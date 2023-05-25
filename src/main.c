@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/05/25 10:37:07 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/05/25 11:45:23 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void execute_command(char **splited_line)
     else if (pid == 0) // Si le processus créé est le processus fils
     {
         // Code exécuté par le processus fils
-        execvp(splited_line[0], splited_line); // Exécution de la commande
+        execvp(splited_line[0], splited_line); // !utiliser execve
 
         // En cas d'erreur lors de l'exécution de la commande
         perror("execvp");
@@ -71,6 +71,9 @@ void minishell_loop(void)
         if (strlen(line) == 0)
             continue;
         args = ft_lexeur(line);
+        printf("args[0] = %s\n", args[0]);
+        printf("args[1] = %s\n", args[1]);
+        printf("args[2] = %s\n", args[2]);
         if (strcmp(args[0], "exit") == 0)
             builtin_exit();
         else if (strcmp(args[0], "pwd") == 0)

@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 07:23:43 by bghandri          #+#    #+#             */
-/*   Updated: 2023/05/25 10:34:29 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/05/25 11:42:01 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ t_token* parseString(const char* input) {
 
         // Déterminer le type du caractère
         enum e_token_type type;
-        if ((currentChar >= 'a' && currentChar <= 'z') ||
+        if ((currentChar == '-') ||
+            (currentChar >= 'a' && currentChar <= 'z') ||
             (currentChar >= 'A' && currentChar <= 'Z') ||
             (currentChar >= '0' && currentChar <= '9')) {
             type = ALPHANUM;
@@ -155,7 +156,6 @@ char **ft_lexeur(char *line)
     tokens = parseString(line); // Ici on récupère une liste chaînée de tokens un token et un char
     nodes = mergeTokens(tokens); // ici on groupe les tokens adjacents de même type dans des nœuds
     args = get_args(nodes); // on cree un double tableau avec chaque argument = un node
-
     return (args);
     // return (ft_split(line));
 }
