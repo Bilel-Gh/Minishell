@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/05/25 05:16:12 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/05/25 06:27:25 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,37 @@ void int_handler(int sig)
         rl_replace_line("", 0);  // Efface la ligne de commande actuelle
         rl_on_new_line();  // Place le curseur sur une nouvelle ligne
         rl_redisplay();  // Affiche le prompt
+    }
+}
+
+void execute_command(char **splited_line)
+{
+    pid_t pid = fork(); // Création d'un nouveau processus
+
+    if (pid < 0) // Si la création du processus a échoué
+    {
+        // Gestion d'erreur si la création du processus a échoué
+        perror("fork");
+        return;
+    }
+    else if (pid == 0) // Si le processus créé est le processus fils
+    {
+        // Code exécuté par le processus fils
+        execvp(splited_line[0], splited_line); // Exécution de la commande
+
+        // En cas d'erreur lors de l'exécution de la commande
+        perror("execvp");
+        exit(1);
+    }
+    else
+    {
+        // Code exécuté par le processus parent
+        int status;
+        waitpid(pid, &status, 0); // Attente de la fin du processus fils
+
+        // Vérification du statut de sortie de la commande exécutée
+        if (status != 0)
+            printf("Commande introuvable\n");
     }
 }
 
@@ -57,6 +88,8 @@ void minishell_loop(void)
             builtin_export(args);
         else if (strcmp(args[0], "unset") == 0)
             builtin_unset(args);
+        else if (line != NULL)
+            execute_command(args);
         else
             printf("Commande introuvable\n");
         // Libérez la mémoire allouée par readline
