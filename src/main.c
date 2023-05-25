@@ -6,13 +6,11 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/05/25 06:27:25 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/05/25 10:37:07 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-#include "builtins/builtins.c"
-#include "builtins/b_export.c"
 
 #define MAX_ARGS 64
 #define MAX_ARG_LENGTH 256
@@ -72,8 +70,7 @@ void minishell_loop(void)
             exit(0);
         if (strlen(line) == 0)
             continue;
-        args = ft_split(line);
-        // printf("args[0] = %s\n", args[0]);
+        args = ft_lexeur(line);
         if (strcmp(args[0], "exit") == 0)
             builtin_exit();
         else if (strcmp(args[0], "pwd") == 0)
@@ -99,8 +96,6 @@ void minishell_loop(void)
 
 int main(void)
 {
-    char *line;
-    char **args;
     struct sigaction s_sigaction;
 
     s_sigaction.sa_handler = int_handler; // Nom de la fonction de gestionnaire

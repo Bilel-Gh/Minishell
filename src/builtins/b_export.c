@@ -6,12 +6,11 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 02:56:40 by bghandri          #+#    #+#             */
-/*   Updated: 2023/05/25 03:18:46 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/05/25 08:05:34 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "../../includes/minishell.h"
 
 extern char **environ;
 

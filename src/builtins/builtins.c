@@ -6,12 +6,11 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 01:44:34 by bghandri          #+#    #+#             */
-/*   Updated: 2023/05/25 03:24:14 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/05/25 08:09:36 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <string.h>
+#include "../../includes/minishell.h"
 
 void builtin_echo(char **args)
 {
@@ -70,7 +69,6 @@ void builtin_pwd()
         perror("pwd");
     }
 }
-extern char **environ;
 
 void builtin_unset(char **args)
 {

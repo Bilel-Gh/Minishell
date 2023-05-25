@@ -6,11 +6,11 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 05:04:11 by bghandri          #+#    #+#             */
-/*   Updated: 2023/05/25 05:05:26 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/05/25 08:05:57 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
+#include "../../includes/minishell.h"
 
 int			ft_isspace(char c)
 {
