@@ -3,28 +3,122 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/05/24 20:26:12 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/05/26 05:21:25 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../includes/minishell.h"
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <readline/readline.h>
-#include <readline/history.h>
+#define MAX_ARGS 64
+#define MAX_ARG_LENGTH 256
+
+// Gestionnaire de signal SIGINT
+void int_handler(int sig)
+{
+    if (sig == SIGINT)
+    {
+        printf("\n");
+        rl_replace_line("", 0);  // Efface la ligne de commande actuelle
+        rl_on_new_line();  // Place le curseur sur une nouvelle ligne
+        rl_redisplay();  // Affiche le prompt
+    }
+}
+
+void execute_command(char **splited_line)
+{
+    pid_t pid = fork(); // Création d'un nouveau processus
+
+    if (pid < 0) // Si la création du processus a échoué
+    {
+        // Gestion d'erreur si la création du processus a échoué
+        perror("fork");
+        return;
+    }
+    else if (pid == 0) // Si le processus créé est le processus fils
+    {
+        // Code exécuté par le processus fils
+        execvp(splited_line[0], splited_line); // !utiliser execve
+
+        // En cas d'erreur lors de l'exécution de la commande
+        perror("execvp");
+        exit(1);
+    }
+    else
+    {
+        // Code exécuté par le processus parent
+        int status;
+        waitpid(pid, &status, 0); // Attente de la fin du processus fils
+
+        // Vérification du statut de sortie de la commande exécutée
+        if (status != 0)
+            printf("Commande introuvable\n");
+    }
+}
+/*char	**ft_split_line_to_token(char *line)
+{
+	char **args;
+	int start;
+	int end;
+	int i;
+
+	
+
+	i = 0;
+	while(line[i])
+	{
+		
+	}
+
+
+
+}*/
+
+void minishell_loop(void)
+{
+    char *line;
+    // char *line_cpy;
+    char **args;
+    while (1)
+    {
+        line = readline("minishell >");
+        if (line == NULL)
+            exit(0);
+        if (strlen(line) == 0)
+            continue;
+
+//		args = ft_split_line_to_token(line);
+    args = ft_lexeur(line);
+    ft_info_token(args);
+		int i = 0;
+
+		while (args[i])
+		{
+			printf("loop = %s\n",args[i]);
+			i++;
+		}
+//
+            //execute_command(args);
+        //else
+           // printf("Commande introuvable\n");
+        // Libérez la mémoire allouée par readline
+        free(line);
+    }
+}
 
 int main(void)
 {
+    struct sigaction s_sigaction;
 
-	char *line;
-	while (1)
-	{
-	 line = readline("minishell >:");
-	 printf("%s\n",line);
-	}
-	return (0);
+    s_sigaction.sa_handler = int_handler; // Nom de la fonction de gestionnaire
+    sigaction(SIGINT, &s_sigaction, NULL); // Gestionnaire de signal SIGINT
+
+    minishell_loop();
+    return 0;
 }
+
+
+
+
