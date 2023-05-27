@@ -1,6 +1,6 @@
 #include "../../includes/minishell.h"
 
-void ft_info_token(char **line_split)
+int *ft_info_token(char **line_split , int *give_nb_token)
 {
     int nb_token;
     int i;
@@ -10,7 +10,7 @@ void ft_info_token(char **line_split)
     i = 0;
     while (line_split[nb_token])
         nb_token++; 
-    printf("nb_token = %d\n",nb_token);
+   // printf("nb_token = %d\n",nb_token);
     type = malloc(sizeof(int) * nb_token);
     while (line_split[i])
     {
@@ -28,12 +28,15 @@ void ft_info_token(char **line_split)
          }
          i++;
     }
-    printf ( "i == %d\n" ,i);
+    printf ( "nb token == %d\n" ,i);
+    *give_nb_token = i;
   i = 0;
     while (i < nb_token)
     {
         printf("type nb %d = %d\n", i, type[i]);
         i++;
     }
+    
+    return (type);
  //   exit (0);
 }

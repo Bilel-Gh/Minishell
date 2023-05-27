@@ -81,7 +81,8 @@ void builtin_env();
 void builtin_pwd();
 void builtin_cd(char **args);
 void builtin_exit();
-void ft_info_token(char **line_split);
+int *ft_info_token(char **line_split , int *give_nb_token);
 int	ft_isprint(int chara);
+int ft_parsing(int *type_token, int nb_token);
 
 #endif

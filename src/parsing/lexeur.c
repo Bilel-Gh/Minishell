@@ -112,20 +112,23 @@ t_node* mergeTokens(t_token* head) {
 			char* value = (char*)malloc(2 * sizeof(char)); // Pour stocker le caractère et le terminateur null
 			value[0] = currentToken->value;
 			value[1] = '\0';
-			//printf("c = %c\n",currentToken->value);
+	//		printf("c# = %c\n",currentToken->value);
 			//enum e_token_type type = currentToken->type;
 
 			t_token* nextToken = currentToken->next;
 			if (nextToken == NULL)
+			{
+				nodeHead = addNode(nodeHead, value);
 				return nodeHead;
-
+			}
+				
 			while ((state == 1 && nextToken->type != QUOTE_D) || (state == 2 && nextToken->type != QUOTE_S))
 			{
 				char* temp = (char*)malloc((strlen(value) + 2) * sizeof(char)); // +2 pour le caractère et le terminateur null
 				strcpy(temp, value);
 				temp[strlen(value)] = nextToken->value;
 				temp[strlen(value) + 1] = '\0';
-			//	printf("intra c1 = %s\n",temp);
+				//printf("intra c1 = %s\n",temp);
 				free(value);
 				value = temp;
 
@@ -133,7 +136,7 @@ t_node* mergeTokens(t_token* head) {
 				nextToken = nextToken->next;
 				currentToken = currentToken->next;
 				if (state == 0 && nextToken->type == ESPACE)
-					printf("jj\n");
+		//			printf("jj\n");
 				if (nextToken == NULL)
 				{
 					nodeHead = addNode(nodeHead, value);
@@ -147,7 +150,7 @@ t_node* mergeTokens(t_token* head) {
 				strcpy(temp, value);
 				temp[strlen(value)] = nextToken->value;
 				temp[strlen(value) + 1] = '\0';
-//				printf("intra c2 = %s\n",temp);
+		//		printf("intra c2 = %s\n",temp);
 				free(value);
 				value = temp;
 
@@ -155,7 +158,7 @@ t_node* mergeTokens(t_token* head) {
 				nextToken = nextToken->next;
 				currentToken = currentToken->next;
 				if (state == 0 && nextToken->type == ESPACE)
-					printf("jj\n");
+				//	printf("jj\n");
 				if (nextToken == NULL) 
 				{
 					nodeHead = addNode(nodeHead, value);
@@ -171,6 +174,7 @@ t_node* mergeTokens(t_token* head) {
 		char* value = (char*)malloc(2 * sizeof(char)); // Pour stocker le caractère et le terminateur null
 		value[0] = currentToken->value;
 		value[1] = '\0';
+		//printf("intra c5 = %s\n",value);
 
 		enum e_token_type type = currentToken->type;
 
@@ -181,12 +185,17 @@ t_node* mergeTokens(t_token* head) {
 			strcpy(temp, value);
 			temp[strlen(value)] = nextToken->value;
 			temp[strlen(value) + 1] = '\0';
-
+		//	printf("intra c4 = %s\n",temp);
 			free(value);
 			value = temp;
 
 			nextToken = nextToken->next;
 			currentToken = currentToken->next;
+		}
+		if (nextToken == NULL) 
+		{
+			nodeHead = addNode(nodeHead, value);
+			return nodeHead;
 		}
 
 		nodeHead = addNode(nodeHead, value);

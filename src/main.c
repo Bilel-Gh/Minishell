@@ -81,6 +81,7 @@ void minishell_loop(void)
     char *line;
     // char *line_cpy;
     char **args;
+    int *info_token;
     while (1)
     {
         line = readline("minishell >");
@@ -90,9 +91,17 @@ void minishell_loop(void)
             continue;
 
 //		args = ft_split_line_to_token(line);
+    int nb_token;
     args = ft_lexeur(line);
-    ft_info_token(args);
-		int i = 0;
+    info_token = ft_info_token(args, &nb_token);
+    int i = 0;
+    i = ft_parsing(info_token, nb_token);
+    if (i)
+        printf("-----error type nb = %d --------\n",i);
+    else
+        printf("-----no error --------\n");
+
+		 i = 0;
 
 		while (args[i])
 		{

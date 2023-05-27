@@ -14,6 +14,7 @@ OBJS_UTILS = ${addprefix ${UTILS_DIR}, ${UTILS:.c=.o}}
 PARSING_DIR = ./src/parsing/
 PARSING =	lexeur.c \
 			ft_info_token.c \
+			parsing.c \
 
 OBJS_PARSING = ${addprefix ${PARSING_DIR}, ${PARSING:.c=.o}}
 
