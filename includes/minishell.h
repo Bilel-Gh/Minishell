@@ -21,6 +21,7 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <stdbool.h>
 
 // #include "../src/builtins/builtins.c"
 // #include "../src/builtins/b_export.c"
@@ -41,7 +42,8 @@ enum e_token_type {
 	RED_D_IN,
 	RED_D_OUT,
 	QUOTE_S,
-	QUOTE_D
+	QUOTE_D,
+	LAST
 };
 // test de ce a quoi vont les structures
 
@@ -83,6 +85,6 @@ void builtin_cd(char **args);
 void builtin_exit();
 int *ft_info_token(char **line_split , int *give_nb_token);
 int	ft_isprint(int chara);
-int ft_parsing(int *type_token, int nb_token);
+int ft_parsing(int *type_token, int nb_token, char **cont_token);
 
 #endif

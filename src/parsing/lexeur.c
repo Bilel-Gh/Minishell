@@ -100,8 +100,41 @@ t_node* mergeTokens(t_token* head) {
 	{
 		state = 0;
 		if (currentToken->type == ESPACE) {
-			currentToken = currentToken->next;
-			continue;
+			char* value = (char*)malloc(2 * sizeof(char)); // Pour stocker le caractère et le terminateur null
+			value[0] = currentToken->value;
+			value[1] = '\0';
+			printf("c# = %c\n",currentToken->value);
+		//	enum e_token_type type = currentToken->type;
+
+			t_token* nextToken = currentToken->next;
+			if (nextToken == NULL)
+			{
+				nodeHead = addNode(nodeHead, value);
+				return nodeHead;
+			}
+				
+			while (((nextToken->type == ESPACE)) && currentToken != NULL)
+			{
+				char* temp = (char*)malloc((strlen(value) + 2) * sizeof(char)); // +2 pour le caractère et le terminateur null
+				strcpy(temp, value);
+				temp[strlen(value)] = nextToken->value;
+				temp[strlen(value) + 1] = '\0';
+				printf("intra c1 = %s\n",temp);
+				free(value);
+				value = temp;
+
+
+				nextToken = nextToken->next;
+				currentToken = currentToken->next;
+			//	if (state == 0 && nextToken->type == ESPACE)
+		//			printf("jj\n");
+				if (nextToken == NULL || currentToken == NULL)
+				{
+					nodeHead = addNode(nodeHead, value);
+					return nodeHead;
+				}
+				continue ;              
+			}
 		}
 		if (currentToken->type == QUOTE_D || currentToken->type == QUOTE_S)
 		{
@@ -112,8 +145,8 @@ t_node* mergeTokens(t_token* head) {
 			char* value = (char*)malloc(2 * sizeof(char)); // Pour stocker le caractère et le terminateur null
 			value[0] = currentToken->value;
 			value[1] = '\0';
-	//		printf("c# = %c\n",currentToken->value);
-			//enum e_token_type type = currentToken->type;
+			printf("c# = %c\n",currentToken->value);
+		//	enum e_token_type type = currentToken->type;
 
 			t_token* nextToken = currentToken->next;
 			if (nextToken == NULL)
@@ -122,22 +155,22 @@ t_node* mergeTokens(t_token* head) {
 				return nodeHead;
 			}
 				
-			while ((state == 1 && nextToken->type != QUOTE_D) || (state == 2 && nextToken->type != QUOTE_S))
+			while (((state == 1 && nextToken->type != QUOTE_D) || (state == 2 && nextToken->type != QUOTE_S)) && currentToken != NULL)
 			{
 				char* temp = (char*)malloc((strlen(value) + 2) * sizeof(char)); // +2 pour le caractère et le terminateur null
 				strcpy(temp, value);
 				temp[strlen(value)] = nextToken->value;
 				temp[strlen(value) + 1] = '\0';
-				//printf("intra c1 = %s\n",temp);
+				printf("intra c1 = %s\n",temp);
 				free(value);
 				value = temp;
 
 
 				nextToken = nextToken->next;
 				currentToken = currentToken->next;
-				if (state == 0 && nextToken->type == ESPACE)
+			//	if (state == 0 && nextToken->type == ESPACE)
 		//			printf("jj\n");
-				if (nextToken == NULL)
+				if (nextToken == NULL || currentToken == NULL)
 				{
 					nodeHead = addNode(nodeHead, value);
 					return nodeHead;
@@ -150,15 +183,15 @@ t_node* mergeTokens(t_token* head) {
 				strcpy(temp, value);
 				temp[strlen(value)] = nextToken->value;
 				temp[strlen(value) + 1] = '\0';
-		//		printf("intra c2 = %s\n",temp);
+				//printf("intra c2 = %s\n",temp);
 				free(value);
 				value = temp;
 
 
 				nextToken = nextToken->next;
 				currentToken = currentToken->next;
-				if (state == 0 && nextToken->type == ESPACE)
-				//	printf("jj\n");
+				//if (state == 0 && nextToken->type == ESPACE)
+				//	printf("jj\n");  
 				if (nextToken == NULL) 
 				{
 					nodeHead = addNode(nodeHead, value);

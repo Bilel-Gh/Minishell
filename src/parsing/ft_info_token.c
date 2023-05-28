@@ -16,9 +16,9 @@ int *ft_info_token(char **line_split , int *give_nb_token)
     {
        
         if (line_split[i][0] == 34)
-			type[i] = QUOTE_D;
+			type[i] = ALPHANUM;
 		else if (line_split[i][0] == 39)
-			type[i] = QUOTE_S;
+			type[i] = ALPHANUM;
 		else if (line_split[i][0] == '>' || line_split[i][0] == '<') {
 			type[i] = REDIRECT;
 		}  else if (line_split[i][0] == '|') {
