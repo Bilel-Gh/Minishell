@@ -112,7 +112,7 @@ void minishell_loop(void)
 
 		while (args[i])
 		{
-			printf("loop = %s\n",args[i]);
+			printf("token nb %d = %s\n", i, args[i]);
 			i++;
 		}
 //

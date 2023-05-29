@@ -19,6 +19,8 @@ int *ft_info_token(char **line_split , int *give_nb_token)
 			type[i] = ALPHANUM;
 		else if (line_split[i][0] == 39)
 			type[i] = ALPHANUM;
+        else if (line_split[i][0] == ' ')
+			type[i] = ESPACE;
 		else if (line_split[i][0] == '>' || line_split[i][0] == '<') {
 			type[i] = REDIRECT;
 		}  else if (line_split[i][0] == '|') {
