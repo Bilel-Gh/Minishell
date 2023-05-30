@@ -85,21 +85,19 @@ t_node	*ft_group_spaces(t_node *nodeHead, t_token **currentTokenPtr)
     value = ft_strndup(&(*currentTokenPtr)->value, 1);
     nextToken = (*currentTokenPtr)->next;
     if (!nextToken)
-        return addNode(nodeHead, value);
+    {
+        *currentTokenPtr = NULL;
+        return (addNode(nodeHead, value));
+    }
     while (nextToken->type == ESPACE)
     {
         value = append_value(value, nextToken->value);
-        *currentTokenPtr = (*currentTokenPtr)->next;
-        if (!(nextToken = nextToken->next) || nextToken->type != ESPACE)
-        {
-            if (nextToken)
-                *currentTokenPtr = (*currentTokenPtr)->next;
+        nextToken = nextToken->next;
+        *currentTokenPtr = nextToken ? nextToken : NULL;
+        if (!(nextToken) || nextToken->type != ESPACE)
             return addNode(nodeHead, value);
-        }
     }
     nodeHead = addNode(nodeHead, value);
-    if (nextToken)
-        *currentTokenPtr = (*currentTokenPtr)->next;
     return nodeHead;
 }
 
@@ -122,25 +120,23 @@ t_node	*ft_handle_quotes(t_node *nodeHead, t_token **currentTokenPtr)
     value = ft_strndup(&(*currentTokenPtr)->value, 1);
     nextToken = (*currentTokenPtr)->next;
     if (!nextToken)
+    {
+        *currentTokenPtr = NULL;
         return (addNode(nodeHead, value));
+    }
     while (!is_quote_end(state, nextToken))
     {
         value = append_value(value, nextToken->value);
         nextToken = nextToken->next;
-        *currentTokenPtr = (*currentTokenPtr)->next;
-        if (!nextToken || !(*currentTokenPtr))
+        *currentTokenPtr = nextToken ? nextToken : NULL;
+        if (!nextToken)
             return (addNode(nodeHead, value));
     }
     if (is_quote_end(state, nextToken))
     {
         value = append_value(value, nextToken->value);
-        nextToken = nextToken->next;
-        *currentTokenPtr = (*currentTokenPtr)->next;
-        if (!nextToken)
-            return (addNode(nodeHead, value));
+        *currentTokenPtr = (nextToken->next) ? nextToken->next : NULL;
     }
-    printf("QUOTE RESET -----> currentToken->value: %c\n", (*currentTokenPtr)->value);
-    *currentTokenPtr = (*currentTokenPtr)->next;
     return (addNode(nodeHead, value));
 }
 
@@ -157,14 +153,50 @@ t_node	*ft_group_rest(t_node *nodeHead, t_token **currentTokenPtr)
     {
         value = append_value(value, nextToken->value);
         nextToken = nextToken->next;
-        *currentTokenPtr = (*currentTokenPtr)->next;
     }
-    printf("REST RESET -----> currentToken->value: %c\n", (*currentTokenPtr)->value);
-    if (!nextToken)
-        return addNode(nodeHead, value);
-    nodeHead = addNode(nodeHead, value);
-    *currentTokenPtr = (*currentTokenPtr)->next;
-    return nodeHead;
+    *currentTokenPtr = nextToken ? nextToken : NULL;
+    return addNode(nodeHead, value);
+}
+
+// permet de supprimer les quotes
+void	ft_clean_quotes(t_node *nodeHead)
+{
+    t_node	*currentNode;
+    int		len_value;
+    int     type_start;
+    int     type_end;
+
+    currentNode = nodeHead;
+    len_value = 0;
+    type_start = 0;
+    type_end = 1;
+    while (currentNode)
+    {
+        if (currentNode->value[1] == 0)
+        {
+            currentNode = currentNode->next;
+            continue;
+        }
+        if (currentNode->value[0] == 34 || currentNode->value[0] == 39)
+        {
+            printf("\033[0;32m [QUOTE]\n \033[0m");
+            len_value = ft_strlen(currentNode->value);
+            type_start = currentNode->value[0] == 34 ? QUOTE_D : QUOTE_S;
+            if (currentNode->value[len_value - 1] == 34 || currentNode->value[len_value - 1] == 39)
+            {
+                type_end = currentNode->value[len_value - 1] == 34 ? QUOTE_D : QUOTE_S;
+            }
+            printf("\033[0;32m [QUOTE Type] start: %d end: %d\n \033[0m", type_start, type_end);
+            // regarde si la quote est fermée
+            if (type_start == type_end)
+            {
+                printf("\033[0;32m [QUOTE] \033[0m");
+                currentNode->value[len_value - 1] = '\0';
+                currentNode->value = currentNode->value + 1;
+            }
+        }
+        currentNode = currentNode->next;
+    }
 }
 
 t_node* mergeTokens(t_token* head) {
@@ -174,18 +206,18 @@ t_node* mergeTokens(t_token* head) {
     {
         if (currentToken->type == ESPACE) {
             nodeHead = ft_group_spaces(nodeHead, &currentToken);
-            if ((currentToken == NULL || currentToken->next == NULL) && currentToken->type == ESPACE) // a gerer
+            printf("\033[0;32m [currentToken] = '%c'\n \033[0m", currentToken->value);
+            if (currentToken == NULL) // a gerer
                 return nodeHead;
         }
         if (currentToken->type == QUOTE_D || currentToken->type == QUOTE_S) {
             nodeHead = ft_handle_quotes(nodeHead, &currentToken);
-            printf("currentToken->value: %c\n", currentToken->value);
-            printf("currentToken->type: %d\n", currentToken->type);
-            if ((currentToken == NULL || currentToken->next == NULL) && (currentToken->type == QUOTE_D || currentToken->type == QUOTE_S)) // A gerer
+            ft_clean_quotes(nodeHead);
+            if (currentToken == NULL)
                 return nodeHead;
         }
         nodeHead = ft_group_rest(nodeHead, &currentToken);
-        if (currentToken->next == NULL || currentToken == NULL)
+        if (currentToken == NULL)
             return nodeHead;
     }
 

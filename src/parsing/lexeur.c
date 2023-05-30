@@ -122,8 +122,6 @@ char** get_args(t_node* head) {
 
 char **ft_lexeur(char *line)
 {
-	// ici il faudra spliter correctement la ligne de commande avec la tokenisation et les listes chainées
-	// pour l'instant on se contente de séparer les mots par des espaces
 	t_token* tokens;
 	t_node* nodes;
 	char **args;
