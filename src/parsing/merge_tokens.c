@@ -24,6 +24,34 @@ int ft_strlen(char *str)
     return (i);
 }
 
+// fonction qui copie n octets de src dans dst
+void	*ft_memcpy(void *dst, const void *src, size_t n)
+{
+    size_t i;
+
+    if (!dst && !src)
+        return (0);
+    i = 0;
+    while (i < n)
+    {
+        ((unsigned char *)dst)[i] = ((unsigned char *)src)[i];
+        i++;
+    }
+    return (dst);
+}
+
+// fonction qui duplique une chaine de caracteres
+char	*ft_strndup(const char *s1, size_t n)
+{
+    char *s2;
+
+    if (!(s2 = (char *)malloc(n + 1)))
+        return (0);
+    ft_memcpy(s2, s1, n);
+    s2[n + 1] = 0;
+    return (s2);
+}
+
 char	*ft_strcpy(char *dest, char *src)
 {
     int i;
@@ -38,134 +66,122 @@ char	*ft_strcpy(char *dest, char *src)
     return (dest);
 }
 
+// permet d'ajouter un caractère à la fin d'une chaine de caractère
+char	*append_value(char *str, char c)
+{
+    char	*temp = (char *)malloc((ft_strlen(str) + 2) * sizeof(char));
+    ft_strcpy(temp, str);
+    temp[ft_strlen(str)] = c;
+    temp[ft_strlen(str) + 1] = '\0';
+    free(str);
+    return temp;
+}
 
-// fonction qui regroupe tous les tokens de type espace qui se suivent dans un seul node
-t_node* ft_group_spaces(t_node* nodeHead, t_token* currentToken) {
-    char* value;
-    t_token* nextToken;
-    char* temp;
+t_node	*ft_group_spaces(t_node *nodeHead, t_token **currentTokenPtr)
+{
+    char	*value;
+    t_token	*nextToken;
 
-    value = (char*)malloc(2 * sizeof(char)); // Pour stocker le caractère et le terminateur null
-    value[0] = currentToken->value;
-    value[1] = '\0';
-    nextToken = currentToken->next;
-    if (nextToken == NULL) {
-        nodeHead = addNode(nodeHead, value);
-        return nodeHead;
-    }
+    value = ft_strndup(&(*currentTokenPtr)->value, 1);
+    nextToken = (*currentTokenPtr)->next;
+    if (!nextToken)
+        return addNode(nodeHead, value);
     while (nextToken->type == ESPACE)
     {
-        temp = (char*)malloc((ft_strlen(value) + 2) * sizeof(char)); // +2 pour le caractère et le terminateur null
-        ft_strcpy(temp, value); // copie de value dans temp
-        temp[ft_strlen(value)] = nextToken->value; // ajout du caractère suivant à la fin de temp
-        temp[ft_strlen(value) + 1] = '\0'; // ajout du terminateur null
-        free(value);
-        value = temp;
-        currentToken = currentToken->next;
-        nextToken = nextToken->next;
-        if (nextToken == NULL || nextToken->type != ESPACE) {
-            nodeHead = addNode(nodeHead, value);
-            return nodeHead;
+        value = append_value(value, nextToken->value);
+        *currentTokenPtr = (*currentTokenPtr)->next;
+        if (!(nextToken = nextToken->next) || nextToken->type != ESPACE)
+        {
+            if (nextToken)
+                *currentTokenPtr = (*currentTokenPtr)->next;
+            return addNode(nodeHead, value);
         }
     }
     nodeHead = addNode(nodeHead, value);
+    if (nextToken)
+        *currentTokenPtr = (*currentTokenPtr)->next;
     return nodeHead;
 }
 
-t_node* ft_handle_quotes(t_node* nodeHead, t_token** currentTokenPtr) {
-    int state;
-    char* value;
-    t_token* nextToken;
+// permet de savoir si la quote est fermée
+// si la quote est fermée, on retourne 1
+// si la quote n'est pas fermée, on retourne 0
+int	is_quote_end(int curr_state, t_token *next_token)
+{
+    return ((curr_state == QUOTE_D && next_token->type == QUOTE_D) ||
+            (curr_state == QUOTE_S && next_token->type == QUOTE_S));
+}
 
-    state = ((*currentTokenPtr)->type == QUOTE_D) ? 1 : 2;
-    value = (char*)malloc(2 * sizeof(char));
-    value[0] = (*currentTokenPtr)->value;
-    value[1] = '\0';
+t_node	*ft_handle_quotes(t_node *nodeHead, t_token **currentTokenPtr)
+{
+    int		state;
+    char	*value;
+    t_token	*nextToken;
+
+    state = ((*currentTokenPtr)->type == QUOTE_D) ? QUOTE_D : QUOTE_S;
+    value = ft_strndup(&(*currentTokenPtr)->value, 1);
     nextToken = (*currentTokenPtr)->next;
-    if (nextToken == NULL) {
-        nodeHead = addNode(nodeHead, value);
-        return nodeHead;
-    }
-    while ((state == 1 && nextToken->type != QUOTE_D) || (state == 2 && nextToken->type != QUOTE_S)) {
-        char* temp = (char*)malloc((ft_strlen(value) + 2) * sizeof(char));
-        ft_strcpy(temp, value);
-        temp[ft_strlen(value)] = nextToken->value;
-        temp[ft_strlen(value) + 1] = '\0';
-        free(value);
-        value = temp;
+    if (!nextToken)
+        return (addNode(nodeHead, value));
+    while (!is_quote_end(state, nextToken))
+    {
+        value = append_value(value, nextToken->value);
         nextToken = nextToken->next;
-        (*currentTokenPtr) = (*currentTokenPtr)->next;
-        if (nextToken == NULL || (*currentTokenPtr) == NULL) {
-            nodeHead = addNode(nodeHead, value);
-            return nodeHead;
-        }
+        *currentTokenPtr = (*currentTokenPtr)->next;
+        if (!nextToken || !(*currentTokenPtr))
+            return (addNode(nodeHead, value));
     }
-    if ((state == 1 && nextToken->type == QUOTE_D) || (state == 2 && nextToken->type == QUOTE_S)) {
-        char* temp = (char*)malloc((ft_strlen(value) + 2) * sizeof(char));
-        ft_strcpy(temp, value);
-        temp[ft_strlen(value)] = nextToken->value;
-        temp[ft_strlen(value) + 1] = '\0';
-        free(value);
-        value = temp;
+    if (is_quote_end(state, nextToken))
+    {
+        value = append_value(value, nextToken->value);
         nextToken = nextToken->next;
-        (*currentTokenPtr) = (*currentTokenPtr)->next;
-        if (nextToken == NULL) {
-            nodeHead = addNode(nodeHead, value);
-            return nodeHead;
-        }
+        *currentTokenPtr = (*currentTokenPtr)->next;
+        if (!nextToken)
+            return (addNode(nodeHead, value));
     }
-    nodeHead = addNode(nodeHead, value);
-    (*currentTokenPtr) = (*currentTokenPtr)->next;
-    return nodeHead;
+    printf("QUOTE RESET -----> currentToken->value: %c\n", (*currentTokenPtr)->value);
+    *currentTokenPtr = (*currentTokenPtr)->next;
+    return (addNode(nodeHead, value));
 }
 
-t_node* ft_group_rest(t_node* nodeHead, t_token** currentTokenPtr) {
-    char* value;
-    t_token* nextToken;
+t_node	*ft_group_rest(t_node *nodeHead, t_token **currentTokenPtr)
+{
+    char	*value;
+    t_token	*nextToken;
     enum e_token_type type;
-    char* temp;
 
-    value = (char*)malloc(2 * sizeof(char)); // Pour stocker le caractère et le terminateur null
-    value[0] = (*currentTokenPtr)->value;
-    value[1] = '\0';
+    value = ft_strndup(&(*currentTokenPtr)->value, 1);
     type = (*currentTokenPtr)->type;
     nextToken = (*currentTokenPtr)->next;
-    while (nextToken != NULL && nextToken->type == type) {
-        temp = (char*)malloc((ft_strlen(value) + 2) * sizeof(char)); // +2 pour le caractère et le terminateur null
-        ft_strcpy(temp, value);
-        temp[ft_strlen(value)] = nextToken->value;
-        temp[ft_strlen(value) + 1] = '\0';
-        free(value);
-        value = temp;
-        nextToken = nextToken->next;
-        (*currentTokenPtr) = (*currentTokenPtr)->next;
-    }
-    if (nextToken == NULL)
+    while (nextToken && nextToken->type == type)
     {
-        nodeHead = addNode(nodeHead, value);
-        return nodeHead;
+        value = append_value(value, nextToken->value);
+        nextToken = nextToken->next;
+        *currentTokenPtr = (*currentTokenPtr)->next;
     }
+    printf("REST RESET -----> currentToken->value: %c\n", (*currentTokenPtr)->value);
+    if (!nextToken)
+        return addNode(nodeHead, value);
     nodeHead = addNode(nodeHead, value);
-    (*currentTokenPtr) = (*currentTokenPtr)->next;
+    *currentTokenPtr = (*currentTokenPtr)->next;
     return nodeHead;
 }
 
 t_node* mergeTokens(t_token* head) {
     t_node* nodeHead = NULL;
     t_token* currentToken = head;
-
     while (currentToken != NULL)
     {
         if (currentToken->type == ESPACE) {
-            nodeHead = ft_group_spaces(nodeHead, currentToken);
-            if (currentToken->next == NULL)
+            nodeHead = ft_group_spaces(nodeHead, &currentToken);
+            if ((currentToken == NULL || currentToken->next == NULL) && currentToken->type == ESPACE) // a gerer
                 return nodeHead;
-            while (currentToken->type == ESPACE)
-                currentToken = currentToken->next;
         }
         if (currentToken->type == QUOTE_D || currentToken->type == QUOTE_S) {
             nodeHead = ft_handle_quotes(nodeHead, &currentToken);
-            if (currentToken->next == NULL || currentToken == NULL)
+            printf("currentToken->value: %c\n", currentToken->value);
+            printf("currentToken->type: %d\n", currentToken->type);
+            if ((currentToken == NULL || currentToken->next == NULL) && (currentToken->type == QUOTE_D || currentToken->type == QUOTE_S)) // A gerer
                 return nodeHead;
         }
         nodeHead = ft_group_rest(nodeHead, &currentToken);
