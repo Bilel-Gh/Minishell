@@ -1,3 +1,15 @@
+# export LDFLAGS="-L$(brew --prefix readline)/lib" #                                                                                               ─╯
+# export CPPFLAGS="-I$(brew --prefix readline)/include" #
+
+# /* ~~~~~~~ COMPILING INFO ~~~~~~~ */
+CC = gcc
+CFLAGS = -Wall -Werror -Wextra -g3
+IFLAGS:= -I ./includes
+
+# /* ~~~~~~~ LINKING INFO ~~~~~~~ */
+LDFLAGS = -L /Users/bilelgh/homebrew/Cellar/readline/8.2.1/lib #A supprimer
+LDLIBS = -lreadline
+
 # /* ~~~~~~ SOURCES ~~~~~~ */
 SRCS_DIR = ./src/
 SRCS =	main.c \
@@ -15,6 +27,7 @@ PARSING_DIR = ./src/parsing/
 PARSING =	lexeur.c \
 			ft_info_token.c \
 			parsing.c \
+			merge_tokens.c \
 
 OBJS_PARSING = ${addprefix ${PARSING_DIR}, ${PARSING:.c=.o}}
 
@@ -26,13 +39,7 @@ BUILTINS =	builtins.c \
 OBJS_BUILTINS = ${addprefix ${BUILTINS_DIR}, ${BUILTINS:.c=.o}}
 
 
-
-# /* ~~~~~~~ COMPILING INFO ~~~~~~~ */
-CC = cc
-CFLAGS = -Wall -Werror -Wextra -g3
-IFLAGS:= -I ./includes
-
-# /* ~~~~~~~ OTHER ~~~~~~~ */
+# /* ~~~~~~~ TARGET ~~~~~~~ */
 NAME = minishell
 RM = rm -f
 
@@ -49,17 +56,21 @@ all:	${NAME}
 
 $(NAME): $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS)
 	@echo $(CYAN) " - Compiling $@" $(RED)
-	@$(CC) $(CFLAGS) $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS) $(IFLAGS) -o $(NAME) -l readline
+	@$(CC) $(CFLAGS) $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS) $(IFLAGS) $(LDFLAGS) $(LDLIBS) -o $(NAME)
 	@echo $(GREEN) "[OK COMPILED]" $(EOC)
 	@echo $(GREEN) "[LAUNCH PROGRAMM]" $(EOC)
+	@mkdir -p obj
+	@mv $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS) obj/
 
 clean:
-		@echo $(PURPLE) "[🧹Cleaning...🧹]" $(EOC)
-		@${RM} ${OBJS} $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS)
+	@echo $(PURPLE) "[🧹Cleaning...🧹]" $(EOC)
+	@${RM} ${OBJS} $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS)
+	@${RM} -r obj
 
 fclean: clean
-		@echo $(PURPLE) "[🧹FCleaning...🧹]" $(EOC)
-		@${RM} ${OBJS} $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS) ${NAME}
+	@echo $(PURPLE) "[🧹FCleaning...🧹]" $(EOC)
+	@${RM} ${NAME}
+
 
 re: 	fclean all
 

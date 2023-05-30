@@ -22,12 +22,13 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdbool.h>
+#include <string.h>
 
 // #include "../src/builtins/builtins.c"
 // #include "../src/builtins/b_export.c"
 // #include "../src/parsing/lexeur.c"
 // #include "../src/utils/split.c"
-
+//
 // #include "../src/utils/split.c"
 
 extern char **environ;
@@ -74,7 +75,6 @@ typedef struct		node
 }					t_node;
 
 char **ft_lexeur(char *line);
-char	**ft_split(char *str);
 
 void builtin_echo(char **args);
 void builtin_export(char **args);
@@ -83,8 +83,12 @@ void builtin_env();
 void builtin_pwd();
 void builtin_cd(char **args);
 void builtin_exit();
+
+
 int *ft_info_token(char **line_split , int *give_nb_token);
 int	ft_isprint(int chara);
 int ft_parsing(int *type_token, int nb_token, char **cont_token);
+t_node* addNode(t_node* head, char* value);
+t_node* mergeTokens(t_token* head);
 
 #endif

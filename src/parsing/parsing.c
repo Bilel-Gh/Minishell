@@ -24,7 +24,7 @@ bool error_grammaticale(int *type_token, int nb_token)
         //   printf("parsing 2 = %d nb = %d\n", type_token[i], i);
             if (type_token[i] == 0)
             {
-              //  printf("i parsing.c = %d\n",i); 
+              //  printf("i parsing.c = %d\n",i);
                 if (type_token[i + 1] != 4 && type_token[i + 1] != 0 && type_token[i + 1] != 1)
                     return (true);
             }
@@ -43,7 +43,7 @@ bool error_grammaticale(int *type_token, int nb_token)
 bool    error_size(char *cont_token, int size_max)
 {
         int i;
-        
+
         i = 0;
         while (cont_token[i])
             i++;
@@ -67,7 +67,7 @@ bool    error_no_only_type(char *str)
     }
     return (false);
 }
-   
+
 void    give_sp_token_redi(char *token, int *type_token, int pos)
 {
     int size_token;
@@ -133,15 +133,15 @@ bool quote_is_open(char *token)
     i = 0;
     while (token[i])
     {
-        if (token[i] == 34 && state == 1)
-		    state = 0;
-		else if (token[i] == 34 && state == 0)
-			state = 1;
-		else if (token[i] == 39 && state == 2)
-			state = 0;
-		else if (token[i] == 39 && state == 0)
+        if (token[i] == 34 && state == REDIRECT)
+		    state = ALPHANUM;
+		else if (token[i] == 34 && state == ALPHANUM)
+			state = REDIRECT;
+		else if (token[i] == 39 && state == RED_IN)
+			state = ALPHANUM;
+		else if (token[i] == 39 && state == ALPHANUM)
 			state = 2;
-        i++;                 
+        i++;
     }
  //   printf("state = %d\n", state);
     if (state == 0)
@@ -156,15 +156,15 @@ bool error_quote(int *type_token, int nb_token, char **cont_token)
     printf("\n*********check parsing quote ???***************\n");
     while (i < nb_token)
     {
-        if (cont_token[i][0] == 34 || cont_token[i][0] == 39)
+        if (cont_token[i][0] == 34 || cont_token[i][0] == 39) // 34 = " 39 = '
         {
             if (quote_is_open(cont_token[i]))
                 return (true);
 
             if (cont_token[i][0] == 34)
-                type_token[i] = 9;
+                type_token[i] = QUOTE_D;
             else
-                type_token[i] = 8;
+                type_token[i] = QUOTE_S;
         }
         i++;
     }

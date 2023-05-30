@@ -11,6 +11,10 @@
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <string.h> // a supprimer
+#include <readline/readline.h> // pour faire fonctionner readline sur mac
+#include <readline/history.h> // pour faire fonctionner readline sur mac
+
 
 #define MAX_ARGS 64
 #define MAX_ARG_LENGTH 256
@@ -105,14 +109,14 @@ void minishell_loop(void)
 
 		while (i < nb_token)
 		{
-			printf("type = %d\n",info_token[i]);
+			printf("type%d = %d\n",i, info_token[i]);
 			i++;
 		}
 		 i = 0;
 
 		while (args[i])
 		{
-			printf("loop = %s\n",args[i]);
+			printf("node%d = %s\n",i, args[i]);
 			i++;
 		}
 //

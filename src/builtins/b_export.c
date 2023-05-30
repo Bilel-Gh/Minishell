@@ -33,11 +33,13 @@ char	*ft_strchr(const char *s, int c)
 void builtin_export(char **args)
 {
     char *var = args[1];
+    int i = 0;
 
     if (var == NULL) {
         // Afficher toutes les variables d'environnement
-        for (int i = 0; environ[i] != NULL; i++) {
+        while (environ[i] != NULL) {
             printf("%s\n", environ[i]);
+            i++;
         }
     } else {
         // Rechercher le caractère '=' pour diviser la variable en clé et valeur
