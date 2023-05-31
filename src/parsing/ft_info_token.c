@@ -10,7 +10,7 @@ int *ft_info_token(char **line_split , int *give_nb_token)
     i = 0;
     while (line_split[nb_token])
         nb_token++; 
-   // printf("nb_token = %d\n",nb_token);
+    printf("nb_token = %d\n",nb_token);
     type = malloc(sizeof(int) * nb_token);
     while (line_split[i])
     {

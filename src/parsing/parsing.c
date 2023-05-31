@@ -399,9 +399,14 @@ while (i < nb_token)
 	{
 		if (is_word(type_token[i]))
 			{
+				printf("nb_token new token = %d\n type_", nb_token);
 				while (is_word(type_token[i]) && i < nb_token)
 				{
+					printf("i new token = %d\n", i);
 					i++;
+					if (i == nb_token)
+						return (printf("FSFSFSFF\n"),j + 1);
+				
 				}
 				j++;
 				continue;
@@ -409,6 +414,7 @@ while (i < nb_token)
 	
 		(i++, j++);
 	}
+	printf("j new token = %d\n", j);
 	return (j);
 }
 
@@ -429,6 +435,8 @@ int malloc_new_token(char **new_cont_token, char **cont_token, int *type_token, 
 				{
 					new_cont_token[j] = ft_strjoin(new_cont_token[j], cont_token[i]);
 					i++;
+					if (i == nb_token)
+						return (new_cont_token[j + 1] = 0, 1);
 				}
 				j++;
 				continue;
@@ -436,11 +444,12 @@ int malloc_new_token(char **new_cont_token, char **cont_token, int *type_token, 
 		new_cont_token[j] = ft_strjoin(new_cont_token[j], cont_token[i]);
 		(i++, j++);
 	}
+	new_cont_token[j] = 0;
 	return (1);
 	
 }
 //CHAR **
-void join_inter_space(char **cont_token, int *type_token, int nb_token)
+char **join_inter_space(char **cont_token, int *type_token, int nb_token)
 {
 	char ** new_cont_token;
 	int i;
@@ -452,20 +461,27 @@ void join_inter_space(char **cont_token, int *type_token, int nb_token)
 	//prinft("NB token _join = %d  \n",nb_new_token);
 
 	if (nb_new__token == 1)
-		return ;//return (cont_token);
+		return(cont_token) ;//return (cont_token);
 	i = 0;
 	new_cont_token = malloc( sizeof(char*) * (nb_new__token + 1));
+	while (i <= nb_new__token)
+	{
+		new_cont_token[i] = malloc(1);
+		new_cont_token[i] = NULL;
+		i++;
+	}
+	i = 0;
 	if (!new_cont_token)
-		return ; //ft_free;
+		return(printf("error"), NULL) ; //ft_free;
 	if (!malloc_new_token(new_cont_token, cont_token, type_token, nb_token))
-		return ;//ft_free;
+		return(NULL) ;//ft_free;
+	printf("new token %d = %s", i, new_cont_token[i]);
 	while ( i < nb_new__token)
 	{
 		printf("new token %d = %s", i, new_cont_token[i]);
 		i++;
 	}
-	
-
+	return (new_cont_token);
 }
 
 //void	kick_quote(char **cont_token)
@@ -514,11 +530,11 @@ char    **ft_parsing(int *type_token, int *nb_token, char **cont_token)
 	expande(type_token, *nb_token, cont_token);
     //kick_quote(type_token, nb_token, cont_token);
     //cont_token =
-	 join_inter_space(cont_token, type_token, *nb_token);
+	 return (join_inter_space(cont_token, type_token, *nb_token));
 	//ft_info_token(cont_token , nb_token);
 	//new_list_type_token(cont_token,type_token);
-	 if (error_grammaticale(type_token, *nb_token))
-	   return (cont_token);
+	// if (error_grammaticale(type_token, *nb_token))
+	  // return (cont_token);
 	//printf("^^^^^^^^^^^ no error grammaticale ^^^^^^^^^^^^^^^^\n");
     
 	return (0);
