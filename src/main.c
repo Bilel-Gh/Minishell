@@ -95,8 +95,9 @@ void minishell_loop(void)
     args = ft_lexeur(line);
     info_token = ft_info_token(args, &nb_token);
     int i = 0;
-    i = ft_parsing(info_token, nb_token, args);
-    if (i)
+    char **for_test = 0;
+    for_test = ft_parsing(info_token, &nb_token, args);
+    if (for_test)
         printf("@@@@@@@@@@@@@ ERROR DETECT !!!! @@@@@@@@@@@@@@@\n");
     else
         printf("############# validation ###############\n");
