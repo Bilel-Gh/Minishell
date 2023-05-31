@@ -12,6 +12,8 @@
 
 #include "../../includes/minishell.h"
 
+void ft_delete_quotes(t_node *currentNode, int len_value, int type_start, int type_end);
+
 int ft_strlen(char *str)
 {
     int i;
@@ -158,6 +160,21 @@ t_node	*ft_group_rest(t_node *nodeHead, t_token **currentTokenPtr)
     return addNode(nodeHead, value);
 }
 
+void ft_delete_quotes(t_node *currentNode, int len_value, int type_start, int type_end)
+{
+    len_value = ft_strlen(currentNode->value);
+    type_start = currentNode->value[0] == 34 ? QUOTE_D : QUOTE_S;
+    if (currentNode->value[len_value - 1] == 34 || currentNode->value[len_value - 1] == 39)
+    {
+        type_end = currentNode->value[len_value - 1] == 34 ? QUOTE_D : QUOTE_S;
+    }
+    if (type_start == type_end)
+    {
+        currentNode->value[len_value - 1] = '\0';
+        currentNode->value = currentNode->value + 1;
+    }
+}
+
 // permet de supprimer les quotes
 void	ft_clean_quotes(t_node *nodeHead)
 {
@@ -179,21 +196,7 @@ void	ft_clean_quotes(t_node *nodeHead)
         }
         if (currentNode->value[0] == 34 || currentNode->value[0] == 39)
         {
-            printf("\033[0;32m [QUOTE]\n \033[0m");
-            len_value = ft_strlen(currentNode->value);
-            type_start = currentNode->value[0] == 34 ? QUOTE_D : QUOTE_S;
-            if (currentNode->value[len_value - 1] == 34 || currentNode->value[len_value - 1] == 39)
-            {
-                type_end = currentNode->value[len_value - 1] == 34 ? QUOTE_D : QUOTE_S;
-            }
-            printf("\033[0;32m [QUOTE Type] start: %d end: %d\n \033[0m", type_start, type_end);
-            // regarde si la quote est fermée
-            if (type_start == type_end)
-            {
-                printf("\033[0;32m [QUOTE] \033[0m");
-                currentNode->value[len_value - 1] = '\0';
-                currentNode->value = currentNode->value + 1;
-            }
+            ft_delete_quotes(currentNode, len_value, type_start, type_end);
         }
         currentNode = currentNode->next;
     }
@@ -206,7 +209,6 @@ t_node* mergeTokens(t_token* head) {
     {
         if (currentToken->type == ESPACE) {
             nodeHead = ft_group_spaces(nodeHead, &currentToken);
-            printf("\033[0;32m [currentToken] = '%c'\n \033[0m", currentToken->value);
             if (currentToken == NULL) // a gerer
                 return nodeHead;
         }
