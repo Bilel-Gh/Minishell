@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 17:34:41 by bghandri          #+#    #+#             */
-/*   Updated: 2023/05/29 17:34:49 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/05/31 16:42:08 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,12 +84,17 @@ t_node	*ft_group_spaces(t_node *nodeHead, t_token **currentTokenPtr)
     char	*value;
     t_token	*nextToken;
 
-    value = ft_strndup(&(*currentTokenPtr)->value, 1);
+    value = ft_strndup(&(*currentTokenPtr)->value, 1); // ! gerer le cas ou le token est un seule espace
     nextToken = (*currentTokenPtr)->next;
     if (!nextToken)
     {
         *currentTokenPtr = NULL;
         return (addNode(nodeHead, value));
+    }
+    if (nextToken && nextToken->type != ESPACE)
+    {
+        *currentTokenPtr = nextToken;
+        return addNode(nodeHead, value);
     }
     while (nextToken->type == ESPACE)
     {
@@ -209,12 +214,17 @@ t_node* mergeTokens(t_token* head) {
     {
         if (currentToken->type == ESPACE) {
             nodeHead = ft_group_spaces(nodeHead, &currentToken);
+            // printf avec ANSI color
+            //printf("\033[0;32m currentToken->value = '%c'\n\033[0m", currentToken->value);
             if (currentToken == NULL) // a gerer
+            {
+                printf("currentToken == NULL\n");
                 return nodeHead;
+            }
         }
         if (currentToken->type == QUOTE_D || currentToken->type == QUOTE_S) {
             nodeHead = ft_handle_quotes(nodeHead, &currentToken);
-            ft_clean_quotes(nodeHead);
+            // ft_clean_quotes(nodeHead);
             if (currentToken == NULL)
                 return nodeHead;
         }
