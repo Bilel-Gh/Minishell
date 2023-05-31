@@ -6,25 +6,13 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 17:34:41 by bghandri          #+#    #+#             */
-/*   Updated: 2023/05/31 16:42:08 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/05/31 17:02:01 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 void ft_delete_quotes(t_node *currentNode, int len_value, int type_start, int type_end);
-
-int ft_strlen(char *str)
-{
-    int i;
-
-    i = 0;
-    while (str[i] != '\0')
-    {
-        i++;
-    }
-    return (i);
-}
 
 // fonction qui copie n octets de src dans dst
 void	*ft_memcpy(void *dst, const void *src, size_t n)

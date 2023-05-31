@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/05/28 10:24:16 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/05/31 17:03:17 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ typedef struct		node
 
 char **ft_lexeur(char *line);
 
+// Dossier BUILTIN
 void builtin_echo(char **args);
 void builtin_export(char **args);
 void builtin_unset(char **args);
@@ -84,11 +85,15 @@ void builtin_pwd();
 void builtin_cd(char **args);
 void builtin_exit();
 
+// DOSSIER UTILS
+int	ft_strlen(const char *str);
+char	*ft_strjoin(char *s1, char *s2);
 
 int *ft_info_token(char **line_split , int *give_nb_token);
 int	ft_isprint(int chara);
-int ft_parsing(int *type_token, int nb_token, char **cont_token);
 t_node* addNode(t_node* head, char* value);
 t_node* mergeTokens(t_token* head);
+char **ft_parsing(int *type_token, int *nb_token, char **cont_token);
+
 
 #endif

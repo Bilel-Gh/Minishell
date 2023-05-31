@@ -19,6 +19,7 @@ OBJS = ${addprefix ${SRCS_DIR}, ${SRCS:.c=.o}}
 # /* ~~~~~~~ UTILS ~~~~~~~ */
 UTILS_DIR = ./src/utils/
 UTILS =	split.c \
+		ft_strjoin.c \
 
 OBJS_UTILS = ${addprefix ${UTILS_DIR}, ${UTILS:.c=.o}}
 

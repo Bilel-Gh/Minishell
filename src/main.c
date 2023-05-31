@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/05/26 05:21:25 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/05/31 17:33:36 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,12 @@ void execute_command(char **splited_line)
 	int end;
 	int i;
 
-	
+
 
 	i = 0;
 	while(line[i])
 	{
-		
+
 	}
 
 
@@ -99,12 +99,13 @@ void minishell_loop(void)
     args = ft_lexeur(line);
     info_token = ft_info_token(args, &nb_token);
     int i = 0;
-    i = ft_parsing(info_token, nb_token, args);
-    if (i)
+    char **for_test = 0;
+    for_test = ft_parsing(info_token, &nb_token, args);
+    if (for_test)
         printf("@@@@@@@@@@@@@ ERROR DETECT !!!! @@@@@@@@@@@@@@@\n");
     else
         printf("############# validation ###############\n");
-     
+
      i = 0;
 
 		while (i < nb_token)
@@ -116,7 +117,7 @@ void minishell_loop(void)
 
 		while (args[i])
 		{
-			printf("node%d = %s\n",i, args[i]);
+			printf("token nb %d = %s avec len = %d\n", i, args[i], ft_strlen(args[i]));
 			i++;
 		}
 //
