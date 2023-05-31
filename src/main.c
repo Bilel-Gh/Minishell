@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/05/31 17:33:36 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/05/31 21:51:34 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #define MAX_ARGS 64
 #define MAX_ARG_LENGTH 256
 
-// Gestionnaire de signal SIGINT
+// Gestionnaire de signal SIGINT //
 void int_handler(int sig)
 {
     if (sig == SIGINT)
