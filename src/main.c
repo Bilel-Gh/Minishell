@@ -88,7 +88,7 @@ void minishell_loop(void)
     int *info_token;
     while (1)
     {
-        line = readline("minishell >");
+        line = readline("\033[1;32mminishell >\033[0m");
         if (line == NULL)
             exit(0);
         if (strlen(line) == 0)
@@ -97,7 +97,7 @@ void minishell_loop(void)
 //		args = ft_split_line_to_token(line);
     int nb_token;
     args = ft_lexeur(line);
-    info_token = ft_info_token(args, &nb_token);
+    info_token = ft_info_token(args, &nb_token); // nt bilel : je pense que cette partie est a revoir.
     int i = 0;
     char **for_test = 0;
     for_test = ft_parsing(info_token, &nb_token, args);
@@ -110,7 +110,7 @@ void minishell_loop(void)
 
 		while (i < nb_token)
 		{
-			printf("type%d = %d\n",i, info_token[i]);
+			printf("type %d = %d\n",i, info_token[i]);
 			i++;
 		}
 		 i = 0;

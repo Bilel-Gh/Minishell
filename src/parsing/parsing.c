@@ -515,7 +515,7 @@ char    **ft_parsing(int *type_token, int *nb_token, char **cont_token)
 	expande(type_token, *nb_token, cont_token);
     //kick_quote(type_token, nb_token, cont_token);
     //cont_token =
-	 join_inter_space(cont_token, type_token, *nb_token);
+	 join_inter_space(cont_token, type_token, *nb_token); // revoir cette fonction avec nassim sur les type des token
 	//ft_info_token(cont_token , nb_token);
 	//new_list_type_token(cont_token,type_token);
 	 if (error_grammaticale(type_token, *nb_token))

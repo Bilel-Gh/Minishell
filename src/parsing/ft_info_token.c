@@ -12,7 +12,7 @@
 
 #include "../../includes/minishell.h"
 
-// fonction qui
+// demander a nassim a quoi sert cette fonction et si c'est pas mieux de mettre les infos des tokens dans la structure prevu a cet effet (t_node_info)
 int *ft_info_token(char **line_split , int *give_nb_token)
 {
     int nb_token;
@@ -27,7 +27,6 @@ int *ft_info_token(char **line_split , int *give_nb_token)
     type = malloc(sizeof(int) * nb_token);
     while (line_split[i])
     {
-
         if (line_split[i][0] == 34)
 			type[i] = ALPHANUM;
 		else if (line_split[i][0] == 39)

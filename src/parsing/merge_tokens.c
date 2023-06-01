@@ -38,7 +38,7 @@ char	*ft_strndup(const char *s1, size_t n)
     if (!(s2 = (char *)malloc(n + 1)))
         return (0);
     ft_memcpy(s2, s1, n);
-    s2[n + 1] = 0;
+    s2[n] = 0;
     return (s2);
 }
 
@@ -52,7 +52,7 @@ char	*ft_strcpy(char *dest, char *src)
         dest[i] = src[i];
         i++;
     }
-    dest[i + 1] = src[i];
+    dest[i] = '\0';
     return (dest);
 }
 
@@ -84,7 +84,7 @@ t_node	*ft_group_spaces(t_node *nodeHead, t_token **currentTokenPtr)
         *currentTokenPtr = nextToken;
         return addNode(nodeHead, value);
     }
-    while (nextToken->type == ESPACE)
+    while (nextToken && nextToken->type == ESPACE)
     {
         value = append_value(value, nextToken->value);
         nextToken = nextToken->next;
@@ -105,18 +105,37 @@ int	is_quote_end(int curr_state, t_token *next_token)
             (curr_state == QUOTE_S && next_token->type == QUOTE_S));
 }
 
+int ft_is_quote_closed(t_token *currentToken)
+{
+    enum e_token_type state;
+    int is_quote_closed;
+
+    state = (currentToken->type == QUOTE_D) ? QUOTE_D : QUOTE_S;
+    currentToken = currentToken->next;
+    is_quote_closed = 0;
+    while (currentToken)
+    {
+        if (currentToken->type == state)
+            is_quote_closed = 1;
+        currentToken = currentToken->next;
+    }
+    return is_quote_closed;
+}
+
 t_node	*ft_handle_quotes(t_node *nodeHead, t_token **currentTokenPtr)
 {
-    int		state;
+    enum e_token_type		state;
     char	*value;
     t_token	*nextToken;
+    int is_quote_closed;
 
+    is_quote_closed = ft_is_quote_closed(*currentTokenPtr);
     state = ((*currentTokenPtr)->type == QUOTE_D) ? QUOTE_D : QUOTE_S;
     value = ft_strndup(&(*currentTokenPtr)->value, 1);
     nextToken = (*currentTokenPtr)->next;
-    if (!nextToken)
+    if (!nextToken || (!is_quote_closed && nextToken->type != ALPHANUM))
     {
-        *currentTokenPtr = NULL;
+        *currentTokenPtr = nextToken ? nextToken : NULL;
         return (addNode(nodeHead, value));
     }
     while (!is_quote_end(state, nextToken))
@@ -124,7 +143,7 @@ t_node	*ft_handle_quotes(t_node *nodeHead, t_token **currentTokenPtr)
         value = append_value(value, nextToken->value);
         nextToken = nextToken->next;
         *currentTokenPtr = nextToken ? nextToken : NULL;
-        if (!nextToken)
+        if (!nextToken || (!is_quote_closed && nextToken->type != ALPHANUM))
             return (addNode(nodeHead, value));
     }
     if (is_quote_end(state, nextToken))
