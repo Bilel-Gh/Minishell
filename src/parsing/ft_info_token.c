@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_info_token.c                                    :+:      :+:    :+:   */
+/*   ft_info_node.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,19 +12,19 @@
 
 #include "../../includes/minishell.h"
 
-// demander a nassim a quoi sert cette fonction et si c'est pas mieux de mettre les infos des tokens dans la structure prevu a cet effet (t_node_info)
-int *ft_info_token(char **line_split , int *give_nb_token)
+// demander a nassim a quoi sert cette fonction et si c'est pas mieux de mettre les infos des nodes dans la structure prevu a cet effet (t_node_info)
+int *ft_info_node(char **line_split , int *give_nb_node)
 {
-    int nb_token;
+    int nb_node;
     int i;
     int *type ;
 
-    nb_token = 0;
+    nb_node = 0;
     i = 0;
-    while (line_split[nb_token])
-        nb_token++;
-    printf("nb_token = %d\n",nb_token);
-    type = malloc(sizeof(int) * nb_token);
+    while (line_split[nb_node])
+        nb_node++;
+    printf("nb_node = %d\n",nb_node);
+    type = malloc(sizeof(int) * nb_node);
     while (line_split[i])
     {
         if (line_split[i][0] == 34)
@@ -42,10 +42,10 @@ int *ft_info_token(char **line_split , int *give_nb_token)
          }
          i++;
     }
-    printf ( "nb token == %d\n" ,i);
-    *give_nb_token = i;
+    printf ( "nb node == %d\n" ,i);
+    *give_nb_node = i;
     i = 0;
-    while (i < nb_token)
+    while (i < nb_node)
     {
         printf("type nb %d = %d\n", i, type[i]);
         i++;

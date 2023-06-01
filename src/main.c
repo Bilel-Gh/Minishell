@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/05/31 21:51:34 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/01 14:01:45 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void minishell_loop(void)
     char *line;
     // char *line_cpy;
     char **args;
-    int *info_token;
+    int *info_node;
     while (1)
     {
         line = readline("\033[1;32mminishell >\033[0m");
@@ -95,30 +95,30 @@ void minishell_loop(void)
             continue;
 
 //		args = ft_split_line_to_token(line);
-    int nb_token;
+    int nb_node;
     args = ft_lexeur(line);
-    info_token = ft_info_token(args, &nb_token); // nt bilel : je pense que cette partie est a revoir.
+    info_node = ft_info_node(args, &nb_node); // nt bilel : je pense que cette partie est a revoir.
     int i = 0;
     int error;
     //char **for_test = 0;
-    args = ft_parsing(info_token, &nb_token, args, &error);
+    args = ft_parsing(info_node, &nb_node, args, &error);
     if (error == 0)
         printf("@@@@@@@@@@@@@ ERROR DETECT !!!! @@@@@@@@@@@@@@@\n");
     else
         printf("############# validation ###############\n");
-
+    // ici parsing PLUS
      i = 0;
-       info_token = ft_info_token(args, &nb_token);
-		while (i < nb_token)
+       info_node = ft_info_node(args, &nb_node);
+		while (i < nb_node)
 		{
-			printf("type %d = %d\n",i, info_token[i]);
+			printf("type %d = %d\n",i, info_node[i]);
 			i++;
 		}
 		 i = 0;
 
 		while (args[i])
 		{
-			printf("token nb %d = %s avec len = %d\n", i, args[i], ft_strlen(args[i]));
+			printf("node nb %d = %s avec len = %d\n", i, args[i], ft_strlen(args[i]));
 			i++;
 		}
 //
