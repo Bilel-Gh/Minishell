@@ -85,7 +85,8 @@ void builtin_cd(char **args);
 void builtin_exit();
 int *ft_info_token(char **line_split , int *give_nb_token);
 int	ft_isprint(int chara);
-char **ft_parsing(int *type_token, int *nb_token, char **cont_token);
+char **ft_parsing(int *type_token, int *nb_token, char **cont_token, int *error);
 char	*ft_strjoin(char *s1, char *s2);
+int	ft_strlen(const char *str);
 
 #endif
