@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/01 13:25:37 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/01 20:34:13 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,14 +85,25 @@ void builtin_pwd();
 void builtin_cd(char **args);
 void builtin_exit();
 
-char **ft_parsing(int *type_token, int *nb_token, char **cont_token, int *error);
+// Dossier PARSING
+char    **ft_parsing(int *type_args, int *nb_args, char **args, int *error);
+int *ft_get_info_args(char **line_split , int *give_nb_node);
+int	ft_isprint(int chara);
+t_node* addNode(t_node* head, char* value);
+
+// Dossier UTILS
 char	*ft_strjoin(char *s1, char *s2);
 int	ft_strlen(const char *str);
 
-int *ft_info_node(char **line_split , int *give_nb_node);
-int	ft_isprint(int chara);
-t_node* addNode(t_node* head, char* value);
+// Dossier LEXEUR
 t_node* mergeTokens(t_token* head);
+
+// Dossier error_args
+bool search_error_args(int *type_args, int *nb_args, char **args);
+bool	error_no_only_type(char *str);
+bool	error_size(char *args, int size_max);
+void	give_sp_args_redi(char *args, int *type_args, int pos);
+bool	quote_is_open(char *args);
 
 
 #endif

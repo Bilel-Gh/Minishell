@@ -23,12 +23,19 @@ UTILS =	split.c \
 
 OBJS_UTILS = ${addprefix ${UTILS_DIR}, ${UTILS:.c=.o}}
 
+# /* ~~~~~~~ LEXEUR ~~~~~~~ */
+LEXEUR_DIR = ./src/lexeur/
+LEXEUR =	lexeur.c \
+			merge_tokens.c \
+
+OBJS_LEXEUR = ${addprefix ${LEXEUR_DIR}, ${LEXEUR:.c=.o}}
+
 # /* ~~~~~~~ PARSING ~~~~~~~ */
 PARSING_DIR = ./src/parsing/
-PARSING =	lexeur.c \
-			ft_info_token.c \
+PARSING =	get_info_args.c \
 			parsing.c \
-			merge_tokens.c \
+			/error_args/search_error_args.c \
+			/error_args/utils_error_args.c \
 
 OBJS_PARSING = ${addprefix ${PARSING_DIR}, ${PARSING:.c=.o}}
 
@@ -55,17 +62,17 @@ EOC:="\033[0;0m"
 
 all:	${NAME}
 
-$(NAME): $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS)
+$(NAME): $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS)
 	@echo $(CYAN) " - Compiling $@" $(RED)
-	@$(CC) $(CFLAGS) $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS) $(IFLAGS) $(LDFLAGS) $(LDLIBS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS) $(IFLAGS) $(LDFLAGS) $(LDLIBS) -o $(NAME)
 	@echo $(GREEN) "[OK COMPILED]" $(EOC)
 	@echo $(GREEN) "[LAUNCH PROGRAMM]" $(EOC)
 	@mkdir -p obj
-	@mv $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS) obj/
+	@mv $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS) obj/
 
 clean:
 	@echo $(PURPLE) "[🧹Cleaning...🧹]" $(EOC)
-	@${RM} ${OBJS} $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS)
+	@${RM} ${OBJS} $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS)
 	@${RM} -r obj
 
 fclean: clean

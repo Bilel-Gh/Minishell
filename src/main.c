@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/01 14:01:45 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/01 20:32:59 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void minishell_loop(void)
     char *line;
     // char *line_cpy;
     char **args;
-    int *info_node;
+    int *info_args;
     while (1)
     {
         line = readline("\033[1;32mminishell >\033[0m");
@@ -95,23 +95,23 @@ void minishell_loop(void)
             continue;
 
 //		args = ft_split_line_to_token(line);
-    int nb_node;
+    int nb_args;
     args = ft_lexeur(line);
-    info_node = ft_info_node(args, &nb_node); // nt bilel : je pense que cette partie est a revoir.
+    info_args = ft_get_info_args(args, &nb_args); // anciennement info_node
     int i = 0;
     int error;
     //char **for_test = 0;
-    args = ft_parsing(info_node, &nb_node, args, &error);
+    args = ft_parsing(info_args, &nb_args, args, &error);
     if (error == 0)
-        printf("@@@@@@@@@@@@@ ERROR DETECT !!!! @@@@@@@@@@@@@@@\n");
+        printf("\n@@@@@@@@@@@@@ ERROR DETECT !!!! @@@@@@@@@@@@@@@\n");
     else
         printf("############# validation ###############\n");
     // ici parsing PLUS
      i = 0;
-       info_node = ft_info_node(args, &nb_node);
-		while (i < nb_node)
+       info_args = ft_get_info_args(args, &nb_args);
+		while (i < nb_args)
 		{
-			printf("type %d = %d\n",i, info_node[i]);
+			printf("type %d = %d\n",i, info_args[i]);
 			i++;
 		}
 		 i = 0;

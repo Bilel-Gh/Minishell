@@ -13,18 +13,18 @@
 #include "../../includes/minishell.h"
 
 // demander a nassim a quoi sert cette fonction et si c'est pas mieux de mettre les infos des nodes dans la structure prevu a cet effet (t_node_info)
-int *ft_info_node(char **line_split , int *give_nb_node)
+int *ft_get_info_args(char **line_split , int *give_nb_args)
 {
-    int nb_node;
+    int nb_args;
     int i;
     int *type ;
 
-    nb_node = 0;
+    nb_args = 0;
     i = 0;
-    while (line_split[nb_node])
-        nb_node++;
-    printf("nb_node = %d\n",nb_node);
-    type = malloc(sizeof(int) * nb_node);
+    while (line_split[nb_args])
+        nb_args++;
+    printf("nb_args = %d\n",nb_args);
+    type = malloc(sizeof(int) * nb_args);
     while (line_split[i])
     {
         if (line_split[i][0] == 34)
@@ -42,10 +42,10 @@ int *ft_info_node(char **line_split , int *give_nb_node)
          }
          i++;
     }
-    printf ( "nb node == %d\n" ,i);
-    *give_nb_node = i;
+    printf ( "nb args == %d\n" ,i);
+    *give_nb_args = i;
     i = 0;
-    while (i < nb_node)
+    while (i < nb_args)
     {
         printf("type nb %d = %d\n", i, type[i]);
         i++;
