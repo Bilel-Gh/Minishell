@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 17:34:33 by bghandri          #+#    #+#             */
-/*   Updated: 2023/05/31 17:31:12 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/01 13:12:27 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int *ft_info_token(char **line_split , int *give_nb_token)
     i = 0;
     while (line_split[nb_token])
         nb_token++;
-    printf("nb_token 1 = %d\n",nb_token);
+    printf("nb_token = %d\n",nb_token);
     type = malloc(sizeof(int) * nb_token);
     while (line_split[i])
     {
@@ -44,7 +44,7 @@ int *ft_info_token(char **line_split , int *give_nb_token)
     }
     printf ( "nb token == %d\n" ,i);
     *give_nb_token = i;
-  i = 0;
+    i = 0;
     while (i < nb_token)
     {
         printf("type nb %d = %d\n", i, type[i]);

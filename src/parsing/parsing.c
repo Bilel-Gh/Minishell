@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 16:18:20 by ncharii           #+#    #+#             */
-/*   Updated: 2023/05/31 17:33:05 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/01 13:13:31 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ bool	error_grammaticale(int *type_token, int nb_token)
 	int	i;
 
 	i = 0;
+	if(!type_token)
+		return(true);
 	printf("*********check grammaticale error ???***************\n");
 	if (nb_token == 1)
 	{
@@ -198,10 +200,11 @@ int	ft_size_of_expende(char *expande)
 
 	size = 1;
 	while (expande[size] != ' ' && expande[size] != 0 && expande[size] != '$'
-		&& expande[size] != 39)
+		&& expande[size] != 34)
 	{
 		if ((expande[size] == '@' && size > 1)
-			|| (expande[size] == '#' && size > 1))
+			|| (expande[size] == '#' && size > 1)
+			)
 		{
 			size--;
 			break ;
@@ -388,7 +391,7 @@ bool is_word(int type_token)
 	return (false);
 }
 
-int nb_new_token(int *type_token, int nb_token)
+int count_new_token(int *type_token, int nb_token)
 {
 	int i;
 	int j;
@@ -400,9 +403,14 @@ while (i < nb_token)
 		printf("nb token = %d\n", nb_token);
 		if (is_word(type_token[i]))
 			{
+				printf("nb_token new token = %d\n type_", nb_token);
 				while (is_word(type_token[i]) && i < nb_token)
 				{
+					printf("i new token = %d\n", i);
 					i++;
+					if (i == nb_token)
+						return (printf("FSFSFSFF\n"),j + 1);
+
 				}
 				j++;
 				continue;
@@ -410,6 +418,7 @@ while (i < nb_token)
 
 		(i++, j++);
 	}
+	printf("j new token = %d\n", j);
 	return (j);
 }
 
@@ -430,6 +439,8 @@ int malloc_new_token(char **new_cont_token, char **cont_token, int *type_token, 
 				{
 					new_cont_token[j] = ft_strjoin(new_cont_token[j], cont_token[i]);
 					i++;
+					if (i == nb_token)
+						return (new_cont_token[j + 1] = 0, 1);
 				}
 				j++;
 				continue;
@@ -437,37 +448,109 @@ int malloc_new_token(char **new_cont_token, char **cont_token, int *type_token, 
 		new_cont_token[j] = ft_strjoin(new_cont_token[j], cont_token[i]);
 		(i++, j++);
 	}
+	new_cont_token[j] = 0;
 	return (1);
 
 }
 //CHAR **
-void join_inter_space(char **cont_token, int *type_token, int nb_token)
+char *copy_sans_quote(char *cont_token)// vas malloc et copier sans quote
+{
+	char *new_no_quote;
+	int size_cont_token;
+	int size_no_quote;
+	int i;
+	int j;
+
+	i = 1;
+	j = 0;
+	size_cont_token = ft_strlen(cont_token);
+	size_no_quote = size_cont_token - 2;
+	new_no_quote = malloc(size_no_quote + 1);
+	new_no_quote[size_no_quote] = 0;
+	while (j < size_no_quote)
+	{
+		new_no_quote[j] = cont_token[i];
+		i++;
+		j++;
+	}
+	return (new_no_quote);
+}
+
+char *copy_cont(char *str)
+{
+	char *copy;
+	int size_str;
+	int i;
+
+	i = 0;
+	size_str = ft_strlen(str);
+	copy = malloc(size_str + 1);
+	if (!copy)
+		return (NULL);
+	while (str[i])
+	{
+		copy[i] = str[i];
+		i++;
+	}
+	copy[i] = 0;
+	return (copy);
+}
+
+char **kick_quote(int *type_token, int nb_token, char **cont_token)
+{
+	char **no_quote;
+	int i;
+
+	i = 0;
+	no_quote = malloc (sizeof(char*) * (nb_token + 1));
+	no_quote[nb_token] = 0;
+	while (i < nb_token)
+	{
+		if (type_token[i] == QUOTE_D || type_token[i] == QUOTE_S)
+			no_quote[i] = copy_sans_quote(cont_token[i]);
+		else
+			no_quote[i] = copy_cont(cont_token[i]);
+		i++;
+	}
+	return (no_quote);
+
+}
+char **join_inter_space(char **cont_token, int *type_token, int *nb_token)
 {
 	char ** new_cont_token;
 	int i;
-	int nb_new__token;
+	int nb_new_token;
 
-	nb_new__token = nb_new_token(type_token, nb_token);
+	nb_new_token = count_new_token(type_token, *nb_token);
 	//printf("nb space =  %d\n", nb_new_token(type_token, nb_token));
-	printf("\n \n nb token_join %d\n", nb_new__token);
+	printf("\n \n nb token_join %d\n", nb_new_token);
 	//prinft("NB token _join = %d  \n",nb_new_token);
 
-	if (nb_new__token == 1)
-		return ;//return (cont_token);
+	if (nb_new_token == *nb_token)
+		return(cont_token) ;//return (cont_token);
 	i = 0;
-	new_cont_token = malloc( sizeof(char*) * (nb_new__token + 1));
+	new_cont_token = malloc( sizeof(char*) * (nb_new_token + 1));
+	while (i <= nb_new_token)
+	{
+		new_cont_token[i] = malloc(1);
+		new_cont_token[i] = NULL;
+		i++;
+	}
+	i = 0;
 	if (!new_cont_token)
-		return ; //ft_free;
-	if (!malloc_new_token(new_cont_token, cont_token, type_token, nb_token))
-		return ;//ft_free;
-	while ( i < nb_new__token)
+		return(printf("error"), NULL) ; //ft_free;
+	if (!malloc_new_token(new_cont_token, cont_token, type_token, *nb_token))
+		return(printf("error malloc_new_token"), NULL) ;//ft_free;
+	printf("new token %d = %s", i, new_cont_token[i]);
+	while ( i < nb_new_token)
 	{
 		printf("new token %d = %s", i, new_cont_token[i]);
 		i++;
 	}
-
-
+	*nb_token = nb_new_token;
+	return (new_cont_token);
 }
+
 
 //void	kick_quote(char **cont_token)
 //char **join_inter_space(char **cont_token, int *type_token, int nb_token)
@@ -501,8 +584,67 @@ char    **good_tokennisation(int *type_token, int nb_token, char **cont_token)
     return (good_tokennisation);
 }*/
 
-char    **ft_parsing(int *type_token, int *nb_token, char **cont_token)
+int count_nb_space(int *type_token, int nb_token)
 {
+	int i;
+	int nb_space;
+
+	i = 0;
+	nb_space = 0;
+	while (i < nb_token)
+	{
+		if (type_token[i] == ESPACE)
+			nb_space++;
+		i++;
+	}
+	return (nb_space);
+}
+
+char **kick_token_space(char **new_cont_token, int *type_token, int *nb_token)
+{
+	char **last_cont_token;
+	int nb_space;
+	int nb_new_token;
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
+	nb_space = count_nb_space(type_token, *nb_token);
+	nb_new_token = *nb_token - nb_space;
+	//printf ("$$$$$$$$$$$$$$$$$$$$$$$$ nb_space %d\n", nb_space);
+	last_cont_token = malloc( sizeof(char*) * (nb_new_token + 1));
+	if (!last_cont_token)
+		return (NULL);// FT_ERROR_malloc_parsing
+	last_cont_token[nb_new_token] = 0;
+	while (i < *nb_token)
+	{
+		printf("111111111111\n");
+		if (type_token[i] == ESPACE)
+		{
+				i++;
+				if (i == *nb_token)
+					return (*nb_token = nb_new_token, last_cont_token);
+		}
+		last_cont_token[j] = ft_strjoin(last_cont_token[j], new_cont_token[i]);
+		(i++, j++);
+	}
+	while ( i < nb_new_token)
+	{
+		printf("new token kick_space %d = %s", i, new_cont_token[i]);
+		i++;
+	}
+	*nb_token = nb_new_token;
+	return (last_cont_token);
+}
+
+char    **ft_parsing(int *type_token, int *nb_token, char **cont_token, int *error)
+{
+	char **new_cont_token;
+	char **no_quote_cont_token;
+	int *new_type_token;
+
+	*error = 0;
 	if (error_size_or_spe_redi(type_token, *nb_token, cont_token))
 		return (cont_token);
 	printf("^^^^^^^^^^^ no error redirection ^^^^^^^^^^^^^^^^^^\n");
@@ -513,16 +655,22 @@ char    **ft_parsing(int *type_token, int *nb_token, char **cont_token)
 		return (cont_token);
 	printf("\n*********    no error quote    ***************\n");
 	expande(type_token, *nb_token, cont_token);
-    //kick_quote(type_token, nb_token, cont_token);
-    //cont_token =
-	 join_inter_space(cont_token, type_token, *nb_token); // revoir cette fonction avec nassim sur les type des token
-	//ft_info_token(cont_token , nb_token);
-	//new_list_type_token(cont_token,type_token);
-	 if (error_grammaticale(type_token, *nb_token))
-	   return (cont_token);
-	//printf("^^^^^^^^^^^ no error grammaticale ^^^^^^^^^^^^^^^^\n");
+    no_quote_cont_token = kick_quote(type_token, *nb_token, cont_token);
+	new_cont_token = join_inter_space(no_quote_cont_token, type_token, nb_token);
+	//free no_quote
+	new_type_token = ft_info_token(new_cont_token, nb_token);
+	//ft_free(cont_token);
+	cont_token = kick_token_space(new_cont_token,type_token, nb_token);
+	free (type_token);
+	free(new_type_token);
+	new_type_token = ft_info_token(cont_token, nb_token);
 
-	return (0);
+	//ft_free (cont_token);
+	 if (error_grammaticale(new_type_token, *nb_token))
+	   return (cont_token);
+	printf("^^^^^^^^^^^ no error grammaticale ^^^^^^^^^^^^^^^^\n");
+    *error = 1;
+	return (cont_token);
 }
 
 //execve("/usr/bin/jjy", {"echo", "$USER"}, argv)

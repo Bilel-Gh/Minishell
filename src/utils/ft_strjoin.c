@@ -32,6 +32,8 @@ static void	ft_complete( char const *s, char *str, int *i)
 	int	x;
 
 	x = 0;
+	if (!s)
+		return;
 	while (s[x])
 	{
 		str[*i] = s[x];
@@ -47,8 +49,8 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		size_s2;
 	int		i;
 
-	if (!s1 || !s2)
-		return (NULL);
+	//if (!s1 || !s2)
+	//	return (NULL);
 	i = 0;
 	size_s1 = ft_strlen(s1);
 	size_s2 = ft_strlen(s2);
@@ -57,10 +59,12 @@ char	*ft_strjoin(char *s1, char *s2)
 		return (NULL);
 	ft_complete(s1, str, &i);
 	ft_complete(s2, str, &i);
-	free(s1);
+	if (s1)
+		free(s1);
 	str[i] = '\0';
 	return (str);
 }
+
 /*
 int main()
 {
@@ -69,4 +73,5 @@ int main()
 
 	printf("%s",ft_strjoin(s1, s2));
 	return (0);
-}*/
+}
+*/

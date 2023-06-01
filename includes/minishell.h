@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/05/31 17:03:17 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/01 13:11:30 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,15 +85,14 @@ void builtin_pwd();
 void builtin_cd(char **args);
 void builtin_exit();
 
-// DOSSIER UTILS
-int	ft_strlen(const char *str);
+char **ft_parsing(int *type_token, int *nb_token, char **cont_token, int *error);
 char	*ft_strjoin(char *s1, char *s2);
+int	ft_strlen(const char *str);
 
 int *ft_info_token(char **line_split , int *give_nb_token);
 int	ft_isprint(int chara);
 t_node* addNode(t_node* head, char* value);
 t_node* mergeTokens(t_token* head);
-char **ft_parsing(int *type_token, int *nb_token, char **cont_token);
 
 
 #endif
