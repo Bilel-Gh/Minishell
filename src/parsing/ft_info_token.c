@@ -32,7 +32,7 @@ int *ft_info_token(char **line_split , int *give_nb_token)
     }
     printf ( "nb token == %d\n" ,i);
     *give_nb_token = i;
-  i = 0;
+    i = 0;
     while (i < nb_token)
     {
         printf("type nb %d = %d\n", i, type[i]);

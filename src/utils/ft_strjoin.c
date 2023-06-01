@@ -64,6 +64,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	str[i] = '\0';
 	return (str);
 }
+
 /*
 int main()
 {
@@ -72,4 +73,5 @@ int main()
 
 	printf("%s",ft_strjoin(s1, s2));
 	return (0);
-}*/
+}
+*/

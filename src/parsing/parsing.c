@@ -622,6 +622,8 @@ char **kick_token_space(char **new_cont_token, int *type_token, int *nb_token)
 		if (type_token[i] == ESPACE)
 		{
 				i++;
+				if (i == *nb_token)
+					return (*nb_token = nb_new_token, last_cont_token);
 		}
 		last_cont_token[j] = ft_strjoin(last_cont_token[j], new_cont_token[i]);
 		(i++, j++);
