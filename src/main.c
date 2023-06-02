@@ -61,24 +61,7 @@ void execute_command(char **splited_line)
             printf("Commande introuvable\n");
     }
 }
-/*char	**ft_split_line_to_token(char *line)
-{
-	char **args;
-	int start;
-	int end;
-	int i;
 
-
-
-	i = 0;
-	while(line[i])
-	{
-
-	}
-
-
-
-}*/
 
 void minishell_loop(void)
 {
@@ -86,6 +69,7 @@ void minishell_loop(void)
     // char *line_cpy;
     char **args;
     int *info_args;
+    t_node* nodes;
     while (1)
     {
         line = readline("\033[1;32mminishell >\033[0m");
@@ -106,7 +90,13 @@ void minishell_loop(void)
         printf("\n@@@@@@@@@@@@@ ERROR DETECT !!!! @@@@@@@@@@@@@@@\n");
     else
         printf("############# validation ###############\n");
-    // ici parsing PLUS
+    nodes = ft_get_nodes_with_infos(args, info_args, nb_args);
+    while (nodes)
+    {
+        printf("\033[1;31mnode value = %s\n\033[0m", nodes->value);
+        printf("\033[1;31mnode type = %d\n\033[0m", nodes->info->type);
+        nodes = nodes->next;
+    }
      i = 0;
        info_args = ft_get_info_args(args, &nb_args);
 		while (i < nb_args)

@@ -34,8 +34,13 @@ OBJS_LEXEUR = ${addprefix ${LEXEUR_DIR}, ${LEXEUR:.c=.o}}
 PARSING_DIR = ./src/parsing/
 PARSING =	get_info_args.c \
 			parsing.c \
+			join_inter_space.c \
+			kick_quotes.c \
+			get_node_infos.c \
 			/error_args/search_error_args.c \
 			/error_args/utils_error_args.c \
+			/expand/expand.c \
+			/expand/expand2.c \
 
 OBJS_PARSING = ${addprefix ${PARSING_DIR}, ${PARSING:.c=.o}}
 

@@ -46,16 +46,28 @@ enum e_token_type {
 	QUOTE_D,
 	LAST
 };
+
+enum e_node_type {
+    COMMANDE,
+    FICHIER,
+    ARG,
+    OPERATOR,
+    OPTION,
+    N_PIPE,
+    ERROR,
+    ENV,
+    EXPAND,
+    REDIRECT_OUT,
+    REDIRECT_IN,
+    REDIRECT_D_OUT,
+    REDIRECT_D_IN,
+};
 // test de ce a quoi vont les structures
 
 // infos sur tout le node (a completer)
 typedef struct		node_info
 {
-	int is_builtin;
-	int is_option;
-	int is_cmd;
-	int is_output;
-	int is_input;
+	enum e_node_type	type;
 }					t_node_info;
 
 // chaque charactere est un token
@@ -88,6 +100,9 @@ void builtin_exit();
 // Dossier PARSING
 char    **ft_parsing(int *type_args, int *nb_args, char **args, int *error);
 int *ft_get_info_args(char **line_split , int *give_nb_node);
+char **join_inter_space(char **args, int *type_args, int *nb_args);
+char **kick_quote(int *type_args, int nb_args, char **args);
+t_node* ft_get_nodes_with_infos(char **args, int *info_args, int nb_args);
 int	ft_isprint(int chara);
 t_node* addNode(t_node* head, char* value);
 
@@ -105,5 +120,12 @@ bool	error_size(char *args, int size_max);
 void	give_sp_args_redi(char *args, int *type_args, int pos);
 bool	quote_is_open(char *args);
 
+// Dossier EXPAND
+void	expande(int *type_args, int nb_args, char **args);
+char	*join_and_rp_args(char *args_con, char *expande, int size_extract);
+char	*give_env_expand(char *expande_search, int size);
+char	*is_sp_expand(char *expand_search);
+char	*get_expende_detect(int size_of_expende, char *expande);
+int	ft_size_of_expende(char *expande);
 
 #endif
