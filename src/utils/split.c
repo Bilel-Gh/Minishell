@@ -6,78 +6,84 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 05:04:11 by bghandri          #+#    #+#             */
-/*   Updated: 2023/05/25 08:05:57 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/02 19:05:04 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int			ft_isspace(char c)
+#include <stdlib.h>
+
+int		has_char(char c, char *str)
 {
-	return (c == ' ' || c == '\n' || c == '\t' || c == '\r');
+    while (*str)
+    {
+        if (*str++ == c)
+            return (1);
+    }
+    return (0);
 }
 
-int		count_words(char *str)
+int		strs_l(char *str, char *charset)
 {
-	int	count;
+    int	part;
+    int count;
 
-	count = 0;
-	while (*str)
-	{
-		// move to the beggining of a new word
-		while (*str && ft_isspace(*str))
-			str++;
-		if (*str && !ft_isspace(*str))
-		{
-			count++;
-			// move to the next whitespace
-			while (*str && !ft_isspace(*str))
-				str++;
-		}
-	}
-	return (count);
+    part = 1;
+    count = 0;
+    while (*str)
+    {
+        if (!has_char(*str, charset) && part)
+        {
+            count++;
+            part = 0;
+        }
+        else if (has_char(*str, charset))
+            part = 1;
+        str++;
+    }
+    return (count);
 }
 
-char	*malloc_word(char *str)
+char	*ft_strdup_split(char *src, char *charset)
 {
-	char *word;
-	int	i;
+    char	*dest;
+    char	*buffer;
+    int		length;
 
-	i = 0;
-	while (str[i] && !ft_isspace(str[i]))
-		i++;
-	word = (char *)malloc(sizeof(char) * (i + 1));
-	i = 0;
-	while (str[i] && !ft_isspace(str[i]))
-	{
-		word[i] = str[i];
-		i++;
-	}
-	word[i] = '\0';
-	return (word);
+    length = 0;
+    buffer = src;
+    while (*buffer && !has_char(*buffer++, charset))
+        length++;
+    dest = (char*)malloc(sizeof(*src) * length);
+    buffer = dest;
+    while (*src && length-- > 0)
+        *buffer++ = *src++;
+    *buffer = '\0';
+    return (dest);
 }
 
-char	**ft_split(char *str)
+char	**ft_split(char *str, char *charset)
 {
-	char **arr = (char **)malloc(sizeof(char *) * (count_words(str) + 1));
+    char	**strs;
+    char	**tmp;
+    int		part;
 
-	// same as count_words, except we save word to array instead of counting
-	int i = 0;
-	while (*str)
-	{
-		// move to the beggining of a new word
-		while (*str && ft_isspace(*str))
-			str++;
-		if (*str && !ft_isspace(*str))
-		{
-			// save word to array
-			arr[i] = malloc_word(str);
-			i++;
-			// move to the next whitespace
-			while (*str && !ft_isspace(*str))
-				str++;
-		}
-	}
-	arr[i] = NULL;
-	return (arr);
+    strs = (char**)malloc(strs_l(str, charset) * sizeof(*strs) + 1);
+    tmp = strs;
+    part = 1;
+    while (*str)
+    {
+        if (!has_char(*str, charset) && part)
+        {
+            part = 0;
+            *tmp = ft_strdup_split(str, charset);
+            tmp++;
+        }
+        else if (has_char(*str, charset))
+            part = 1;
+        str++;
+    }
+    *tmp = 0;
+    return (strs);
 }

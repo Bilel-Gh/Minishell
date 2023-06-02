@@ -81,9 +81,11 @@ typedef struct		s_token
 // chaque node est un ensemble de charactere du meme type
 typedef struct		node
 {
+    int node_index;
 	char			*value;
 	t_node_info		*info;
 	struct node		*next;
+    struct node		*prev;
 }					t_node;
 
 char **ft_lexeur(char *line);
@@ -109,6 +111,8 @@ t_node* addNode(t_node* head, char* value);
 // Dossier UTILS
 char	*ft_strjoin(char *s1, char *s2);
 int	ft_strlen(const char *str);
+char	**ft_split(char *str, char *charset);
+char	*ft_strdup(char *src);
 
 // Dossier LEXEUR
 t_node* mergeTokens(t_token* head);
