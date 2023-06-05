@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 17:34:33 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/05 04:05:06 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/05 10:34:58 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ int *ft_get_info_args(char **line_split , int *give_nb_args)
          }
          i++;
     }
-    printf ( "nb args == %d\n" ,i);
     *give_nb_args = i;
     i = 0;
     while (i < nb_args)

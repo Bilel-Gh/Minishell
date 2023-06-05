@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/05 04:05:06 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/05 10:37:00 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ void minishell_loop(void)
        info_args = ft_get_info_args(args, &nb_args);
 		while (i < nb_args)
 		{
-			printf("type %d = %d\n",i, info_args[i]);
 			i++;
 		}
 		 i = 0;

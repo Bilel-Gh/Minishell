@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/05 04:05:06 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/05 10:38:12 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,30 +34,31 @@
 extern char **environ;
 
 enum e_character_type {
-    ALPHANUM,
-    REDIRECT,
-	RED_IN,
-	RED_OUT,
-    PIPE,
-	ESPACE,
-	RED_D_IN,
-	RED_D_OUT,
-	QUOTE_S,
-	QUOTE_D,
-	LAST
+    ALPHANUM = 0,
+    REDIRECT = 1,
+	RED_IN = 2,
+	RED_OUT = 3,
+    PIPE = 4,
+	ESPACE = 5,
+	RED_D_IN = 6,
+	RED_D_OUT = 7,
+	QUOTE_S = 8,
+	QUOTE_D = 9,
+	LAST = 10
 };
 
 enum e_token_type {
-    COMMANDE,
-    FICHIER,
-    ARG,
-    OPTION,
-    N_PIPE,
-    ERROR,
-    REDIRECT_OUT,
-    REDIRECT_IN,
-    REDIRECT_D_OUT,
-    REDIRECT_D_IN,
+    COMMANDE = 0,
+    ARG = 1,
+    OPTION = 2,
+    N_PIPE = 3,
+    ERROR = 4,
+    PATH = 5,
+    ENV = 6,
+    REDIRECT_OUT = 7,
+    REDIRECT_IN = 8,
+    REDIRECT_D_OUT = 9,
+    REDIRECT_D_IN = 10,
 };
 // test de ce a quoi vont les structures
 
@@ -114,6 +115,7 @@ int		ft_strncmp(char *s1, char *s2, unsigned int n);
 char	*ft_strcpy(char *dest, char *src);
 char	*ft_strndup(const char *s1, size_t n);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
+int ft_is_upper(char c);
 
 // Dossier LEXEUR
 t_token* merge_characters(t_character* head);
@@ -136,8 +138,9 @@ char	*get_expende_detect(int size_of_expende, char *expande);
 int	ft_size_of_expende(char *expande);
 
 // Dossier INFOS_TOKENS
-int ft_is_command(char* value);
+int ft_is_command(t_token *token);
 int ft_is_argument(char* value);
 int ft_is_option(char* value);
+int is_env(t_token* token);
 
 #endif

@@ -14,10 +14,11 @@
 
 enum e_token_type get_value_type(t_token* token)
 {
-    // si c'est une commande
-    if (access(token->value, F_OK) == 0)
-        return FICHIER;
-    else if (token->prev == NULL && token->token_index == 0 && ft_is_command(token->value))
+    if (access(token->value, 0) == 0)
+        return PATH;
+    else if (is_env(token))
+        return ENV;
+    else if (token->prev == NULL && token->token_index == 0 && ft_is_command(token))
         return COMMANDE;
     else if (ft_is_argument(token->value))
         return ARG;

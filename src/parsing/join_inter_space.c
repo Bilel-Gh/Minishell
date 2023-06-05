@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:49:46 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/02 02:49:47 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/05 10:36:19 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,10 @@ int count_new_args(int *type_args, int nb_args)
     j = 0;
     while (i < nb_args)
     {
-        printf("nb args = %d\n", nb_args);
         if (is_word(type_args[i]))
         {
-            printf("nb_args new args = %d\n type_", nb_args);
             while (is_word(type_args[i]) && i < nb_args)
             {
-                printf("i new args = %d\n", i);
                 i++;
                 if (i == nb_args)
                     return (printf("FSFSFSFF\n"),j + 1);
@@ -88,7 +85,7 @@ char **join_inter_space(char **args, int *type_args, int *nb_args)
 
     nb_new_args = count_new_args(type_args, *nb_args);
     //printf("nb space =  %d\n", nb_new_args(type_args, nb_args));
-    printf("\n \n nb args_join %d\n", nb_new_args);
+    // printf("\n \n nb args_join %d\n", nb_new_args);
     //prinft("NB args _join = %d  \n",nb_new_args);
 
     if (nb_new_args == *nb_args)
