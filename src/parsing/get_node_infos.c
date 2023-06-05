@@ -82,21 +82,19 @@ int ft_is_option(char* value)
     return 0;
 }
 
-enum e_node_type get_value_type(char* value)
+enum e_node_type get_value_type(t_node* node)
 {
     // si c'est une commande
-    if (access(value, F_OK) == 0)
+    if (access(node->value, F_OK) == 0)
         return FICHIER;
-    else if (ft_is_command(value))
+    else if (node->prev == NULL && node->node_index == 0 && ft_is_command(node->value))
         return COMMANDE;
-    else if (ft_is_argument(value))
+    else if (ft_is_argument(node->value))
         return ARG;
-    else if (ft_is_option(value))
+    else if (ft_is_option(node->value))
         return OPTION;
     else
         return ERROR;
-    // si c'est un fichier
-
 }
 
 int		ft_strncmp(char *s1, char *s2, unsigned int n)
@@ -119,14 +117,14 @@ int		ft_strncmp(char *s1, char *s2, unsigned int n)
 
 t_node_info*    ft_get_value_infos(char* value, t_node* node)
 {
-    printf("\033[0;32m node value : %s\033[0m\n", node->value);
-    if (node->prev != NULL)
-        printf("\033[0;31m node prev value : %s\033[0m\n", node->prev->value);
-    printf("\033[0;32m node index : %d\033[0m\n", node->node_index);
-    if (node->prev != NULL)
-        printf("\033[0;31m node prev index : %d\033[0m\n", node->prev->node_index);
-    if (value == NULL)
-        return NULL;
+//    printf("\033[0;32m node value : %s\033[0m\n", node->value);
+//    if (node->prev != NULL)
+//        printf("\033[0;31m node prev value : %s\033[0m\n", node->prev->value);
+//    printf("\033[0;32m node index : %d\033[0m\n", node->node_index);
+//    if (node->prev != NULL)
+//        printf("\033[0;31m node prev index : %d\033[0m\n", node->prev->node_index);
+//    if (value == NULL)
+//        return NULL;
     t_node_info* infos = (t_node_info*)malloc(sizeof(t_node_info));
     if (ft_strncmp(value, "|", 1) == 0)
         infos->type = N_PIPE;
@@ -139,17 +137,16 @@ t_node_info*    ft_get_value_infos(char* value, t_node* node)
     else if (ft_strncmp(value, "<<", 2) == 0)
         infos->type = REDIRECT_D_IN;
     else
-        infos->type = get_value_type(value);
+        infos->type = get_value_type(node);
 
     return infos;
 }
 
-t_node* addNode_with_infos(t_node* head, char* value, int index)
+t_node* create_node(t_node* head, char* value, int index)
 {
     t_node* newNode = (t_node*)malloc(sizeof(t_node));
     newNode->value = value;
     newNode->node_index = index;
-    newNode->info = ft_get_value_infos(value, newNode);
     newNode->next = NULL;
     newNode->prev = NULL;
 
@@ -178,8 +175,15 @@ t_node* ft_get_nodes_with_infos(char **args, int *info_args, int nb_args)
 
     while (i < nb_args)
     {
-        nodeHead = addNode_with_infos(nodeHead, args[i], i);
+        nodeHead = create_node(nodeHead, args[i], i);
         i++;
+    }
+    i = 0;
+    t_node* current = nodeHead;
+    while (current != NULL)
+    {
+        current->info = ft_get_value_infos(current->value, current);
+        current = current->next;
     }
     return nodeHead;
 }
