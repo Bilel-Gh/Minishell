@@ -20,6 +20,7 @@ OBJS = ${addprefix ${SRCS_DIR}, ${SRCS:.c=.o}}
 UTILS_DIR = ./src/utils/
 UTILS =	split.c \
 		ft_strjoin.c \
+		utils.c \
 
 OBJS_UTILS = ${addprefix ${UTILS_DIR}, ${UTILS:.c=.o}}
 
@@ -27,6 +28,7 @@ OBJS_UTILS = ${addprefix ${UTILS_DIR}, ${UTILS:.c=.o}}
 LEXEUR_DIR = ./src/lexeur/
 LEXEUR =	lexeur.c \
 			merge_characters.c \
+			merge_characters2.c \
 
 OBJS_LEXEUR = ${addprefix ${LEXEUR_DIR}, ${LEXEUR:.c=.o}}
 
@@ -36,7 +38,8 @@ PARSING =	get_info_args.c \
 			parsing.c \
 			join_inter_space.c \
 			kick_quotes.c \
-			get_token_infos.c \
+			/infos_token/get_token_infos.c \
+			/infos_token/infos_utils.c \
 			/error_args/search_error_args.c \
 			/error_args/utils_error_args.c \
 			/expand/expand.c \

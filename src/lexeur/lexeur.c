@@ -6,13 +6,13 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 07:23:43 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/05 04:05:06 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/05 04:35:31 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-t_character* addcharacter(t_character* head, char value, enum e_character_type type) {
+t_character* add_char(t_character* head, char value, enum e_character_type type) {
 	t_character* newcharacter = (t_character*)malloc(sizeof(t_character));
 	newcharacter->value = value;
 	newcharacter->type = type;
@@ -44,21 +44,21 @@ t_character* parseString(const char* input) {
 	t_character* head = NULL;
 
 	while (*input != '\0') {
-		char currentChar = *input;
+		char current_char = *input;
 
 		// Déterminer le type du caractère
 		enum e_character_type type;
-		if (currentChar == 34)
+		if (current_char == 34)
 			type = QUOTE_D;
-		else if (currentChar == 39)
+		else if (current_char == 39)
 			type = QUOTE_S;
-		else if (currentChar == '>' || currentChar == '<') {
+		else if (current_char == '>' || current_char == '<') {
 			type = REDIRECT;
-		}  else if (currentChar == '|') {
+		}  else if (current_char == '|') {
 			type = PIPE;
-		} else if (currentChar == ' ') { // ! a voir si on inclut les tabulations ou pas
+		} else if (current_char == ' ') { // ! a voir si on inclut les tabulations ou pas
 			type = ESPACE;
-		} else if (ft_isprint(currentChar)) {
+		} else if (ft_isprint(current_char)) {
 			type = ALPHANUM;
 		} else {
 			input++;
@@ -66,7 +66,7 @@ t_character* parseString(const char* input) {
 		}
 
 		// Ajouter le caractère à la liste chaînée
-		head = addcharacter(head, currentChar, type);
+		head = add_char(head, current_char, type);
 
 		input++;
 	}
@@ -126,7 +126,7 @@ char **ft_lexeur(char *line)
 	t_token* tokens;
 	char **args;
 
-	characters = parseString(line); // Ici on récupère une liste chaînée de characters un character et un char
+	characters = parseString(line); // Ici on récupère une liste chaînée de characters
     // afficher tous les characters
      t_character* current = characters;
      // *debug*
@@ -137,7 +137,7 @@ char **ft_lexeur(char *line)
          current = current->next;
      }
     // *debug*
-	tokens = mergecharacters(characters); // ici on groupe les characters adjacents de même type dans des nœuds
+	tokens = merge_characters(characters); // ici on groupe les characters adjacents de même type dans des nœuds
 	args = get_args(tokens); // on cree un double tableau avec chaque argument = un token
 	return (args);
 	// return (ft_split(line));

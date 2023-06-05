@@ -110,9 +110,15 @@ char	*ft_strjoin(char *s1, char *s2);
 int	ft_strlen(const char *str);
 char	**ft_split(char *str, char *charset);
 char	*ft_strdup(char *src);
+int		ft_strncmp(char *s1, char *s2, unsigned int n);
+char	*ft_strcpy(char *dest, char *src);
+char	*ft_strndup(const char *s1, size_t n);
+void	*ft_memcpy(void *dst, const void *src, size_t n);
 
 // Dossier LEXEUR
-t_token* mergecharacters(t_character* head);
+t_token* merge_characters(t_character* head);
+t_token	*ft_handle_quotes(t_token *tokenHead, t_character **current_charPtr);
+char	*append_value(char *str, char c);
 
 // Dossier error_args
 bool search_error_args(int *type_args, int *nb_args, char **args);
@@ -128,5 +134,10 @@ char	*give_env_expand(char *expande_search, int size);
 char	*is_sp_expand(char *expand_search);
 char	*get_expende_detect(int size_of_expende, char *expande);
 int	ft_size_of_expende(char *expande);
+
+// Dossier INFOS_TOKENS
+int ft_is_command(char* value);
+int ft_is_argument(char* value);
+int ft_is_option(char* value);
 
 #endif
