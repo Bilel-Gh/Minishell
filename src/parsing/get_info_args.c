@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_info_node.c                                    :+:      :+:    :+:   */
+/*   get_info_args.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 17:34:33 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/01 13:12:27 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/05 04:05:06 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-// demander a nassim a quoi sert cette fonction et si c'est pas mieux de mettre les infos des nodes dans la structure prevu a cet effet (t_node_info)
+// demander a nassim a quoi sert cette fonction et si c'est pas mieux de mettre les infos des tokens dans la structure prevu a cet effet (t_token_info)
 int *ft_get_info_args(char **line_split , int *give_nb_args)
 {
     int nb_args;

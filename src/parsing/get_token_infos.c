@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_node_infos.c                                   :+:      :+:    :+:   */
+/*   get_token_infos.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 05:03:47 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/02 19:04:30 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/05 04:04:56 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,16 +82,16 @@ int ft_is_option(char* value)
     return 0;
 }
 
-enum e_node_type get_value_type(t_node* node)
+enum e_token_type get_value_type(t_token* token)
 {
     // si c'est une commande
-    if (access(node->value, F_OK) == 0)
+    if (access(token->value, F_OK) == 0)
         return FICHIER;
-    else if (node->prev == NULL && node->node_index == 0 && ft_is_command(node->value))
+    else if (token->prev == NULL && token->token_index == 0 && ft_is_command(token->value))
         return COMMANDE;
-    else if (ft_is_argument(node->value))
+    else if (ft_is_argument(token->value))
         return ARG;
-    else if (ft_is_option(node->value))
+    else if (ft_is_option(token->value))
         return OPTION;
     else
         return ERROR;
@@ -115,17 +115,17 @@ int		ft_strncmp(char *s1, char *s2, unsigned int n)
     return (r);
 }
 
-t_node_info*    ft_get_value_infos(char* value, t_node* node)
+t_token_info*    add_infos_to_token(char* value, t_token* token)
 {
-//    printf("\033[0;32m node value : %s\033[0m\n", node->value);
-//    if (node->prev != NULL)
-//        printf("\033[0;31m node prev value : %s\033[0m\n", node->prev->value);
-//    printf("\033[0;32m node index : %d\033[0m\n", node->node_index);
-//    if (node->prev != NULL)
-//        printf("\033[0;31m node prev index : %d\033[0m\n", node->prev->node_index);
+//    printf("\033[0;32m token value : %s\033[0m\n", token->value);
+//    if (token->prev != NULL)
+//        printf("\033[0;31m token prev value : %s\033[0m\n", token->prev->value);
+//    printf("\033[0;32m token index : %d\033[0m\n", token->token_index);
+//    if (token->prev != NULL)
+//        printf("\033[0;31m token prev index : %d\033[0m\n", token->prev->token_index);
 //    if (value == NULL)
 //        return NULL;
-    t_node_info* infos = (t_node_info*)malloc(sizeof(t_node_info));
+    t_token_info* infos = (t_token_info*)malloc(sizeof(t_token_info));
     if (ft_strncmp(value, "|", 1) == 0)
         infos->type = N_PIPE;
     else if (ft_strncmp(value, ">", 1) == 0)
@@ -137,53 +137,53 @@ t_node_info*    ft_get_value_infos(char* value, t_node* node)
     else if (ft_strncmp(value, "<<", 2) == 0)
         infos->type = REDIRECT_D_IN;
     else
-        infos->type = get_value_type(node);
+        infos->type = get_value_type(token);
 
     return infos;
 }
 
-t_node* create_node(t_node* head, char* value, int index)
+t_token* create_token(t_token* head, char* value, int index)
 {
-    t_node* newNode = (t_node*)malloc(sizeof(t_node));
-    newNode->value = value;
-    newNode->node_index = index;
-    newNode->next = NULL;
-    newNode->prev = NULL;
+    t_token* newtoken = (t_token*)malloc(sizeof(t_token));
+    newtoken->value = value;
+    newtoken->token_index = index;
+    newtoken->next = NULL;
+    newtoken->prev = NULL;
 
     if (head == NULL) {
-        head = newNode;
+        head = newtoken;
     } else {
-        t_node* current = head;
+        t_token* current = head;
         while (current->next != NULL) {
             current = current->next;
         }
-        current->next = newNode;
-        newNode->prev = current;
+        current->next = newtoken;
+        newtoken->prev = current;
     }
     return head;
 }
 
 // TODO :
-// il faut dabbord cree les node avec prev et next add_node simple
-// apres ajouter les infos avec une nouvelle fonction add_infos_to_node
-t_node* ft_get_nodes_with_infos(char **args, int *info_args, int nb_args)
+// il faut dabbord cree les token avec prev et next add_token simple
+// apres ajouter les infos avec une nouvelle fonction add_infos_to_token
+t_token* ft_get_tokens_with_infos(char **args, int *info_args, int nb_args)
 {
     (void)info_args;
     int i;
     i = 0;
-    t_node* nodeHead = NULL;
+    t_token* tokenHead = NULL;
 
     while (i < nb_args)
     {
-        nodeHead = create_node(nodeHead, args[i], i);
+        tokenHead = create_token(tokenHead, args[i], i);
         i++;
     }
     i = 0;
-    t_node* current = nodeHead;
+    t_token* current = tokenHead;
     while (current != NULL)
     {
-        current->info = ft_get_value_infos(current->value, current);
+        current->info = add_infos_to_token(current->value, current);
         current = current->next;
     }
-    return nodeHead;
+    return tokenHead;
 }

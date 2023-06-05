@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/01 20:34:13 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/05 04:05:06 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 
 extern char **environ;
 
-enum e_token_type {
+enum e_character_type {
     ALPHANUM,
     REDIRECT,
 	RED_IN,
@@ -47,7 +47,7 @@ enum e_token_type {
 	LAST
 };
 
-enum e_node_type {
+enum e_token_type {
     COMMANDE,
     FICHIER,
     ARG,
@@ -61,29 +61,29 @@ enum e_node_type {
 };
 // test de ce a quoi vont les structures
 
-// infos sur tout le node (a completer)
-typedef struct		node_info
+// infos sur tout le token (a completer)
+typedef struct		token_info
 {
-	enum e_node_type	type;
-}					t_node_info;
+	enum e_token_type	type;
+}					t_token_info;
 
-// chaque charactere est un token
-typedef struct		s_token
+// chaque charactere est un character
+typedef struct		s_character
 {
 	char				value;
-	enum e_token_type	type;
-	struct s_token	*next;
-}					t_token;
+	enum e_character_type	type;
+	struct s_character	*next;
+}					t_character;
 
-// chaque node est un ensemble de charactere du meme type
-typedef struct		node
+// chaque token est un ensemble de charactere du meme type
+typedef struct		token
 {
-    int node_index;
+    int token_index;
 	char			*value;
-	t_node_info		*info;
-	struct node		*next;
-    struct node		*prev;
-}					t_node;
+	t_token_info		*info;
+	struct token		*next;
+    struct token		*prev;
+}					t_token;
 
 char **ft_lexeur(char *line);
 
@@ -98,12 +98,12 @@ void builtin_exit();
 
 // Dossier PARSING
 char    **ft_parsing(int *type_args, int *nb_args, char **args, int *error);
-int *ft_get_info_args(char **line_split , int *give_nb_node);
+int *ft_get_info_args(char **line_split , int *give_nb_token);
 char **join_inter_space(char **args, int *type_args, int *nb_args);
 char **kick_quote(int *type_args, int nb_args, char **args);
-t_node* ft_get_nodes_with_infos(char **args, int *info_args, int nb_args);
+t_token* ft_get_tokens_with_infos(char **args, int *info_args, int nb_args);
 int	ft_isprint(int chara);
-t_node* addNode(t_node* head, char* value);
+t_token* addtoken(t_token* head, char* value);
 
 // Dossier UTILS
 char	*ft_strjoin(char *s1, char *s2);
@@ -112,7 +112,7 @@ char	**ft_split(char *str, char *charset);
 char	*ft_strdup(char *src);
 
 // Dossier LEXEUR
-t_node* mergeTokens(t_token* head);
+t_token* mergecharacters(t_character* head);
 
 // Dossier error_args
 bool search_error_args(int *type_args, int *nb_args, char **args);

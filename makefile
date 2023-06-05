@@ -26,7 +26,7 @@ OBJS_UTILS = ${addprefix ${UTILS_DIR}, ${UTILS:.c=.o}}
 # /* ~~~~~~~ LEXEUR ~~~~~~~ */
 LEXEUR_DIR = ./src/lexeur/
 LEXEUR =	lexeur.c \
-			merge_tokens.c \
+			merge_characters.c \
 
 OBJS_LEXEUR = ${addprefix ${LEXEUR_DIR}, ${LEXEUR:.c=.o}}
 
@@ -36,7 +36,7 @@ PARSING =	get_info_args.c \
 			parsing.c \
 			join_inter_space.c \
 			kick_quotes.c \
-			get_node_infos.c \
+			get_token_infos.c \
 			/error_args/search_error_args.c \
 			/error_args/utils_error_args.c \
 			/expand/expand.c \

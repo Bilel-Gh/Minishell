@@ -6,26 +6,26 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 07:23:43 by bghandri          #+#    #+#             */
-/*   Updated: 2023/05/26 19:22:18 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/05 04:05:06 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-t_token* addToken(t_token* head, char value, enum e_token_type type) {
-	t_token* newToken = (t_token*)malloc(sizeof(t_token));
-	newToken->value = value;
-	newToken->type = type;
-	newToken->next = NULL;
+t_character* addcharacter(t_character* head, char value, enum e_character_type type) {
+	t_character* newcharacter = (t_character*)malloc(sizeof(t_character));
+	newcharacter->value = value;
+	newcharacter->type = type;
+	newcharacter->next = NULL;
 
 	if (head == NULL) {
-		head = newToken;
+		head = newcharacter;
 	} else {
-		t_token* current = head;
+		t_character* current = head;
 		while (current->next != NULL) {
 			current = current->next;
 		}
-		current->next = newToken;
+		current->next = newcharacter;
 	}
 
 	return head;
@@ -40,14 +40,14 @@ int	ft_isprint(int chara)
 	return (1);
 }
 
-t_token* parseString(const char* input) {
-	t_token* head = NULL;
+t_character* parseString(const char* input) {
+	t_character* head = NULL;
 
 	while (*input != '\0') {
 		char currentChar = *input;
 
 		// Déterminer le type du caractère
-		enum e_token_type type;
+		enum e_character_type type;
 		if (currentChar == 34)
 			type = QUOTE_D;
 		else if (currentChar == 39)
@@ -66,7 +66,7 @@ t_token* parseString(const char* input) {
 		}
 
 		// Ajouter le caractère à la liste chaînée
-		head = addToken(head, currentChar, type);
+		head = addcharacter(head, currentChar, type);
 
 		input++;
 	}
@@ -74,28 +74,28 @@ t_token* parseString(const char* input) {
 	return head;
 }
 
-t_node* addNode(t_node* head, char* value)
+t_token* addtoken(t_token* head, char* value)
 {
-	t_node* newNode = (t_node*)malloc(sizeof(t_node));
-	newNode->value = value;
-	newNode->next = NULL;
+	t_token* newtoken = (t_token*)malloc(sizeof(t_token));
+	newtoken->value = value;
+	newtoken->next = NULL;
 
 	if (head == NULL) {
-		head = newNode;
+		head = newtoken;
 	} else {
-		t_node* current = head;
+		t_token* current = head;
 		while (current->next != NULL) {
 			current = current->next;
 		}
-		current->next = newNode;
+		current->next = newtoken;
 	}
 
 	return head;
 }
 
-char** get_args(t_node* head) {
+char** get_args(t_token* head) {
 	int count = 0;
-	t_node* current = head;
+	t_token* current = head;
 	char	**args;
 
 	// while (current != NULL) {
@@ -122,23 +122,23 @@ char** get_args(t_node* head) {
 
 char **ft_lexeur(char *line)
 {
+	t_character* characters;
 	t_token* tokens;
-	t_node* nodes;
 	char **args;
 
-	tokens = parseString(line); // Ici on récupère une liste chaînée de tokens un token et un char
-    // afficher tous les tokens
-     t_token* current = tokens;
+	characters = parseString(line); // Ici on récupère une liste chaînée de characters un character et un char
+    // afficher tous les characters
+     t_character* current = characters;
      // *debug*
      int i = 0;
      while (current != NULL) {
-         printf("token %d ---------------> '%c'\n", i, current->value);
+         printf("character %d ---------------> '%c'\n", i, current->value);
          i++;
          current = current->next;
      }
     // *debug*
-	nodes = mergeTokens(tokens); // ici on groupe les tokens adjacents de même type dans des nœuds
-	args = get_args(nodes); // on cree un double tableau avec chaque argument = un node
+	tokens = mergecharacters(characters); // ici on groupe les characters adjacents de même type dans des nœuds
+	args = get_args(tokens); // on cree un double tableau avec chaque argument = un token
 	return (args);
 	// return (ft_split(line));
 }
