@@ -14,18 +14,16 @@
 
 enum e_token_type get_value_type(t_token* token)
 {
-    if (access(token->value, 0) == 0)
-        return PATH;
-    else if (is_env(token))
-        return ENV;
-    else if (token->prev == NULL && token->token_index == 0 && ft_is_command(token))
+    if (ft_is_infile(token))
+        return INFILE;
+    else if (ft_is_outfile(token))
+        return OUTFILE;
+    else if (ft_is_command(token))
         return COMMANDE;
-    else if (ft_is_argument(token->value))
-        return ARG;
     else if (ft_is_option(token->value))
         return OPTION;
     else
-        return ERROR;
+        return ft_get_infos_by_pos(token);
 }
 
 t_token_info*    add_infos_to_token(char* value, t_token* token)
@@ -36,11 +34,12 @@ t_token_info*    add_infos_to_token(char* value, t_token* token)
 //    printf("\033[0;32m token index : %d\033[0m\n", token->token_index);
 //    if (token->prev != NULL)
 //        printf("\033[0;31m token prev index : %d\033[0m\n", token->prev->token_index);
-//    if (value == NULL)
-//        return NULL;
+//
+    if (value == NULL)
+        return NULL;
     t_token_info* infos = (t_token_info*)malloc(sizeof(t_token_info));
     if (ft_strncmp(value, "|", 1) == 0)
-        infos->type = N_PIPE;
+        infos->type = T_PIPE;
     else if (ft_strncmp(value, ">", 1) == 0)
         infos->type = REDIRECT_OUT;
     else if (ft_strncmp(value, "<", 1) == 0)

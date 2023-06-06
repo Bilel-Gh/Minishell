@@ -44,11 +44,11 @@ int *ft_get_info_args(char **line_split , int *give_nb_args)
     }
     *give_nb_args = i;
     i = 0;
-    while (i < nb_args)
-    {
-        printf("type nb %d = %d\n", i, type[i]);
-        i++;
-    }
+//    while (i < nb_args)
+//    {
+//        printf("type tableau nb %d = %d\n", i, type[i]);
+//        i++;
+//    }
 
     return (type);
  //   exit (0);

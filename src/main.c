@@ -94,7 +94,7 @@ void minishell_loop(void)
     while (tokens)
     {
         printf("\033[1;31mtoken value = %s\n\033[0m", tokens->value);
-        printf("\033[1;31mtoken type = %d\n\033[0m", tokens->info->type);
+        printf("\033[1;33mtoken type = %d\n\033[0m", tokens->info->type);
         tokens = tokens->next;
     }
      i = 0;
@@ -105,11 +105,11 @@ void minishell_loop(void)
 		}
 		 i = 0;
 
-		while (args[i])
-		{
-			printf("token nb %d = %s avec len = %d\n", i, args[i], ft_strlen(args[i]));
-			i++;
-		}
+//		while (args[i])
+//		{
+//			printf("token nb %d = %s avec len = %d\n", i, args[i], ft_strlen(args[i]));
+//			i++;
+//		}
 //
             //execute_command(args);
         //else

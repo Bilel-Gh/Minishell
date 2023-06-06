@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/05 10:38:12 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/05 16:00:54 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,17 +48,18 @@ enum e_character_type {
 };
 
 enum e_token_type {
-    COMMANDE = 0,
-    ARG = 1,
-    OPTION = 2,
-    N_PIPE = 3,
-    ERROR = 4,
-    PATH = 5,
-    ENV = 6,
-    REDIRECT_OUT = 7,
-    REDIRECT_IN = 8,
-    REDIRECT_D_OUT = 9,
-    REDIRECT_D_IN = 10,
+    COMMANDE = 1,
+    T_PIPE = 2,
+    ARG = 3,
+    INFILE = 4,
+    OUTFILE = 5,
+    REDIRECT_OUT = 6,
+    REDIRECT_IN = 7,
+    REDIRECT_D_OUT = 8,
+    REDIRECT_D_IN = 9,
+    LIMITEUR = 10,
+    OPTION = 11,
+    UNDEFINED_CMD = 12,
 };
 // test de ce a quoi vont les structures
 
@@ -104,7 +105,10 @@ char **join_inter_space(char **args, int *type_args, int *nb_args);
 char **kick_quote(int *type_args, int nb_args, char **args);
 t_token* ft_get_tokens_with_infos(char **args, int *info_args, int nb_args);
 int	ft_isprint(int chara);
+int ft_is_outfile(t_token *token);
+int ft_is_infile(t_token *token);
 t_token* addtoken(t_token* head, char* value);
+int ft_get_infos_by_pos(t_token *token);
 
 // Dossier UTILS
 char	*ft_strjoin(char *s1, char *s2);
