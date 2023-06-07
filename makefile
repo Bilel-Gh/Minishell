@@ -40,6 +40,7 @@ PARSING =	get_info_args.c \
 			kick_quotes.c \
 			/infos_token/get_token_infos.c \
 			/infos_token/infos_utils.c \
+			/infos_token/recipe_for_exec.c \
 			/error_args/search_error_args.c \
 			/error_args/utils_error_args.c \
 			/expand/expand.c \

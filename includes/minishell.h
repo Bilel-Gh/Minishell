@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/06 15:31:44 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/07 20:00:06 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,13 @@ typedef struct		token
 	t_token_info		*info;
 	struct token		*next;
     struct token		*prev;
-}					t_token;
+}
+					t_token;
+typedef struct commande
+{
+    char**cmd;
+	struct commande		*next;
+}					t_commande;
 
 char **ft_lexeur(char *line);
 
@@ -110,6 +116,7 @@ t_token* addtoken(t_token* head, char* value);
 int ft_get_infos_by_pos(t_token *token);
 
 // Dossier UTILS
+void	ft_complete( char const *s, char *str, int *i);
 char	*ft_strjoin(char *s1, char *s2);
 int	ft_strlen(const char *str);
 char	**ft_split(char *str, char *charset);
@@ -119,6 +126,7 @@ char	*ft_strcpy(char *dest, char *src);
 char	*ft_strndup(const char *s1, size_t n);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
 int ft_is_upper(char c);
+char	*ft_strchr(const char *s, int c);
 
 // Dossier LEXEUR
 t_token* merge_characters(t_character* head);
@@ -145,5 +153,6 @@ int ft_is_command(t_token *token);
 int ft_is_argument(char* value);
 int ft_is_option(char* value);
 int is_env(t_token* token);
-
+t_commande *cmd_complete(t_token *token);
+char *ft_join_cmd(char *s1, char *s2);
 #endif

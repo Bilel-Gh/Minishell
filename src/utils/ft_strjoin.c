@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:54:47 by ncharii           #+#    #+#             */
-/*   Updated: 2023/05/31 17:02:09 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/07 19:10:12 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	ft_strlen(const char *str)
 	return (nb);
 }
 
-static void	ft_complete( char const *s, char *str, int *i)
+void	ft_complete( char const *s, char *str, int *i)
 {
 	int	x;
 
