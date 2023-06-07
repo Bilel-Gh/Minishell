@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/07 20:03:34 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/07 20:21:46 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void minishell_loop(void)
     else
         printf("############# validation ###############\n");
     tokens = ft_get_tokens_with_infos(args, info_args, nb_args);
-    cmd_complete(tokens);
+    //cmd_complete(tokens);
     while (tokens)
     {
         printf("\033[1;31mtoken value = %s\n\033[0m", tokens->value);

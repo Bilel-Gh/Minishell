@@ -175,7 +175,7 @@ int ft_get_nb_space_in_value(char* value)
 t_token* ft_verif_cmd(t_token** tokenHead)
 {
     t_token* current = *tokenHead;
-//    t_token* save_next_token;
+    t_token* save_next_token = NULL;
     t_token* tmp;
     char **value_splited;
 
@@ -185,13 +185,14 @@ t_token* ft_verif_cmd(t_token** tokenHead)
         {
             if (ft_get_nb_space_in_value(current->value) > 0)
             {
-//                 if (current->next != NULL)
-//                 {
-//
-//                 }
+                if (current->next != NULL)
+                {
+                    printf("\033[0;31m token next value : %s\033[0m\n", current->next->value);
+                    save_next_token = current->next; // Sauvegarde du token suivant
+                    current->next = NULL; // Déconnexion du token suivant
+                }
                 value_splited = ft_split(current->value, " ");
                 tmp = current;
-                current = current->next;
 
                 free(tmp->value);
                 tmp->value = ft_strdup(value_splited[0]);
@@ -200,7 +201,6 @@ t_token* ft_verif_cmd(t_token** tokenHead)
                 tmp->next = create_token(tmp->next, value_splited[1], tmp->token_index + 1);
                 tmp->next->info = add_infos_to_token(value_splited[1], tmp->next, 0);
                 tmp->next->prev = tmp;
-
                 int i = 2;
 
                 while (value_splited[i] != NULL)
@@ -224,28 +224,23 @@ t_token* ft_verif_cmd(t_token** tokenHead)
                 while (value_splited[i] != NULL)
                 {
                     free(value_splited[i]);
-                    i++;
-                }
+                    i++;                }
 
                 free(value_splited);
             }
         }
-
         if (current->next == NULL)
             break;
-
         current = current->next;
     }
-
-        // Ajout du token suivant et tous les tokens suivants à la fin de la manipulation
-    // if (save_next_token != NULL) {
-    //     t_token* lastToken = *tokenHead;
-    //     while (lastToken->next != NULL) {
-    //         lastToken = lastToken->next;
-    //     }
-    //     lastToken->next = save_next_token;
-    //     save_next_token->prev = lastToken;
-    // }
+    if (save_next_token != NULL) {
+        t_token* lastToken = current;
+        while (lastToken->next != NULL) {
+            lastToken = lastToken->next;
+        }
+        lastToken->next = save_next_token;
+        save_next_token->prev = lastToken;
+    }
     return *tokenHead;
 }
 
