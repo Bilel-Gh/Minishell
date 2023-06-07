@@ -12,21 +12,34 @@
 
 #include "../../../includes/minishell.h"
 
-enum e_token_type get_value_type(t_token* token)
+enum e_token_type get_value_type(t_token* token, int* is_commande_in_pipe)
 {
     if (ft_is_infile(token))
         return INFILE;
     else if (ft_is_outfile(token))
         return OUTFILE;
-    else if (ft_is_command(token))
+    else if (token->prev && token->prev->info->type == REDIRECT_D_OUT)
+        return LIMITEUR;
+    else if (ft_is_command(token) && *is_commande_in_pipe == 0)
+    {
+        *is_commande_in_pipe = 1;
         return COMMANDE;
-    else if (ft_is_option(token->value))
-        return OPTION;
+    }
     else
-        return ft_get_infos_by_pos(token);
+        return ARG;
 }
 
-t_token_info*    add_infos_to_token(char* value, t_token* token)
+int	ft_strcmp(char *s1, char *s2)
+{
+	int i;
+
+	i = 0;
+	while (s1[i] == s2[i] && s1[i] != '\0' && s2[i] != '\0')
+		i++;
+	return (s1[i] - s2[i]);
+}
+
+t_token_info*    add_infos_to_token(char* value, t_token* token, int* is_commande_in_pipe)
 {
 //    printf("\033[0;32m token value : %s\033[0m\n", token->value);
 //    if (token->prev != NULL)
@@ -34,22 +47,24 @@ t_token_info*    add_infos_to_token(char* value, t_token* token)
 //    printf("\033[0;32m token index : %d\033[0m\n", token->token_index);
 //    if (token->prev != NULL)
 //        printf("\033[0;31m token prev index : %d\033[0m\n", token->prev->token_index);
-//
     if (value == NULL)
         return NULL;
     t_token_info* infos = (t_token_info*)malloc(sizeof(t_token_info));
     if (ft_strncmp(value, "|", 1) == 0)
+    {
+        *is_commande_in_pipe = 0;
         infos->type = T_PIPE;
-    else if (ft_strncmp(value, ">", 1) == 0)
+    }
+    else if (ft_strcmp(value, ">") == 0)
         infos->type = REDIRECT_OUT;
-    else if (ft_strncmp(value, "<", 1) == 0)
+    else if (ft_strcmp(value, "<") == 0)
         infos->type = REDIRECT_IN;
-    else if (ft_strncmp(value, ">>", 2) == 0)
+    else if (ft_strcmp(value, ">>") == 0)
         infos->type = REDIRECT_D_OUT;
-    else if (ft_strncmp(value, "<<", 2) == 0)
+    else if (ft_strcmp(value, "<<") == 0)
         infos->type = REDIRECT_D_IN;
     else
-        infos->type = get_value_type(token);
+        infos->type = get_value_type(token, is_commande_in_pipe);
 
     return infos;
 }
@@ -92,10 +107,12 @@ t_token* ft_get_tokens_with_infos(char **args, int *info_args, int nb_args)
     }
     i = 0;
     t_token* current = tokenHead;
+    int is_commande_in_pipe = 0;
     while (current != NULL)
     {
-        current->info = add_infos_to_token(current->value, current);
+        current->info = add_infos_to_token(current->value, current, &is_commande_in_pipe);
         current = current->next;
+
     }
     return tokenHead;
 }

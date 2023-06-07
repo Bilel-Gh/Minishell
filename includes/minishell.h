@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/05 16:00:54 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/06 15:31:44 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ enum e_token_type {
     REDIRECT_D_IN = 9,
     LIMITEUR = 10,
     OPTION = 11,
-    UNDEFINED_CMD = 12,
 };
 // test de ce a quoi vont les structures
 
