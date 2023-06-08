@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/07 20:21:46 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/08 23:37:53 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void minishell_loop(void)
     t_token* tokens;
     while (1)
     {
-        line = readline("\033[1;32mminishell >\033[0m");
+        line = readline("\033[1;32mminishell >\033[0m"); // TODO : BUG affichage quand on ecrit plein de caracteres
         if (line == NULL)
             exit(0);
         if (strlen(line) == 0)
@@ -96,6 +96,10 @@ void minishell_loop(void)
     {
         printf("\033[1;31mtoken value = %s\n\033[0m", tokens->value);
         printf("\033[1;33mtoken type = %d\n\033[0m", tokens->info->type);
+        printf("\033[1;34mtoken index = %d\n\033[0m", tokens->token_index);
+        if (tokens->prev)
+            printf("\033[1;35mtoken prev value = %s\n\033[0m", tokens->prev->value);
+        printf("\n\n");
         tokens = tokens->next;
     }
      i = 0;

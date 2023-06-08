@@ -21,6 +21,7 @@ UTILS_DIR = ./src/utils/
 UTILS =	split.c \
 		ft_strjoin.c \
 		utils.c \
+		utils2.c \
 
 OBJS_UTILS = ${addprefix ${UTILS_DIR}, ${UTILS:.c=.o}}
 
@@ -40,6 +41,8 @@ PARSING =	get_info_args.c \
 			kick_quotes.c \
 			/infos_token/get_token_infos.c \
 			/infos_token/infos_utils.c \
+			/infos_token/verif_cmd.c \
+			/infos_token/verif_cmd2.c \
 			/infos_token/recipe_for_exec.c \
 			/error_args/search_error_args.c \
 			/error_args/utils_error_args.c \

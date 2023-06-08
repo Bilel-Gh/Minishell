@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/07 20:00:06 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/08 22:51:28 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,9 @@ char	*ft_strndup(const char *s1, size_t n);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
 int ft_is_upper(char c);
 char	*ft_strchr(const char *s, int c);
+int	ft_strcmp(char *s1, char *s2);
+size_t	ft_strlcpy(char *dst, const char *src, size_t size);
+char	*ft_strtrim(char *s1, char *set);
 
 // Dossier LEXEUR
 t_token* merge_characters(t_character* head);
@@ -155,4 +158,10 @@ int ft_is_option(char* value);
 int is_env(t_token* token);
 t_commande *cmd_complete(t_token *token);
 char *ft_join_cmd(char *s1, char *s2);
+t_token* ft_verif_cmd(t_token** tokenHead);
+t_token* create_token(t_token* head, char* value, int index);
+t_token_info*    add_infos_to_token(char* value, t_token* token, int* is_commande_in_pipe);
+t_token *ft_save_next_tokens(t_token *current);
+void ft_free_value_splited(char **value_splited);
+
 #endif

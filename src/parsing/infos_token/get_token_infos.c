@@ -29,24 +29,8 @@ enum e_token_type get_value_type(t_token* token, int* is_commande_in_pipe)
         return ARG;
 }
 
-int	ft_strcmp(char *s1, char *s2)
-{
-	int i;
-
-	i = 0;
-	while (s1[i] == s2[i] && s1[i] != '\0' && s2[i] != '\0')
-		i++;
-	return (s1[i] - s2[i]);
-}
-
 t_token_info*    add_infos_to_token(char* value, t_token* token, int* is_commande_in_pipe)
 {
-//    printf("\033[0;32m token value : %s\033[0m\n", token->value);
-//    if (token->prev != NULL)
-//        printf("\033[0;31m token prev value : %s\033[0m\n", token->prev->value);
-//    printf("\033[0;32m token index : %d\033[0m\n", token->token_index);
-//    if (token->prev != NULL)
-//        printf("\033[0;31m token prev index : %d\033[0m\n", token->prev->token_index);
     if (value == NULL)
         return NULL;
     t_token_info* infos = (t_token_info*)malloc(sizeof(t_token_info));
@@ -65,69 +49,7 @@ t_token_info*    add_infos_to_token(char* value, t_token* token, int* is_command
         infos->type = REDIRECT_D_IN;
     else
         infos->type = get_value_type(token, is_commande_in_pipe);
-
     return infos;
-}
-
-char	*ft_strchr(const char *s, int c)
-{
-    char	*str;
-
-    str = (char *)s;
-    while (*str != c)
-    {
-        if (*str == '\0')
-        {
-            return (NULL);
-        }
-        str++;
-    }
-    return (str);
-}
-
-size_t	ft_strlcpy(char *dst, const char *src, size_t size)
-{
-    unsigned int	i;
-
-    i = 0;
-    if (!dst || !src)
-        return (0);
-    if (size > 0)
-    {
-        while (--size && src[i])
-        {
-            dst[i] = src[i];
-            i++;
-        }
-        dst[i] = '\0';
-    }
-    while (src[i])
-        i++;
-    return (i);
-}
-
-// fonction qui enleve les charactere de set au debut et a la fin de s1
-char	*ft_strtrim(char *s1, char *set)
-{
-    int		start;
-    int		end;
-    char	*str;
-
-    if (!s1 || !set)
-        return (NULL);
-    start = 0;
-    end = ft_strlen(s1) - 1;
-    while (ft_strchr(set, s1[start]) && start <= end)
-        start++;
-    if (start > end)
-        return (ft_strdup(s1 + end + 1));
-    while (ft_strchr(set, s1[end]) && end >= 0)
-        end--;
-    str = malloc(end - start + 2);
-    if (!str)
-        return (NULL);
-    ft_strlcpy(str, &s1[start], end - start + 2);
-    return (str);
 }
 
 t_token* create_token(t_token* head, char* value, int index)
@@ -151,97 +73,6 @@ t_token* create_token(t_token* head, char* value, int index)
         newtoken->prev = current;
     }
     return head;
-}
-
-int ft_get_nb_space_in_value(char* value)
-{
-    int i;
-    int nb_space;
-    i = 0;
-    nb_space = 0;
-    while (value[i] != '\0')
-    {
-        if (value[i] == ' ')
-        {
-            while (value[i] == ' ' && value[i] != '\0')
-                i++;
-            nb_space++;
-        }
-        i++;
-    }
-    return nb_space;
-}
-
-t_token* ft_verif_cmd(t_token** tokenHead)
-{
-    t_token* current = *tokenHead;
-    t_token* save_next_token = NULL;
-    t_token* tmp;
-    char **value_splited;
-
-    while (current != NULL)
-    {
-        if (current->info->type == COMMANDE)
-        {
-            if (ft_get_nb_space_in_value(current->value) > 0)
-            {
-                if (current->next != NULL)
-                {
-                    printf("\033[0;31m token next value : %s\033[0m\n", current->next->value);
-                    save_next_token = current->next; // Sauvegarde du token suivant
-                    current->next = NULL; // Déconnexion du token suivant
-                }
-                value_splited = ft_split(current->value, " ");
-                tmp = current;
-
-                free(tmp->value);
-                tmp->value = ft_strdup(value_splited[0]);
-                tmp->info->type = COMMANDE;
-
-                tmp->next = create_token(tmp->next, value_splited[1], tmp->token_index + 1);
-                tmp->next->info = add_infos_to_token(value_splited[1], tmp->next, 0);
-                tmp->next->prev = tmp;
-                int i = 2;
-
-                while (value_splited[i] != NULL)
-                {
-                    t_token* newToken = create_token(NULL, value_splited[i], tmp->token_index + i);
-                    newToken->info = add_infos_to_token(value_splited[i], newToken, 0);
-                    newToken->prev = tmp;
-
-                    if (tmp->next != NULL) {
-                        newToken->next = tmp->next;
-                        tmp->next->prev = newToken;
-                    }
-
-                    tmp->next = newToken;
-                    tmp = newToken;
-                    i++;
-                }
-
-                i = 0;
-
-                while (value_splited[i] != NULL)
-                {
-                    free(value_splited[i]);
-                    i++;                }
-
-                free(value_splited);
-            }
-        }
-        if (current->next == NULL)
-            break;
-        current = current->next;
-    }
-    if (save_next_token != NULL) {
-        t_token* lastToken = current;
-        while (lastToken->next != NULL) {
-            lastToken = lastToken->next;
-        }
-        lastToken->next = save_next_token;
-        save_next_token->prev = lastToken;
-    }
-    return *tokenHead;
 }
 
 
