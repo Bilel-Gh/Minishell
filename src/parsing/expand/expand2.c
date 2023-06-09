@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:13:01 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/09 15:53:12 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/09 19:17:27 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,8 @@ char	*join_and_rp_args(char *args_con, char *expande, int size_extract)
             i++;
         j++;
     }
-  //make  new_args[j] = 0;
     printf("join = %s\n", new_args);
     free(args_con);
     return (new_args);
 }
+

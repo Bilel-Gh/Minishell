@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexeur.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 07:23:43 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/09 18:37:06 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/09 19:21:20 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,12 @@ int	ft_isprint(int chara)
 	return (1);
 }
 
-t_character* parseString(const char* input) {
+t_character* parseString(const char* input)
+{
 	t_character* head = NULL;
 
 	while (*input != '\0') {
 		char current_char = *input;
-
-		// Déterminer le type du caractère
 		enum e_character_type type;
 		if (current_char == 34)
 			type = QUOTE_D;
@@ -64,13 +63,9 @@ t_character* parseString(const char* input) {
 			input++;
 			continue;
 		}
-
-		// Ajouter le caractère à la liste chaînée
 		head = add_char(head, current_char, type);
-
 		input++;
 	}
-
 	return head;
 }
 
@@ -94,7 +89,8 @@ t_token* addtoken(t_token* head, char* value)
 	return head;
 }
 
-char** get_args(t_token* head) {
+char** get_args(t_token* head)
+{
 	int count = 0;
 	t_token* current = head;
 	char	**args;

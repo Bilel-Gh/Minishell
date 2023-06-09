@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 16:18:20 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/09 18:22:30 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/09 19:23:17 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,34 +20,26 @@ bool	error_grammaticale(int *type_args, int nb_args)
 	if(!type_args)
 		return(false);
 	printf("*********check grammaticale error ???***************\n");
-	if (nb_args == 1)
-	{
-		if ((type_args[i] != 0))
-			return (true);
-	}
+	if (nb_args == 1 && type_args[i] != 0)
+		return (true);
 	while (i < nb_args - 1)
 	{
-		//printf("type_args %d i = %d\n",type_args[i], i);
 		if (type_args[i] == 5)
 			i++;
 		if (i == 0)
 		{
-			if (type_args[i] != 0 && type_args[i] != 1)
-				return (true);
-			if (type_args[i] == 1 && type_args[i + 1] != 0)
+			if (type_args[i] != 0 && type_args[i] != 1
+				|| type_args[i] == 1 && type_args[i + 1] != 0)
 				return (true);
 		}
 		if (i != 0)
 		{
-			//   printf("parsing 2 = %d nb = %d\n", type_args[i], i);
 			if (type_args[i] == 0)
 			{
-				//  printf("i parsing.c = %d\n",i);
 				if (type_args[i + 1] != 4 && type_args[i + 1] != 0
 					&& type_args[i + 1] != 1)
 					return (true);
 			}
-			//!!!!!!! ATTENTION ls | > outfile !!!!!!!!
 			if (type_args[i] == 4 && type_args[i + 1] != 0
 				&& type_args[i + 1] != 1)
 				return (true);
@@ -56,7 +48,6 @@ bool	error_grammaticale(int *type_args, int nb_args)
 		}
 		i++;
 	}
-	//   printf("*********ft_parsing***************\n");
 	return (false);
 }
 
