@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 16:18:20 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/09 13:10:43 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/09 18:22:30 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ bool	error_grammaticale(int *type_args, int nb_args)
 
 	i = 0;
 	if(!type_args)
-		return(true);
+		return(false);
 	printf("*********check grammaticale error ???***************\n");
 	if (nb_args == 1)
 	{
@@ -122,6 +122,8 @@ char **kick_args_space(char **new_args, int *type_args, int *nb_args)
 	j = 0;
 	nb_space = count_nb_space(type_args, *nb_args);
 	nb_new_args = *nb_args - nb_space;
+	if(nb_new_args == 0)
+		return (NULL);
 	//printf ("$$$$$$$$$$$$$$$$$$$$$$$$ nb_space %d\n", nb_space);
 	last_args = malloc( sizeof(char*) * (nb_new_args + 1));
 	if (!last_args)
@@ -166,19 +168,19 @@ char    **ft_parsing(int *type_args, int *nb_args, char **args, int *error)
 	expande(type_args, *nb_args, args);
     no_quote_args = kick_quote(type_args, *nb_args, args);
 	new_args = join_inter_space(no_quote_args, type_args, nb_args);
-	//free no_quote
+	//free_db_array(no_quote_args);
 	new_type_args = ft_get_info_args(new_args, nb_args);
-	//ft_free(args);
+	free_db_array(args);
 	args = kick_args_space(new_args,type_args, nb_args);
 	free (type_args);
 	free(new_type_args);
 	new_type_args = ft_get_info_args(args, nb_args);
-
-	//ft_free (args);
 	 if (error_grammaticale(new_type_args, *nb_args))
 	   return (args);
 	printf("^^^^^^^^^^^ no error grammaticale ^^^^^^^^^^^^^^^^\n");
     *error = 1;
+	free(new_type_args);
+	free_db_array(no_quote_args);
 	return (args);
 }
 

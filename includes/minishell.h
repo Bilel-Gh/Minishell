@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/08 22:51:28 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/09 18:34:46 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ char    **ft_parsing(int *type_args, int *nb_args, char **args, int *error);
 int *ft_get_info_args(char **line_split , int *give_nb_token);
 char **join_inter_space(char **args, int *type_args, int *nb_args);
 char **kick_quote(int *type_args, int nb_args, char **args);
-t_token* ft_get_tokens_with_infos(char **args, int *info_args, int nb_args);
+t_token* ft_get_tokens_with_infos(char **args, int nb_args);
 int	ft_isprint(int chara);
 int ft_is_outfile(t_token *token);
 int ft_is_infile(t_token *token);
@@ -119,7 +119,7 @@ int ft_get_infos_by_pos(t_token *token);
 void	ft_complete( char const *s, char *str, int *i);
 char	*ft_strjoin(char *s1, char *s2);
 int	ft_strlen(const char *str);
-char	**ft_split(char *str, char *charset);
+char	**ft_split(char *str, char charset);
 char	*ft_strdup(char *src);
 int		ft_strncmp(char *s1, char *s2, unsigned int n);
 char	*ft_strcpy(char *dest, char *src);
@@ -130,6 +130,9 @@ char	*ft_strchr(const char *s, int c);
 int	ft_strcmp(char *s1, char *s2);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 char	*ft_strtrim(char *s1, char *set);
+void	free_db_array(char **array);
+void free_list_tokens(t_token* tokens);
+void free_list_commande(t_commande *commande);
 
 // Dossier LEXEUR
 t_token* merge_characters(t_character* head);

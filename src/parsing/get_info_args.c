@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_info_args.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 17:34:33 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/05 10:34:58 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/09 16:37:13 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ int *ft_get_info_args(char **line_split , int *give_nb_args)
 
     nb_args = 0;
     i = 0;
+    if (line_split == NULL)
+        return (NULL);
     while (line_split[nb_args])
         nb_args++;
     printf("nb_args = %d\n",nb_args);

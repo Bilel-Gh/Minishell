@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 04:16:16 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/05 04:16:35 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/09 15:25:17 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ char	*ft_strdup(char *src)
         str[i] = src[i];
         i++;
     }
+    str[i] = 0;
     return (str);
 }
 

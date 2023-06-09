@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   kick_quote.c                                       :+:      :+:    :+:   */
+/*   kick_quotes.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 03:35:14 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/02 03:35:24 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/09 16:49:53 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ char **kick_quote(int *type_args, int nb_args, char **args)
             no_quote[i] = copy_cont(args[i]);
         i++;
     }
+    no_quote[i] = 0;
     return (no_quote);
 
 }

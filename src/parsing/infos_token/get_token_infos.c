@@ -75,13 +75,11 @@ t_token* create_token(t_token* head, char* value, int index)
     return head;
 }
 
-
 // TODO :
 // il faut dabbord cree les token avec prev et next add_token simple
 // apres ajouter les infos avec une nouvelle fonction add_infos_to_token
-t_token* ft_get_tokens_with_infos(char **args, int *info_args, int nb_args)
+t_token* ft_get_tokens_with_infos(char **args, int nb_args)
 {
-    (void)info_args;
     int i;
     i = 0;
     t_token* tokenHead = NULL;

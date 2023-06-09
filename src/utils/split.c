@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 05:04:11 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/02 19:05:04 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/09 15:57:19 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,76 +14,112 @@
 
 #include <stdlib.h>
 
-int		has_char(char c, char *str)
+static int	nbr_string(char *s, char c)
 {
-    while (*str)
-    {
-        if (*str++ == c)
-            return (1);
-    }
-    return (0);
+	int	nb_str;
+	int	i;
+	int	ok;
+
+	ok = 0;
+	i = 0;
+	nb_str = 1;
+	while (s[i])
+	{
+		if (s[i] != c)
+		{
+			ok++;
+		}
+		if (((s[i] == c) || (s[i + 1] == '\0')) && ok > 0)
+		{
+			nb_str++;
+			ok = 0;
+		}
+		i++;
+	}
+	return (nb_str);
 }
 
-int		strs_l(char *str, char *charset)
+static void	reset(int *a, int *b)
 {
-    int	part;
-    int count;
-
-    part = 1;
-    count = 0;
-    while (*str)
-    {
-        if (!has_char(*str, charset) && part)
-        {
-            count++;
-            part = 0;
-        }
-        else if (has_char(*str, charset))
-            part = 1;
-        str++;
-    }
-    return (count);
+	*a = 0;
+	*b = 0;
 }
 
-char	*ft_strdup_split(char *src, char *charset)
+static int	malloc_str(char *s, char **str, char c, int i)
 {
-    char	*dest;
-    char	*buffer;
-    int		length;
+	int	nb_str;
+	int	nb_word;
+	int	ok;
 
-    length = 0;
-    buffer = src;
-    while (*buffer && !has_char(*buffer++, charset))
-        length++;
-    dest = (char*)malloc(sizeof(*src) * length);
-    buffer = dest;
-    while (*src && length-- > 0)
-        *buffer++ = *src++;
-    *buffer = '\0';
-    return (dest);
+	nb_str = 0;
+	nb_word = 0;
+	ok = 0;
+	while (s[i])
+	{
+		if (s[i] != c)
+		{
+			ok++;
+			nb_word++;
+		}
+		if (((s[i] == c) || (s[i + 1] == '\0')) && ok > 0)
+		{
+			str[nb_str] = malloc(sizeof(char) * nb_word + 1);
+			if (!str[nb_str])
+				return (1);
+			nb_str++;
+			reset(&nb_word, &ok);
+		}
+		i++;
+	}
+	return (0);
 }
 
-char	**ft_split(char *str, char *charset)
+static void	complete(char *s, char **str, char c, int i)
 {
-    char	**strs;
-    char	**tmp;
-    int		part;
+	int	nb_str;
+	int	nb_word;
+	int	ok;
 
-    strs = (char**)malloc(strs_l(str, charset) * sizeof(*strs) + 1);
-    tmp = strs;
-    part = 1;
-    while (*str)
-    {
-        if (!has_char(*str, charset) && part)
-        {
-            part = 0;
-            *tmp = ft_strdup_split(str, charset);
-            tmp++;
-        }
-        else if (has_char(*str, charset))
-            part = 1;
-        str++;
-    }
-    *tmp = 0;
-    return (strs);
+	nb_str = 0;
+	nb_word = 0;
+	ok = 0;
+	while (s[i])
+	{
+		if (s[i] != c)
+		{
+			ok++;
+			str[nb_str][nb_word] = s[i];
+			nb_word++;
+		}
+		if (((s[i] == c) || (s[i + 1] == '\0')) && ok > 0)
+		{
+			str[nb_str][nb_word] = '\0';
+			nb_str++;
+			nb_word = 0;
+			ok = 0;
+		}
+		i++;
+	}
+}
+
+
+char	**ft_split(char *s, char c)
+{
+	char	**str;
+	int		nb_str;
+	int		i;
+
+	i = 0;
+	if (!s)
+		return (NULL);
+	nb_str = nbr_string(s, c);
+	str = malloc(sizeof(char *) * nb_str);
+	if (!str)
+		return (NULL);
+	str[nb_str - 1] = NULL;
+	nb_str = malloc_str(s, str, c, i);
+	if (nb_str == 1)
+		return (NULL);
+	complete(s, str, c, i);
+	return (str);
 }

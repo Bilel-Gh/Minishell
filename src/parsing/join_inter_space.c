@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join_inter_space.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:49:46 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/05 10:36:19 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/09 16:50:52 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,12 +89,14 @@ char **join_inter_space(char **args, int *type_args, int *nb_args)
     //prinft("NB args _join = %d  \n",nb_new_args);
 
     if (nb_new_args == *nb_args)
+    {
+              
         return(args) ;//return (args);
+    }
     i = 0;
     new_args = malloc( sizeof(char*) * (nb_new_args + 1));
     while (i <= nb_new_args)
     {
-        new_args[i] = malloc(1);
         new_args[i] = NULL;
         i++;
     }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexeur.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 07:23:43 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/05 04:35:31 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/09 18:37:06 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ t_token* addtoken(t_token* head, char* value)
 {
 	t_token* newtoken = (t_token*)malloc(sizeof(t_token));
 	newtoken->value = value;
+	newtoken->info = NULL;
 	newtoken->next = NULL;
 
 	if (head == NULL) {
@@ -110,7 +111,7 @@ char** get_args(t_token* head) {
 	current = head;
 	int i = 0;
 	while (current != NULL) {
-		args[i] = current->value;
+		args[i] = ft_strdup(current->value);
 		i++;
 		current = current->next;
 	}
@@ -119,6 +120,37 @@ char** get_args(t_token* head) {
 	return args;
 }
 
+void free_list_characters(t_character* characters)
+{
+	t_character* head;
+	while (characters->next)
+	{
+		head = characters;
+		characters = characters->next;
+		free(head);
+	}
+	free(characters);
+}
+
+void free_list_tokens(t_token* tokens)
+{
+	t_token* head;
+	if (!tokens)
+		return ;
+	while(tokens->next)
+	{
+		head = tokens;
+		tokens = tokens->next;
+		free(head->value);
+		if (head->info)
+			free(head->info);
+		free(head);
+	}
+	if (tokens->info)
+		free(tokens->info);
+	free(tokens->value);
+	free(tokens);
+}
 
 char **ft_lexeur(char *line)
 {
@@ -139,6 +171,8 @@ char **ft_lexeur(char *line)
     // *debug*
 	tokens = merge_characters(characters); // ici on groupe les characters adjacents de même type dans des nœuds
 	args = get_args(tokens); // on cree un double tableau avec chaque argument = un token
+	free_list_characters(characters);
+	free_list_tokens(tokens);
 	return (args);
 	// return (ft_split(line));
 }

@@ -2,7 +2,7 @@
 # export CPPFLAGS="-I$(brew --prefix readline)/include" #
 
 # /* ~~~~~~~ COMPILING INFO ~~~~~~~ */
-CC = gcc
+CC = cc
 CFLAGS = -Wall -Werror -Wextra -g3
 IFLAGS:= -I ./includes
 

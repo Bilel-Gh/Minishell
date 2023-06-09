@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   verif_cmd.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 22:16:18 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/08 22:42:44 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/09 15:08:32 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ t_token* ft_verif_cmd(t_token** tokenHead)
         if (current->info->type == COMMANDE && nb_space > 0)
         {
             save_next_tokens = ft_save_next_tokens(current);
-            value_splited = ft_split(current->value, " ");
+            value_splited = ft_split(current->value, ' ');
             tmp = current;
             ft_insert_tokens(tmp, value_splited);
             ft_free_value_splited(value_splited);

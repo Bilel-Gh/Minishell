@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:13:01 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/02 02:13:10 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/09 15:53:12 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	*get_expende_detect(int size_of_expende, char *expande)
     int		i;
 
     i = 0;
-    txt_expande = malloc(sizeof(char) * size_of_expende);
+    txt_expande = malloc(sizeof(char) * (size_of_expende + 1));
     while (i < size_of_expende)
     {
         txt_expande[i] = expande[i + 1];
@@ -97,7 +97,7 @@ char	*join_and_rp_args(char *args_con, char *expande, int size_extract)
     if (!expande)
         new_args = malloc(strlen(args_con) - size_extract);
     else
-        new_args = malloc(strlen(args_con) + strlen(expande) - size_extract);
+        new_args = malloc(strlen(args_con) + (strlen(expande) - size_extract) + 1);
     if (!new_args)
         exit (0);// renplacer par la fonction free_all;
     while (args_con[i])
@@ -116,10 +116,11 @@ char	*join_and_rp_args(char *args_con, char *expande, int size_extract)
             i = i + size_extract;
         }
         new_args[j] = args_con[i];
-        i++;
+        if (args_con[i])
+            i++;
         j++;
     }
-    new_args[j] = 0;
+  //make  new_args[j] = 0;
     printf("join = %s\n", new_args);
     free(args_con);
     return (new_args);

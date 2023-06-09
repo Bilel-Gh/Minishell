@@ -121,15 +121,27 @@ void add_cmd_to_list_commande(t_commande *list_commande, char **cmd_join)
 	i = 0;
 	while(list_cmd)
 	{
-		list_cmd->cmd = ft_split(cmd_join[i], " ");
+		list_cmd->cmd = ft_split(cmd_join[i], ' ');
 		i++;
 		if (list_cmd->next == 0)
 		    break;
 		list_cmd = list_cmd->next;
 	}
-
 }
 
+void free_list_commande(t_commande *commande)
+{
+	t_commande* head;
+	while (commande->next)
+	{
+		head = commande;
+		commande = commande->next;
+		free_db_array(head->cmd);
+		free(head);
+	}
+	free_db_array(commande->cmd);
+	free(commande);
+}
 
 t_commande *cmd_complete(t_token *token)
 {
@@ -149,6 +161,7 @@ t_commande *cmd_complete(t_token *token)
 	cmd_join = give_cmd_join(token, nb_node);
 	add_cmd_to_list_commande(list_commande, cmd_join);
 	list_commande = head;
+	free_db_array(cmd_join);
 	int i;
 	i = 0;
 	int y;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/09 14:42:33 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/09 19:04:07 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,8 @@ void minishell_loop(void)
     char **args;
     int *info_args;
     t_token* tokens;
+    t_token* head;
+    t_commande *commande;
     while (1)
     {
         line = readline("\033[1;32mminishell >\033[0m"); // TODO : BUG affichage quand on ecrit plein de caracteres
@@ -90,8 +92,11 @@ void minishell_loop(void)
         printf("\n@@@@@@@@@@@@@ ERROR DETECT !!!! @@@@@@@@@@@@@@@\n");
     else
         printf("############# validation ###############\n");
-    tokens = ft_get_tokens_with_infos(args, info_args, nb_args);
-    //cmd_complete(tokens);
+    if (!args)
+        continue;
+    tokens = ft_get_tokens_with_infos(args, nb_args);
+    commande = cmd_complete(tokens);
+    head = tokens;
     while (tokens)
     {
         printf("\033[1;31mtoken value = %s\n\033[0m", tokens->value);
@@ -102,6 +107,7 @@ void minishell_loop(void)
         printf("\n\n");
         tokens = tokens->next;
     }
+    tokens = head;
      i = 0;
        info_args = ft_get_info_args(args, &nb_args);
 		while (i < nb_args)
@@ -120,7 +126,11 @@ void minishell_loop(void)
         //else
            // printf("Commande introuvable\n");
         // Libérez la mémoire allouée par readline
+        free(info_args);
+        free_db_array(args);
         free(line);
+        free_list_commande(commande);
+        free_list_tokens(tokens);
     }
 }
 

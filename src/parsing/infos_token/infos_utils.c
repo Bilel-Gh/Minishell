@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   infos_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 04:18:57 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/06 16:30:10 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/09 18:23:11 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,32 +15,40 @@
 // version a completer demain
 int ft_is_command(t_token *token)
 {
+    char **path_splited;
+    char *path;
+    char* pathCopy;
+    char *fullPath;
+    int i;
+
     if (token->token_index == 0)
         return 1;
     if (token->prev != NULL && token->prev->info->type == T_PIPE)
         return 1;
-    char **path_splited;
-    char *path;
+    i = 0;
+    pathCopy = NULL;
     path = getenv("PATH");
-    char* pathCopy = ft_strdup(path);
-    path_splited = ft_split(pathCopy, ":");
-
-    while (*path_splited)
+    pathCopy = ft_strdup(path);
+    path_splited = ft_split(pathCopy, ':');
+    while (path_splited[i])
     {
-        char *fullPath; // 256 est le max de char dans un path
-        fullPath = ft_strjoin(*path_splited, "/");
+        fullPath = NULL;
+        fullPath = ft_strjoin(fullPath, path_splited[i]);
+        fullPath = ft_strjoin(fullPath, "/");
         fullPath = ft_strjoin(fullPath, token->value);
         if (access(fullPath, 0) == 0)
         {
             printf("\033[0;33m[OK CMD]\033[0m\n");
+            free_db_array(path_splited);
             free(fullPath);
             free(pathCopy);
             return 1;
         }
         free(fullPath);
-        path_splited++;
+        i++;
     }
     free(pathCopy);
+    free_db_array(path_splited);
     printf("\033[0;31m[NOT OK CMD]\033[0m\n");
     return 0;
 }
