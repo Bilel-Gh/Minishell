@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 16:18:20 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/01 20:46:14 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/09 13:10:43 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,12 @@ char **kick_args_space(char **new_args, int *type_args, int *nb_args)
 	if (!last_args)
 		return (NULL);// FT_ERROR_malloc_parsing
 	last_args[nb_new_args] = 0;
+	while ( i < nb_new_args)
+	{
+		last_args[i] = 0;
+		i++;
+	}
+	i = 0;
 	while (i < *nb_args)
 	{
 		printf("111111111111\n");
