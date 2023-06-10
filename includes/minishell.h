@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/09 18:34:46 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/10 19:49:25 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,6 +138,8 @@ void free_list_commande(t_commande *commande);
 t_token* merge_characters(t_character* head);
 t_token	*ft_handle_quotes(t_token *tokenHead, t_character **current_charPtr);
 char	*append_value(char *str, char c);
+t_character	*ft_parse_string(const char *input);
+void get_current_charptr(t_character **current_charPtr, t_character *next_char);
 
 // Dossier error_args
 bool search_error_args(int *type_args, int *nb_args, char **args);
@@ -166,5 +168,7 @@ t_token* create_token(t_token* head, char* value, int index);
 t_token_info*    add_infos_to_token(char* value, t_token* token, int* is_commande_in_pipe);
 t_token *ft_save_next_tokens(t_token *current);
 void ft_free_value_splited(char **value_splited);
+void ft_free_paths(char **path_splited, char *pathCopy);
+void ft_free_paths2(char **path_splited, char *pathCopy, char *fullPath);
 
 #endif

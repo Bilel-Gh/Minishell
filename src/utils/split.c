@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   split.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 05:04:11 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/09 15:57:19 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/10 21:27:39 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
 #include <stdlib.h>
 
 static int	nbr_string(char *s, char c)
@@ -101,7 +100,6 @@ static void	complete(char *s, char **str, char c, int i)
 		i++;
 	}
 }
-
 
 char	**ft_split(char *s, char c)
 {

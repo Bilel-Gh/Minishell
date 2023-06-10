@@ -28,6 +28,7 @@ OBJS_UTILS = ${addprefix ${UTILS_DIR}, ${UTILS:.c=.o}}
 # /* ~~~~~~~ LEXEUR ~~~~~~~ */
 LEXEUR_DIR = ./src/lexeur/
 LEXEUR =	lexeur.c \
+			lexeur2.c \
 			merge_characters.c \
 			merge_characters2.c \
 

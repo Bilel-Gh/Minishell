@@ -6,12 +6,12 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 12:54:47 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/07 19:10:12 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/10 21:27:33 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
 #include "../../includes/minishell.h"
+#include <stdlib.h>
 
 int	ft_strlen(const char *str)
 {
@@ -27,13 +27,13 @@ int	ft_strlen(const char *str)
 	return (nb);
 }
 
-void	ft_complete( char const *s, char *str, int *i)
+void	ft_complete(char const *s, char *str, int *i)
 {
 	int	x;
 
 	x = 0;
 	if (!s)
-		return;
+		return ;
 	while (s[x])
 	{
 		str[*i] = s[x];
@@ -49,8 +49,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		size_s2;
 	int		i;
 
-	//if (!s1 || !s2)
-	//	return (NULL);
 	i = 0;
 	size_s1 = ft_strlen(s1);
 	size_s2 = ft_strlen(s2);
@@ -64,14 +62,3 @@ char	*ft_strjoin(char *s1, char *s2)
 	str[i] = '\0';
 	return (str);
 }
-
-/*
-int main()
-{
-	char s1[] = "nassim";
-	char s2[] = "charii";
-
-	printf("%s",ft_strjoin(s1, s2));
-	return (0);
-}
-*/
