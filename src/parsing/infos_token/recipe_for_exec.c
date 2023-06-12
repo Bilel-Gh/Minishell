@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   recipe_for_exec.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/12 22:49:57 by ncharii           #+#    #+#             */
+/*   Updated: 2023/06/13 00:22:51 by ncharii          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../../includes/minishell.h"
 
 void	init_struc_cmd(t_commande *commande)
@@ -32,7 +44,7 @@ void	creat_cmd_list(t_commande *cmd, int nb_node)
 		tmp = malloc(sizeof(t_commande)); //security!!!
 		if (!tmp)
 		{
-			printf("########################################################################\n");
+			printf("##############################################\n");
 			return ;
 		}
 		init_struc_cmd(tmp);
@@ -50,8 +62,6 @@ char	*ft_join_cmd(char *s1, char *s2)
 	int		size_s2;
 	int		i;
 
-	// if (!s1 || !s2)
-	//	return (NULL);
 	i = 0;
 	size_s1 = ft_strlen(s1);
 	size_s2 = ft_strlen(s2);
@@ -68,6 +78,17 @@ char	*ft_join_cmd(char *s1, char *s2)
 	return (str);
 }
 
+void	b_zero_for_cmd_join(char **cmd_join, int nb_cdm, int i)
+{
+	cmd_join[nb_cdm] = 0;
+	while (i < nb_cdm)
+	{
+		cmd_join[i] = 0;
+		i++;
+	}
+	i = 0;
+}
+
 char	**give_cmd_join(t_token *token, int nb_cdm)
 {
 	char	**cmd_join;
@@ -79,13 +100,7 @@ char	**give_cmd_join(t_token *token, int nb_cdm)
 	cmd_join = malloc(sizeof(char *) * (nb_cdm + 1));
 	if (!cmd_join)
 		return (0);
-	cmd_join[nb_cdm] = 0;
-	while (i < nb_cdm)
-	{
-		cmd_join[i] = 0;
-		i++;
-	}
-	i = 0;
+	b_zero_for_cmd_join(cmd_join, nb_cdm, i);
 	while (token_search)
 	{
 		while (token_search)
