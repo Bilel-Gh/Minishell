@@ -6,11 +6,19 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 16:18:20 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/10 21:21:12 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/11 14:27:10 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+bool	fist_error(int *type_args)
+{
+	if ((type_args[0] != 0 && type_args[0] != 1) || (type_args[0] == 1
+				&& type_args[1] != 0))
+		return (true);
+	return (false);
+}
 
 bool	error_grammaticale(int *type_args, int nb_args)
 {
@@ -26,20 +34,16 @@ bool	error_grammaticale(int *type_args, int nb_args)
 	{
 		if (type_args[i] == 5)
 			i++;
-		if (i == 0)
-		{
-			if ((type_args[i] != 0 && type_args[i] != 1) || (type_args[i] == 1
-					&& type_args[i + 1] != 0))
-				return (true);
-		}
+		if (i == 0 && fist_error(type_args))
+			return (true);
 		if (i != 0)
 		{
-			if (type_args[i] == 0)
+		/*	if (type_args[i] == 0)
 			{
 				if (type_args[i + 1] != 4 && type_args[i + 1] != 0
 					&& type_args[i + 1] != 1)
 					return (true);
-			}
+			}*/
 			if (type_args[i] == 4 && type_args[i + 1] != 0 && type_args[i
 				+ 1] != 1)
 				return (true);

@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/09 19:04:07 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/11 14:25:47 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,13 @@ void minishell_loop(void)
     //char **for_test = 0;
     args = ft_parsing(info_args, &nb_args, args, &error);
     if (error == 0)
+	{
         printf("\n@@@@@@@@@@@@@ ERROR DETECT !!!! @@@@@@@@@@@@@@@\n");
-    else
+		//free(info_args);
+        free_db_array(args);
+		continue;
+	}
+	else
         printf("############# validation ###############\n");
     if (!args)
         continue;
