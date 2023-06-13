@@ -62,59 +62,77 @@ void execute_command(char **splited_line)
     }
 }
 
-
-void minishell_loop(void)
+t_global_parsing* ft_init_global_parsing(void)
 {
-    char *line;
+    struct s_global_parsing *g_parsing;
+    g_parsing = malloc(sizeof(struct s_global_parsing));
+    g_parsing->args = NULL;
+    g_parsing->info_args = NULL;
+    g_parsing->tokens = NULL;
+    g_parsing->commande = NULL;
+    g_parsing->line = NULL;
+    return (g_parsing);
+}
+
+void ft_free_g_parsing(t_global_parsing *g_parsing)
+{
+    free(g_parsing->line);
+    free(g_parsing->args);
+    free(g_parsing->info_args);
+    free(g_parsing->tokens);
+    free(g_parsing->commande);
+    free(g_parsing);
+}
+
+void minishell_loop(char **env)
+{
+    struct s_global_parsing *g_parsing;
+    g_parsing = ft_init_global_parsing();
     // char *line_cpy;
-    char **args;
-    int *info_args;
-    t_token* tokens;
     t_token* head;
-    t_commande *commande;
     while (1)
     {
-        line = readline("\033[1;32mminishell >\033[0m"); // TODO : BUG affichage quand on ecrit plein de caracteres
-        if (line == NULL)
+        g_parsing->line = readline("\033[1;32mminishell >\033[0m"); // TODO : BUG affichage quand on ecrit plein de caracteres
+        if (g_parsing->line == NULL)
             exit(0);
-        if (strlen(line) == 0)
+        if (strlen(g_parsing->line) == 0)
             continue;
 
 //		args = ft_split_line_to_character(line);
     int nb_args;
-    args = ft_lexeur(line);
-    info_args = ft_get_info_args(args, &nb_args); // anciennement info_token
+    g_parsing->args = ft_lexeur(g_parsing->line);
+    g_parsing->info_args = ft_get_info_args(g_parsing->args, &nb_args); // anciennement info_token
     int i = 0;
     int error;
     //char **for_test = 0;
-    args = ft_parsing(info_args, &nb_args, args, &error);
+    g_parsing->args = ft_parsing(g_parsing->info_args, &nb_args, g_parsing->args, &error, env);
     if (error == 0)
 	{
         printf("\n@@@@@@@@@@@@@ ERROR DETECT !!!! @@@@@@@@@@@@@@@\n");
 		//free(info_args);
-        free_db_array(args);
+        free_db_array(g_parsing->args);
 		continue;
 	}
 	else
         printf("############# validation ###############\n");
-    if (!args)
+    if (!g_parsing->args)
         continue;
-    tokens = ft_get_tokens_with_infos(args, nb_args);
-    commande = cmd_complete(tokens);
-    head = tokens;
-    while (tokens)
+    g_parsing->tokens = ft_get_tokens_with_infos(g_parsing->args, nb_args);
+    g_parsing->commande = cmd_complete(g_parsing->tokens);
+    head = g_parsing->tokens;
+    while (g_parsing->tokens)
     {
-        printf("\033[1;31mtoken value = %s\n\033[0m", tokens->value);
-        printf("\033[1;33mtoken type = %d\n\033[0m", tokens->info->type);
-        printf("\033[1;34mtoken index = %d\n\033[0m", tokens->token_index);
-        if (tokens->prev)
-            printf("\033[1;35mtoken prev value = %s\n\033[0m", tokens->prev->value);
+        printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
+        printf("\033[1;33mtoken type = %d\n\033[0m", g_parsing->tokens->info->type);
+        printf("\033[1;34mtoken index = %d\n\033[0m", g_parsing->tokens->token_index);
+        if (g_parsing->tokens->prev)
+            printf("\033[1;35mtoken prev value = %s\n\033[0m", g_parsing->tokens->prev->value);
         printf("\n\n");
-        tokens = tokens->next;
+        g_parsing->tokens = g_parsing->tokens->next;
     }
-    tokens = head;
+    g_parsing->tokens = head;
      i = 0;
-       info_args = ft_get_info_args(args, &nb_args);
+        g_parsing->info_args = ft_get_info_args(g_parsing->args, &nb_args);
 		while (i < nb_args)
 		{
 			i++;
@@ -131,22 +149,40 @@ void minishell_loop(void)
         //else
            // printf("Commande introuvable\n");
         // Libérez la mémoire allouée par readline
-        free(info_args);
-        free_db_array(args);
-        free(line);
-        free_list_commande(commande);
-        free_list_tokens(tokens);
+        ft_free_g_parsing(g_parsing);
     }
 }
 
-int main(void)
+char **ft_db_array_dup(char **db_array)
 {
+    int i;
+    char **db_array_cpy;
+    i = 0;
+    while (db_array[i])
+        i++;
+    db_array_cpy = malloc(sizeof(char*) * (i + 1));
+    i = 0;
+    while (db_array[i])
+    {
+        db_array_cpy[i] = ft_strdup(db_array[i]);
+        i++;
+    }
+    db_array_cpy[i] = NULL;
+    return (db_array_cpy);
+}
+
+int main(int argc, char **argv, char **env)
+{
+    (void)argc;
+    (void)argv;
+    char **env_cpy;
+    env_cpy = ft_db_array_dup(env);
     struct sigaction s_sigaction;
 
     s_sigaction.sa_handler = int_handler; // Nom de la fonction de gestionnaire
     sigaction(SIGINT, &s_sigaction, NULL); // Gestionnaire de signal SIGINT
 
-    minishell_loop();
+    minishell_loop(env_cpy);
     return 0;
 }
 

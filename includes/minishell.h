@@ -92,6 +92,15 @@ typedef struct commande
 	struct commande		*next;
 }					t_commande;
 
+typedef struct        s_global_parsing
+{
+    int *info_args;
+    char   **args;
+    t_token *tokens;
+    t_commande *commande;
+    char    *line;
+}                    t_global_parsing;
+
 char **ft_lexeur(char *line);
 
 // Dossier BUILTIN
@@ -104,7 +113,7 @@ void builtin_cd(char **args);
 void builtin_exit();
 
 // Dossier PARSING
-char    **ft_parsing(int *type_args, int *nb_args, char **args, int *error);
+char	**ft_parsing(int *type_args, int *nb_args, char **args, int *error, char **env);
 int *ft_get_info_args(char **line_split , int *give_nb_token);
 char **join_inter_space(char **args, int *type_args, int *nb_args);
 char **kick_quote(int *type_args, int nb_args, char **args);
@@ -149,7 +158,7 @@ void	give_sp_args_redi(char *args, int *type_args, int pos);
 bool	quote_is_open(char *args);
 
 // Dossier EXPAND
-void	expande(int *type_args, int nb_args, char **args);
+void	expande(int *type_args, int nb_args, char **args, char **env);
 char	*join_and_rp_args(char *args_con, char *expande, int size_extract);
 char	*give_env_expand(char *expande_search, int size);
 char	*is_sp_expand(char *expand_search);
