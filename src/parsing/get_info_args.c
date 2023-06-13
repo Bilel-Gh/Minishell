@@ -38,6 +38,7 @@ int	ft_get_type(char *const *line_split, int i, int *type)
 	}
 	return (i);
 }
+
 int	*ft_get_info_args(char **line_split, int *give_nb_args)
 {
 	int	nb_args;

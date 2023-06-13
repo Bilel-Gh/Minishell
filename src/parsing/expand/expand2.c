@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:13:01 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/13 00:22:41 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/13 17:21:21 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,46 +81,48 @@ char	*give_env_expand(char *expande_search, int size)
 	return (&environ[i][size]);
 }
 
-char	*join_and_rp_args(char *args_con, char *expande, int size_extract)
+int	join_expand(char *expande, int *j, int s_extract, char *new_args)
+{
+	int	index;
+
+	index = 0;
+	if (expande)
+	{
+		while (expande[index])
+		{
+			new_args[*j] = expande[index];
+			index++;
+			*j = *j + 1;
+		}
+	}
+	return (s_extract);
+}
+
+char	*join_and_rp_args(char *args_con, char *expande, int s_extract)
 {
 	char	*new_args;
 	int		i;
 	int		j;
-	int		index;
 	bool	expande_in;
 
 	expande_in = false;
-	index = 0;
 	i = 0;
 	j = 0;
 	if (!expande)
-		new_args = malloc(strlen(args_con) - size_extract);
+		new_args = malloc(strlen(args_con) - s_extract);
 	else
-		new_args = malloc(strlen(args_con) + (strlen(expande) - size_extract) + 1);
+		new_args = malloc(strlen(args_con) + (strlen(expande) - s_extract) + 1);
 	if (!new_args)
 		exit (0);// renplacer par la fonction free_all;
 	while (args_con[i])
 	{
 		if (args_con[i] == '$' && expande_in == false)
-		{
-			if (expande)
-			{
-				while (expande[index])
-				{
-					new_args[j] = expande[index];
-					index++;
-					j++;
-				}
-			}
-			i = i + size_extract;
-		}
+			i = i + join_expand(expande, &j, s_extract, new_args);
 		new_args[j] = args_con[i];
 		if (args_con[i])
 			i++;
 		j++;
 	}
-	printf("join = %s\n", new_args);
 	free(args_con);
 	return (new_args);
 }
-

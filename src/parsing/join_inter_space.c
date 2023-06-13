@@ -39,7 +39,8 @@ int	count_new_args(int *type_args, int nb_args)
 			j++;
 			continue ;
 		}
-		(i++, j++);
+		i++;
+		j++;
 	}
 	printf("j new args = %d\n", j);
 	return (j);
@@ -67,7 +68,8 @@ int	malloc_new_args(char **new_args, char **args, int *type_args, int nb_args)
 			continue ;
 		}
 		new_args[j] = ft_strjoin(new_args[j], args[i]);
-		(i++, j++);
+		i++;
+		j++;
 	}
 	new_args[j] = 0;
 	return (1);
