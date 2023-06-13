@@ -70,10 +70,10 @@ bool	have_expande(char *args)
 	return (false);
 }
 
-void	expande(int *type_args, int nb_args, char **args)
+void	expande(int *type_args, int nb_args, char **args, char **env)
 {
 	int	i;
-
+    (void)env;
 	i = 0;
 	while (i < nb_args)
 	{

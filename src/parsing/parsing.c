@@ -104,7 +104,7 @@ char	**kick_args_space(char **new_args, int *type_args, int *nb_args)
 	return (*nb_args = nb_new_args, last_args);
 }
 
-char	**ft_parsing(int *type_args, int *nb_args, char **args, int *error)
+char	**ft_parsing(int *type_args, int *nb_args, char **args, int *error, char **env)
 {
 	char	**new_args;
 	char	**no_quote_args;
@@ -113,7 +113,7 @@ char	**ft_parsing(int *type_args, int *nb_args, char **args, int *error)
 	*error = 0;
 	if (search_error_args(type_args, nb_args, args))
 		return (args);
-	expande(type_args, *nb_args, args);
+	expande(type_args, *nb_args, args, env);
 	no_quote_args = kick_quote(type_args, *nb_args, args);
 	new_args = join_inter_space(no_quote_args, type_args, nb_args);
 	new_type_args = ft_get_info_args(new_args, nb_args);
