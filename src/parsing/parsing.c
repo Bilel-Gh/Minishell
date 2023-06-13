@@ -116,7 +116,6 @@ char	**ft_parsing(int *type_args, int *nb_args, char **args, int *error)
 	expande(type_args, *nb_args, args);
 	no_quote_args = kick_quote(type_args, *nb_args, args);
 	new_args = join_inter_space(no_quote_args, type_args, nb_args);
-	//free_db_array(no_quote_args);
 	new_type_args = ft_get_info_args(new_args, nb_args);
 	free_db_array(args);
 	args = kick_args_space(new_args, type_args, nb_args);
@@ -129,6 +128,6 @@ char	**ft_parsing(int *type_args, int *nb_args, char **args, int *error)
 	printf("^^^^^^^^^^^ no error grammaticale ^^^^^^^^^^^^^^^^\n");
 	*error = 1;
 	free(new_type_args);
-	//free_db_array(no_quote_args);
+	free_db_array(no_quote_args);
 	return (args);
 }

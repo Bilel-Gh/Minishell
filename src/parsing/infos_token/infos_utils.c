@@ -16,7 +16,10 @@ void	get_paths(char *path, char ***path_splited, char **path_copy)
 {
 	(*path_copy) = NULL;
 	path = getenv("PATH");
-	(*path_copy) = ft_strdup(path);
+	if (path)
+		(*path_copy) = ft_strdup(path);
+	else
+		path = "/";
 	(*path_splited) = ft_split((*path_copy), ':');
 }
 

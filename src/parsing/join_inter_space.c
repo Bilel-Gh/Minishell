@@ -80,8 +80,8 @@ char	**join_inter_space(char **args, int *type_args, int *nb_args)
 	int		nb_new_args;
 
 	nb_new_args = count_new_args(type_args, *nb_args);
-	if (nb_new_args == *nb_args)
-		return (args);
+//	if (nb_new_args == *nb_args)
+//		return (args);
 	i = 0;
 	new_args = malloc(sizeof(char *) * (nb_new_args + 1));
 	while (i <= nb_new_args)
