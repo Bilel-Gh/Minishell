@@ -51,7 +51,6 @@ int	*ft_get_info_args(char **line_split, int *give_nb_args)
 		return (NULL);
 	while (line_split[nb_args])
 		nb_args++;
-	printf("nb_args = %d\n", nb_args);
 	type = malloc(sizeof(int) * nb_args);
 	i = ft_get_type(line_split, i, type);
 	*give_nb_args = i;

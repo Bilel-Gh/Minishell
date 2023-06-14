@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 04:45:41 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/10 20:05:58 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/13 23:49:40 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	ft_is_quote_closed(t_character *current_char)
 	enum e_character_type	state;
 	int						is_quote_closed;
 
-    state = get_state(&current_char);
+	state = get_state(&current_char);
 	current_char = current_char->next;
 	is_quote_closed = 0;
 	while (current_char)

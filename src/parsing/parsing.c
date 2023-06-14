@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 16:18:20 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/12 23:58:58 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/13 19:33:49 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,13 +104,14 @@ char	**kick_args_space(char **new_args, int *type_args, int *nb_args)
 	return (*nb_args = nb_new_args, last_args);
 }
 
-char	**ft_parsing(int *type_args, int *nb_args, char **args, int *error, char **env)
+char	**ft_parsing(int *nb_args, char **args, int *error, char **env)
 {
 	char	**new_args;
 	char	**no_quote_args;
 	int		*new_type_args;
+	int		*type_args;
 
-	*error = 0;
+	type_args = ft_get_info_args(args, nb_args);
 	if (search_error_args(type_args, nb_args, args))
 		return (args);
 	expande(type_args, *nb_args, args, env);

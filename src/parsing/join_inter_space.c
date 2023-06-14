@@ -34,7 +34,7 @@ int	count_new_args(int *type_args, int nb_args)
 			{
 				i++;
 				if (i == nb_args)
-					return (printf("FSFSFSFF\n"), j + 1);
+					return (j + 1);
 			}
 			j++;
 			continue ;
@@ -42,7 +42,6 @@ int	count_new_args(int *type_args, int nb_args)
 		i++;
 		j++;
 	}
-	printf("j new args = %d\n", j);
 	return (j);
 }
 

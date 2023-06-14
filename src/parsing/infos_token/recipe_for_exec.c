@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 22:49:57 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/13 00:22:51 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/13 23:34:25 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,31 +93,27 @@ char	**give_cmd_join(t_token *token, int nb_cdm)
 {
 	char	**cmd_join;
 	int		i;
-	t_token	*token_search;
+	t_token	*tok_sch;
 
 	i = 0;
-	token_search = token;
+	tok_sch = token;
 	cmd_join = malloc(sizeof(char *) * (nb_cdm + 1));
 	if (!cmd_join)
 		return (0);
 	b_zero_for_cmd_join(cmd_join, nb_cdm, i);
-	while (token_search)
+	while (tok_sch && i != nb_cdm)
 	{
-		while (token_search)
+		while (tok_sch)
 		{
-			if (token_search->info->type == COMMANDE
-				|| token_search->info->type == ARG)
-				cmd_join[i] = ft_join_cmd(cmd_join[i], token_search->value);
-			if (token_search->info->type == T_PIPE)
-			{
-				token_search = token_search->next;
+			if (tok_sch->info->type == COMMANDE || tok_sch->info->type == ARG)
+				cmd_join[i] = ft_join_cmd(cmd_join[i], tok_sch->value);
+			if (tok_sch->info->type == T_PIPE)
 				break ;
-			}
-			token_search = token_search->next;
+			tok_sch = tok_sch->next;
 		}
 		i++;
-		if (i == nb_cdm)
-			break ;
+		if (i != nb_cdm)
+			tok_sch = tok_sch->next;
 	}
 	return (cmd_join);
 }
@@ -160,8 +156,6 @@ t_commande	*cmd_complete(t_token *token)
 	int			nb_node;
 	t_commande	*head;
 	char		**cmd_join;
-	int			i;
-	int			y;
 
 	nb_node = nb_pipe(token) + 1;
 	list_commande = malloc(sizeof(t_commande));
@@ -175,18 +169,5 @@ t_commande	*cmd_complete(t_token *token)
 	add_cmd_to_list_commande(list_commande, cmd_join);
 	list_commande = head;
 	free_db_array(cmd_join);
-	i = 0;
-	y = 0;
-	while (y < nb_node)
-	{
-		i = 0;
-		while (list_commande->cmd[i])
-		{
-			printf("nb cdm %d :  %s\n", y, list_commande->cmd[i]);
-			i++;
-		}
-		list_commande = list_commande->next;
-		y++;
-	}
 	return (head);
 }

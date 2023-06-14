@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/10 19:49:25 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/13 20:02:44 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void builtin_cd(char **args);
 void builtin_exit();
 
 // Dossier PARSING
-char	**ft_parsing(int *type_args, int *nb_args, char **args, int *error, char **env);
+char	**ft_parsing(int *nb_args, char **args, int *error, char **env);
 int *ft_get_info_args(char **line_split , int *give_nb_token);
 char **join_inter_space(char **args, int *type_args, int *nb_args);
 char **kick_quote(int *type_args, int nb_args, char **args);
@@ -160,7 +160,8 @@ bool	quote_is_open(char *args);
 // Dossier EXPAND
 void	expande(int *type_args, int nb_args, char **args, char **env);
 char	*join_and_rp_args(char *args_con, char *expande, int size_extract);
-char	*give_env_expand(char *expande_search, int size);
+char	*give_env_expand(char *expande_search, int size, char **env);
+char	*give_env_expand(char *expande_search, int size, char **env);
 char	*is_sp_expand(char *expand_search);
 char	*get_expende_detect(int size_of_expende, char *expande);
 int	ft_size_of_expende(char *expande);
