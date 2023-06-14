@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/13 20:02:44 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/14 16:12:56 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ void builtin_env();
 void builtin_pwd();
 void builtin_cd(char **args);
 void builtin_exit();
+void ft_exec_bultins(char **args, char **env);
 
 // Dossier PARSING
 char	**ft_parsing(int *nb_args, char **args, int *error, char **env);

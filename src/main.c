@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/14 15:20:39 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/14 17:13:24 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,16 +154,17 @@ void minishell_loop(char **env)
 		g_parsing->commande = cmd_complete(g_parsing->tokens);
 		head = g_parsing->tokens;
 		ft_set_index_for_exec(&g_parsing->tokens);
-		while (g_parsing->tokens)
-		{
-			printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
-			printf("\033[1;33mtoken type = %d\n\033[0m", g_parsing->tokens->info->type);
-			printf("\033[1;34mtoken index = %d\n\033[0m", g_parsing->tokens->token_index);
-			if (g_parsing->tokens->prev)
-				printf("\033[1;35mtoken prev value = %s\n\033[0m", g_parsing->tokens->prev->value);
-			printf("\n\n");
-			g_parsing->tokens = g_parsing->tokens->next;
-		}
+		ft_exec_bultins(g_parsing->commande->cmd, env);
+		// while (g_parsing->tokens)
+		// {
+		// 	printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
+		// 	printf("\033[1;33mtoken type = %d\n\033[0m", g_parsing->tokens->info->type);
+		// 	printf("\033[1;34mtoken index = %d\n\033[0m", g_parsing->tokens->token_index);
+		// 	if (g_parsing->tokens->prev)
+		// 		printf("\033[1;35mtoken prev value = %s\n\033[0m", g_parsing->tokens->prev->value);
+		// 	printf("\n\n");
+		// 	g_parsing->tokens = g_parsing->tokens->next;
+		// }
 		g_parsing->tokens = head;
 		//		while (args[i])
 		//		{

@@ -6,35 +6,88 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 01:44:34 by bghandri          #+#    #+#             */
-/*   Updated: 2023/05/25 08:09:36 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/14 17:43:03 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+void ft_exec_bultins(char **args, char **env)
+{
+    (void)env;
+    if (ft_strcmp(args[0], "echo") == 0)
+        builtin_echo(args);
+    else if (ft_strcmp(args[0], "cd") == 0)
+        builtin_cd(args);
+    else if (ft_strcmp(args[0], "pwd") == 0)
+        builtin_pwd();
+    else if (ft_strcmp(args[0], "unset") == 0)
+        builtin_unset(args);
+    else if (ft_strcmp(args[0], "env") == 0)
+        builtin_env();
+    else if (ft_strcmp(args[0], "exit") == 0)
+        builtin_exit();
+}
+
+int ft_is_option_echo(char *str)
+{
+    if (str[0] == '-')
+    {
+        if (str[1] == 'n')
+        {
+            str++;
+            while (*str == 'n')
+                str++;
+            if (*str == '\0')
+                return (1);
+            else
+                return (0);
+        }
+        else
+            return (0);
+    }
+    else
+        return (0);
+}
+
+void ft_get_full_arg(char **args, char **full_arg, int i)
+{
+    int j;
+    j = i;
+    if (args[j] == NULL)
+        return;
+    *full_arg = ft_strdup(args[j]);
+    j++;
+    while (args[j] != NULL)
+    {
+        *full_arg = ft_join_cmd(*full_arg, args[j]);
+        j++;
+    }
+}
+
 void builtin_echo(char **args)
 {
-    int i = 1;
-    int len = 0;
-    int print_newline = 1; // Variable pour gérer l'option -n
+    int i;
+    int len;
+    int print_newline;
+    char *full_arg;
 
+    i = 1;
+    len = 0;
+    print_newline = 1; // Variable pour gérer l'option -n
+    full_arg = NULL;
     // Vérifier si l'option -n est spécifiée
-    if (args[1] != NULL && strcmp(args[1], "-n") == 0)
+    if (args[1] != NULL && ft_is_option_echo(args[1]))
     {
         print_newline = 0;
         i = 2;
     }
-
-    // Parcourir les arguments et les afficher
-    while (args[i] != NULL)
+    ft_get_full_arg(args, &full_arg, i);
+    if (full_arg != NULL)
     {
-        len = strlen(args[i]);
-        fwrite(args[i], sizeof(char), len, stdout);
-        i++;
-        if (args[i] != NULL)
-            putchar(' '); // Ajouter un espace entre les arguments
+        len = strlen(full_arg);
+        write(1, full_arg, len);
     }
-
     if (print_newline)
         putchar('\n');
 }
