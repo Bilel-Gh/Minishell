@@ -3,16 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2023/06/14 12:31:27 by ncharii          ###   ########.fr       */
-=======
-/*   Updated: 2023/06/14 15:20:39 by bghandri         ###   ########.fr       */
->>>>>>> 23a1535a4b5d159a0e373b8e97ec375bce4209ca
+/*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
+/*   Updated: 2023/06/14 15:36:12 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../includes/minishell.h"
 #include <string.h> // a supprimer
