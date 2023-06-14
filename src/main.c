@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2023/06/14 12:31:27 by ncharii          ###   ########.fr       */
+=======
+/*   Updated: 2023/06/14 15:20:39 by bghandri         ###   ########.fr       */
+>>>>>>> 23a1535a4b5d159a0e373b8e97ec375bce4209ca
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +94,30 @@ void ft_free_g_parsing(t_global_parsing *g_parsing)
 	free(g_parsing);
 }
 
+void ft_set_index_for_exec(t_token **tokens)
+{
+	t_token *head;
+	int i;
+	i = 0;
+	head = *tokens;
+	while (*tokens)
+	{
+		while ((*tokens)->info->type != 2)
+		{
+			(*tokens)->token_index = i;
+			*tokens = (*tokens)->next;
+			if (!*tokens)
+				break;
+		}
+		if (!*tokens)
+			break;
+		(*tokens)->token_index = i;
+		i++;
+		*tokens = (*tokens)->next;
+	}
+	*tokens = head;
+}
+
 void minishell_loop(char **env)
 {
 	struct s_global_parsing *g_parsing;
@@ -103,7 +131,7 @@ void minishell_loop(char **env)
 			return ;
 		g_parsing->line = readline("\033[1;32mminishell >\033[0m"); // TODO : BUG affichage quand on ecrit plein de caracteres
 		if (g_parsing->line == NULL)
-			exit(0);        
+			exit(0);
 		if (strlen(g_parsing->line) == 0)
 			continue;
 
@@ -129,6 +157,7 @@ void minishell_loop(char **env)
 		g_parsing->tokens = ft_get_tokens_with_infos(g_parsing->args, nb_args);
 		g_parsing->commande = cmd_complete(g_parsing->tokens);
 		head = g_parsing->tokens;
+		ft_set_index_for_exec(&g_parsing->tokens);
 		while (g_parsing->tokens)
 		{
 			printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
@@ -183,7 +212,7 @@ int main(int argc, char **argv, char **env)
 	struct sigaction s_sigaction;
 
 	s_sigaction.sa_handler = int_handler; // Nom de la fonction de gestionnaire
-	sigaction(SIGINT, &s_sigaction, NULL);// Gestionnaire de signal 
+	sigaction(SIGINT, &s_sigaction, NULL);// Gestionnaire de signal
 	minishell_loop(env_cpy);
 	if (env_cpy)
 		free_db_array(env_cpy);
