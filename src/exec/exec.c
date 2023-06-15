@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/15 08:43:36 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/15 15:58:29 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,12 +95,33 @@ t_token *get_info_token(t_token *tokens, int index)
 	info_token = dup_info(info_token, tokens, index);
 }
 
+
+
 //########################################################################
-
-
-void set_exec_and_exec(t_token *tokens, char **cmd)
+typedef struct		exec
 {
-	t_exec exec;
+	int	fd_infile;
+	int	fd_outfile;
+	int	fd_in_last_pipe;
+
+	char	**path;
+}					t_exec;
+
+void gestion_infile(t_token *tokens, t_exec *exec)
+{
+	t_token *seach_tok_in;
+
+	seach_tok_in = tokens;
+	while (seach_tok_in)
+	{
+		if (is_token_redi_in)
+			
+
+	}
+}
+
+void set_exec_and_exec(t_token *tokens, char **cmd, t_exec *exec)
+{
 	
 	gestion_infile;
 	gestion_outfile;
@@ -111,6 +132,7 @@ void set_exec_and_exec(t_token *tokens, char **cmd)
 void exec(t_token *tokens, t_commande *commande, char **env)
 {
 	t_token *info_token;
+	t_exec exec;
 	int i;
 
 	i = 0;
@@ -121,7 +143,7 @@ void exec(t_token *tokens, t_commande *commande, char **env)
 		if (!info_token)
 			return ;
 		i++;
-		//set_exec(info_token, commande->cmd)
+		//set_exec_and_(info_token, commande->cmd, exec)
 		commande = commande->next;
 		free_list_tokens(info_token);
 	}
