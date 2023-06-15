@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/14 18:13:51 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/15 08:43:36 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int nb_token_whis_index(t_token *tokens, int index)
 	seach = tokens;
 	while (seach)
 	{
-		if (seach->token_index = index)
+		if (seach->token_index == index)
 			i++;
 		seach = seach->next;
 	}
@@ -51,9 +51,30 @@ void	creat_info_token_list(t_token *tokens, int nb_node)
 	}
 }
 
-t_token dup_info(t_token *info_token, t_token *tokens, index)
+void	copy_cont_token(t_token *dest, t_token *src)
 {
-	je dois dup les token dans l ordre qui coresponde a l index;
+	dest->token_index = src->token_index;
+	dest->value = ft_strdup(src->value);
+	dest->info->type = src->info->type;
+}
+
+t_token	*dup_info(t_token *info_token, t_token *tokens, int index)
+{
+	t_token *tokens_value_index;
+	t_token *all;
+
+	all = tokens;
+	tokens_value_index = info_token;
+	while (all)
+	{
+		if (all->token_index == index)
+		{
+			copy_cont_token(tokens_value_index, all);
+			tokens_value_index = tokens_value_index->next;
+		}
+		all = all->next;
+	}
+	return (info_token);
 }
 
 t_token *get_info_token(t_token *tokens, int index)
@@ -72,23 +93,36 @@ t_token *get_info_token(t_token *tokens, int index)
 	if (!info_token)
 		return (NULL);
 	info_token = dup_info(info_token, tokens, index);
+}
+
+//########################################################################
 
 
+void set_exec_and_exec(t_token *tokens, char **cmd)
+{
+	t_exec exec;
+	
+	gestion_infile;
+	gestion_outfile;
+	start_exec;
 
 
 }
-
-void exec(t_token *tokens, t_commande *commande)
+void exec(t_token *tokens, t_commande *commande, char **env)
 {
 	t_token *info_token;
 	int i;
 
 	i = 0;
+//get_path;
 	while (commande)
 	{
 		info_token = get_info_token(tokens, i);
+		if (!info_token)
+			return ;
 		i++;
-		//start_exec(info_token, commande->cmd)
+		//set_exec(info_token, commande->cmd)
 		commande = commande->next;
+		free_list_tokens(info_token);
 	}
 }
