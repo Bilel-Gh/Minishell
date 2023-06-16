@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/15 15:58:29 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/16 11:36:26 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,14 +100,41 @@ t_token *get_info_token(t_token *tokens, int index)
 //########################################################################
 typedef struct		exec
 {
+	char *infile;
+	char **outfile;
 	int	fd_infile;
 	int	fd_outfile;
 	int	fd_in_last_pipe;
+	int heredoc;
 
 	char	**path;
 }					t_exec;
 
-void gestion_infile(t_token *tokens, t_exec *exec)
+void	new_infile(t_exec *exec, t_token *token)
+{
+	if (exec->infile)
+		close(fd_infile);
+
+}
+
+void	new_heredoc(t_exec *exec, t_token *token)
+{
+	if (exec->infile)
+		close(fd_infile);
+}
+
+void	set_new_infile(t_exec *exec, t_token *tokens)
+{
+	t_token *token;
+
+	tokens = token;
+	if (token->info->type == INFILE)
+		new_infile(exec, token->next);
+	else
+		new_heredoc(exec, token->next);
+}
+
+void	gestion_infile(t_token *tokens, t_exec *exec)
 {
 	t_token *seach_tok_in;
 
@@ -115,21 +142,20 @@ void gestion_infile(t_token *tokens, t_exec *exec)
 	while (seach_tok_in)
 	{
 		if (is_token_redi_in)
-			
+			set_new_infile(exec, seach_tok_in)
 
 	}
 }
 
-void set_exec_and_exec(t_token *tokens, char **cmd, t_exec *exec)
+void	set_exec_and_exec(t_token *tokens, char **cmd, t_exec *exec)
 {
-	
 	gestion_infile;
 	gestion_outfile;
 	start_exec;
 
 
 }
-void exec(t_token *tokens, t_commande *commande, char **env)
+void	exec(t_token *tokens, t_commande *commande, char **env)
 {
 	t_token *info_token;
 	t_exec exec;
