@@ -55,7 +55,13 @@ OBJS_PARSING = ${addprefix ${PARSING_DIR}, ${PARSING:.c=.o}}
 # /* ~~~~~~~ BUILTINS ~~~~~~~ */
 BUILTINS_DIR = ./src/builtins/
 BUILTINS =	builtins.c \
-			b_export.c \
+			export.c \
+			echo.c \
+			cd.c \
+			env.c \
+			pwd.c \
+			unset.c \
+			exit.c \
 
 OBJS_BUILTINS = ${addprefix ${BUILTINS_DIR}, ${BUILTINS:.c=.o}}
 

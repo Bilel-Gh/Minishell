@@ -1,0 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/17 21:38:03 by bghandri          #+#    #+#             */
+/*   Updated: 2023/06/17 21:42:37 by bghandri         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../includes/minishell.h"
+
+void builtin_env(char **args, char **env)
+{
+    int i;
+
+    i = 0;
+    if (args[1] != NULL) {
+        printf("env: should not have arguments\n");
+        return ;
+    }
+    while (env[i] != NULL) {
+        printf("%s\n", env[i]);
+        i++;
+    }
+}

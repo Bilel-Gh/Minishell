@@ -114,7 +114,7 @@ void ft_set_index_for_exec(t_token **tokens)
 	*tokens = head;
 }
 
-void minishell_loop(char **env)
+void minishell_loop(char ***env)
 {
 	struct s_global_parsing *g_parsing;
 
@@ -154,7 +154,8 @@ void minishell_loop(char **env)
 		g_parsing->commande = cmd_complete(g_parsing->tokens);
 		head = g_parsing->tokens;
 		ft_set_index_for_exec(&g_parsing->tokens);
-		ft_exec_bultins(g_parsing->commande->cmd, env);
+        if (g_parsing->commande->cmd)
+		    ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing);
 		// while (g_parsing->tokens)
 		// {
 		// 	printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
@@ -210,7 +211,7 @@ int main(int argc, char **argv, char **env)
 
 	s_sigaction.sa_handler = int_handler; // Nom de la fonction de gestionnaire
 	sigaction(SIGINT, &s_sigaction, NULL);// Gestionnaire de signal
-	minishell_loop(env_cpy);
+	minishell_loop(&env_cpy);
 	if (env_cpy)
 		free_db_array(env_cpy);
 	return 0;

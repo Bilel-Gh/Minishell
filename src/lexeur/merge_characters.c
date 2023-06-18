@@ -105,7 +105,8 @@ t_token	*merge_characters(t_character *head)
 			if (current_char == NULL)
 				return (token_head);
 		}
-		token_head = ft_group_rest(token_head, &current_char);
+        if (current_char->type != ESPACE && current_char->type != QUOTE_D && current_char->type != QUOTE_S)
+		    token_head = ft_group_rest(token_head, &current_char);
 		if (current_char == NULL)
 			return (token_head);
 	}

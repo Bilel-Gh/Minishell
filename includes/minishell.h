@@ -33,6 +33,8 @@
 
 extern char **environ;
 
+# define SIZE_PATH 4096
+
 enum e_character_type {
     ALPHANUM = 0,
     REDIRECT = 1,
@@ -105,16 +107,18 @@ char **ft_lexeur(char *line);
 
 // Dossier BUILTIN
 void builtin_echo(char **args);
-void builtin_export(char **args);
-void builtin_unset(char **args);
-void builtin_env();
+void builtin_export(char **args, char ***env);
+void builtin_unset(char **args, char ***env);
+void builtin_env(char **args, char **env);
 void builtin_pwd();
-void builtin_cd(char **args);
-void builtin_exit();
-void ft_exec_bultins(char **args, char **env);
+void builtin_cd(char **args, char ***env);
+void builtin_exit(char **args, t_global_parsing **g_pars);
+void ft_exec_bultins(char **args, char ***env, t_global_parsing **g_pars);
+char *ft_getenv(char *name, char **env);
+int ft_setenv(char *name, char *value, char ***env);
 
 // Dossier PARSING
-char	**ft_parsing(int *nb_args, char **args, int *error, char **env);
+char	**ft_parsing(int *nb_args, char **args, int *error, char ***env);
 int *ft_get_info_args(char **line_split , int *give_nb_token);
 char **join_inter_space(char **args, int *type_args, int *nb_args);
 char **kick_quote(int *type_args, int nb_args, char **args);
@@ -128,7 +132,7 @@ int ft_get_infos_by_pos(t_token *token);
 // Dossier UTILS
 void	ft_complete( char const *s, char *str, int *i);
 char	*ft_strjoin(char *s1, char *s2);
-int	ft_strlen(const char *str);
+int	ft_strlen(char *str);
 char	**ft_split(char *str, char charset);
 char	*ft_strdup(char *src);
 int		ft_strncmp(char *s1, char *s2, unsigned int n);
@@ -143,6 +147,7 @@ char	*ft_strtrim(char *s1, char *set);
 void	free_db_array(char **array);
 void free_list_tokens(t_token* tokens);
 void free_list_commande(t_commande *commande);
+void ft_free_g_parsing(t_global_parsing *g_parsing);
 
 // Dossier LEXEUR
 t_token* merge_characters(t_character* head);
