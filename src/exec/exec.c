@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/16 11:36:26 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/19 17:56:06 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,7 @@ void	new_infile(t_exec *exec, t_token *token)
 {
 	if (exec->infile)
 		close(fd_infile);
+	
 
 }
 
