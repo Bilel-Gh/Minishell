@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/21 17:40:38 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/21 21:39:43 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,20 +189,67 @@ void	gestion_infile(t_token *tokens, t_exec *exec)
 	seach_tok_in = tokens;
 	while (seach_tok_in)
 	{
-		if (is_token_redi_in)
+		if (is_token_redi_in(seach_tok_in))
 			set_new_infile(exec, seach_tok_in);
-
+		seach_tok_in = seach_tok_in->next;
 	}
+}
+
+void set_new_outfile(t_exec *exec, t_token *token)
+{
+    if (exec->outfile)
+    {
+        close(exec->fd_outfile);
+        free(exec->outfile);
+    }
+    exec->outfile = ft_strdup(token->next->value);
+	// protection malloc
+    if (token->info->type == REDIRECT_OUT)
+    {
+        exec->fd_outfile = open(exec->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        if (exec->fd_outfile == -1)
+            perror("open");
+    }
+    else if (token->info->type == REDIRECT_D_OUT)
+    {
+        exec->fd_outfile = open(exec->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+        if (exec->fd_outfile == -1)
+            perror("open");
+    }
+}
+
+bool	is_token_redi_out(t_token *token)
+{
+    if (token->info->type == REDIRECT_OUT || token->info->type == REDIRECT_D_OUT)
+        return (true);
+    return (false);
+}
+
+void    gestion_outfile(t_token *tokens, t_exec *exec)
+{
+    t_token *seach_tok_out;
+
+    seach_tok_out = tokens;
+    while (seach_tok_out)
+    {
+        if (is_token_redi_out(seach_tok_out))
+            set_new_outfile(exec, seach_tok_out);
+        seach_tok_out = seach_tok_out->next;
+    }
 }
 
 void	set_exec_and_exec(t_token *tokens, char **cmd, t_exec *exec)
 {
-	gestion_infile(tokens, exec);
-//	gestion_outfile;
-//	start_exec;
+	//gestion_infile;
+    (void)cmd;
+	gestion_outfile(tokens, exec);
+    printf("exec->outfile = %s\n", exec->outfile);
+    printf("exec->fd_outfile = %d\n", exec->fd_outfile);
+	//start_exec;
 
 
-}*/
+}
+*/
 void	exec(t_token *tokens, t_commande *commande, char **env)
 {
 	t_token *info_token;
