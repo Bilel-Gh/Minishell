@@ -49,6 +49,7 @@ PARSING =	get_info_args.c \
 			/error_args/utils_error_args.c \
 			/expand/expand.c \
 			/expand/expand2.c \
+			/exec.c \
 
 OBJS_PARSING = ${addprefix ${PARSING_DIR}, ${PARSING:.c=.o}}
 

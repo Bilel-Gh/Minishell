@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/13 20:02:44 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/21 17:34:59 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include <sys/wait.h>
 #include <stdbool.h>
 #include <string.h>
+#include <fcntl.h>
 
 // #include "../src/builtins/builtins.c"
 // #include "../src/builtins/b_export.c"
@@ -180,5 +181,8 @@ t_token *ft_save_next_tokens(t_token *current);
 void ft_free_value_splited(char **value_splited);
 void ft_free_paths(char **path_splited, char *pathCopy);
 void ft_free_paths2(char **path_splited, char *pathCopy, char *fullPath);
+
+// Dossier exec
+void	exec(t_token *tokens, t_commande *commande, char **env);
 
 #endif
