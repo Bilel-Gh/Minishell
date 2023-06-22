@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/21 17:34:59 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/22 19:36:32 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,10 @@
 // #include "../src/utils/split.c"
 
 extern char **environ;
+
+# define FIRST 0
+# define DERNIER 1
+# define INTER 2
 
 enum e_character_type {
     ALPHANUM = 0,
@@ -181,6 +185,7 @@ t_token *ft_save_next_tokens(t_token *current);
 void ft_free_value_splited(char **value_splited);
 void ft_free_paths(char **path_splited, char *pathCopy);
 void ft_free_paths2(char **path_splited, char *pathCopy, char *fullPath);
+int	nb_pipe(t_token *info);
 
 // Dossier exec
 void	exec(t_token *tokens, t_commande *commande, char **env);
