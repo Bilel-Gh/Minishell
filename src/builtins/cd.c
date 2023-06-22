@@ -121,6 +121,7 @@ void builtin_cd(char **args, char ***env)
 //            env++;
 //        }
         free(new_pwd);
+        free(current_dir);
     } else {
         perror("getcwd");
     }

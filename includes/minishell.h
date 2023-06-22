@@ -23,6 +23,7 @@
 #include <sys/wait.h>
 #include <stdbool.h>
 #include <string.h>
+#include <fcntl.h>
 
 // #include "../src/builtins/builtins.c"
 // #include "../src/builtins/b_export.c"
@@ -62,6 +63,7 @@ enum e_token_type {
     LIMITEUR = 10,
     OPTION = 11,
 };
+
 // test de ce a quoi vont les structures
 
 // infos sur tout le token (a completer)
@@ -90,7 +92,7 @@ typedef struct		token
 					t_token;
 typedef struct commande
 {
-    char**cmd;
+    char **cmd;
 	struct commande		*next;
 }					t_commande;
 
@@ -103,17 +105,27 @@ typedef struct        s_global_parsing
     char    *line;
 }                    t_global_parsing;
 
+typedef struct        s_global_exec
+{
+    char **export;
+}                    t_global_exec;
+
+// DOSSIER EXEC
+void	exec(t_token *tokens, t_commande *commande, char **env);
+
 char **ft_lexeur(char *line);
+char **ft_db_array_dup(char **db_array);
+char *get_name(char *arg);
 
 // Dossier BUILTIN
 void builtin_echo(char **args);
-void builtin_export(char **args, char ***env);
+void builtin_export(char **args, char ***env, t_global_exec **g_exec);
 void builtin_unset(char **args, char ***env);
 void builtin_env(char **args, char **env);
 void builtin_pwd();
 void builtin_cd(char **args, char ***env);
 void builtin_exit(char **args, t_global_parsing **g_pars);
-void ft_exec_bultins(char **args, char ***env, t_global_parsing **g_pars);
+void ft_exec_bultins(char **args, char ***env, t_global_parsing **g_pars, t_global_exec **g_exec);
 char *ft_getenv(char *name, char **env);
 int ft_setenv(char *name, char *value, char ***env);
 

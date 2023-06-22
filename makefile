@@ -13,6 +13,7 @@ LDLIBS = -lreadline
 # /* ~~~~~~ SOURCES ~~~~~~ */
 SRCS_DIR = ./src/
 SRCS =	main.c \
+		exec.c \
 
 OBJS = ${addprefix ${SRCS_DIR}, ${SRCS:.c=.o}}
 

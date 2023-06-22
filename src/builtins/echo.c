@@ -60,10 +60,12 @@ void builtin_echo(char **args)
     print_newline = 1; // Variable pour gérer l'option -n
     full_arg = NULL;
     // Vérifier si l'option -n est spécifiée
-    if (args[1] != NULL && ft_is_option_echo(args[1]))
+    if (args[i] != NULL && ft_is_option_echo(args[i]))
     {
         print_newline = 0;
         i = 2;
+        while (args[i] != NULL && ft_is_option_echo(args[i]))
+            i++;
     }
     ft_get_full_arg(args, &full_arg, i);
     if (full_arg != NULL)

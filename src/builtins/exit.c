@@ -58,20 +58,20 @@ void builtin_exit(char** args, t_global_parsing **g_pars)
     args_cpy = args;
     while (args_cpy[nb_args] != NULL)
         nb_args++;
-    if (nb_args > 2)
-    {
-        printf("exit: too many arguments\n");
-        return ;
-    }
     if (args[1] != NULL && ft_isdigit(args[1]) == 0)
     {
         printf("exit: numeric argument required\n");
+    }
+    else if (nb_args > 2)
+    {
+        printf("exit: too many arguments\n");
         return ;
     }
     if (args[1] != NULL)
     {
         exit_code = ft_atoi(args[1]);
         ft_free_g_parsing(*g_pars);
+        // free env aussi
         exit(exit_code);
     }
     exit(0);

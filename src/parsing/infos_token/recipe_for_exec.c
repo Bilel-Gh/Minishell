@@ -118,6 +118,60 @@ char	**give_cmd_join(t_token *token, int nb_cdm)
 	return (cmd_join);
 }
 
+char **ft_join_for_export(char **cmd_join)
+{
+    int i = 0;
+    int l = 0;
+    char *tmp;
+    char **cmd_join2;
+
+    int count = 0;
+    while (cmd_join[count])
+        count++;
+
+    cmd_join2 = malloc(sizeof(char *) * (count + 1));
+    if (!cmd_join2)
+        return NULL;
+
+    while (cmd_join[i])
+    {
+        if (ft_strchr(cmd_join[i], '"') || ft_strchr(cmd_join[i], '\''))
+        {
+            tmp = ft_strdup(cmd_join[i]);
+            i++;
+            while (cmd_join[i] && !ft_strchr(cmd_join[i], '"') && !ft_strchr(cmd_join[i], '\''))
+            {
+                tmp = ft_strjoin(tmp, " ");
+                tmp = ft_strjoin(tmp, cmd_join[i]);
+                free(cmd_join[i]);
+                i++;
+            }
+            if (cmd_join[i])
+            {
+                tmp = ft_strjoin(tmp, " ");
+                tmp = ft_strjoin(tmp, cmd_join[i]);
+                free(cmd_join[i]);
+                i++;
+            }
+            cmd_join2[l] = tmp;
+            l++;
+        }
+        else
+        {
+            cmd_join2[l] = cmd_join[i];
+            l++;
+            i++;
+        }
+    }
+    cmd_join2[l] = NULL; // Terminer le tableau de sortie
+    free(cmd_join);
+    return cmd_join2;
+}
+
+
+
+
+
 void	add_cmd_to_list_commande(t_commande *list_commande, char **cmd_join)
 {
 	int			i;
@@ -128,6 +182,12 @@ void	add_cmd_to_list_commande(t_commande *list_commande, char **cmd_join)
 	while (list_cmd)
 	{
 		list_cmd->cmd = ft_split(cmd_join[i], ' ');
+        list_cmd->cmd = ft_join_for_export(list_cmd->cmd);
+        while (list_cmd->cmd[i])
+        {
+            printf("cmd_join[%d] = %s\n", i, list_cmd->cmd[i]);
+            i++;
+        }
 		i++;
 		if (list_cmd->next == 0)
 			break ;
@@ -150,6 +210,43 @@ void	free_list_commande(t_commande *commande)
 	free(commande);
 }
 
+//char **ft_gestion_export(char **cmd_join)
+//{
+//    char** cmd_join_cpy;
+//    char *name;
+//    char *value;
+//    name = NULL;
+//    value = NULL;
+//    cmd_join_cpy = ft_db_array_dup(cmd_join);
+//    int i = 0;
+//
+//    while (cmd_join_cpy[i] != 0)
+//    {
+//        name = get_name(cmd_join_cpy[i]);
+//        printf("\033[0;33m name = %s \033[0m\n", name);
+//        // si la chaine commance par export
+//        if (ft_strncmp(cmd_join_cpy[i], " export", 7) == 0)
+//        {
+//            printf("\033[0;33m HELLO EXPORT \033[0m\n");
+//            // si la chaine contient un =
+//            if (ft_strchr(cmd_join_cpy[i], '='))
+//            {
+//                name = ft_strjoin(name, "=");
+//                printf("\033[0;33m name2 = %s \033[0m\n", name);
+//                // on stock tout ce qui est apres le =
+//                value = ft_strchr(*cmd_join_cpy, '=') + 1;
+//                value = ft_strtrim(value, " ");
+//                printf("\033[0;33m value sans espace = %s \033[0m\n", value);
+//            }
+//            // on remplace cmd_join_cpy[i] par name + value
+//            free(cmd_join_cpy[i]);
+//            cmd_join_cpy[i] = ft_strjoin(name, value);
+//        }
+//        i++;
+//    }
+//    return (cmd_join_cpy);
+//}
+
 t_commande	*cmd_complete(t_token *token)
 {
 	t_commande	*list_commande;
@@ -166,6 +263,13 @@ t_commande	*cmd_complete(t_token *token)
 	creat_cmd_list(list_commande, nb_node);
 	list_commande = head;
 	cmd_join = give_cmd_join(token, nb_node);
+    // cmd_join = ft_gestion_export(cmd_join);
+    int i = 0;
+    while (cmd_join[i] != 0)
+    {
+        printf("\033[0;33m cmd_join = %s \033[0m\n", cmd_join[i]);
+        i++;
+    }
 	add_cmd_to_list_commande(list_commande, cmd_join);
 	list_commande = head;
 	free_db_array(cmd_join);

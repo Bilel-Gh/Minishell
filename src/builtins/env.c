@@ -17,7 +17,13 @@ void builtin_env(char **args, char **env)
     int i;
 
     i = 0;
-    if (args[1] != NULL) {
+    while (ft_strcmp(args[i], "env") == 0)
+    {
+        if (args[i + 1] == NULL || ft_strcmp(args[i + 1], "env") != 0)
+            break ;
+        i++;
+    }
+    if (args[i + 1] != NULL) {
         printf("env: should not have arguments\n");
         return ;
     }

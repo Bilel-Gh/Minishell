@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/14 17:13:24 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/21 16:00:32 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ void ft_set_index_for_exec(t_token **tokens)
 	*tokens = head;
 }
 
-void minishell_loop(char ***env)
+void minishell_loop(char ***env, t_global_exec *g_exec)
 {
 	struct s_global_parsing *g_parsing;
 
@@ -154,8 +154,9 @@ void minishell_loop(char ***env)
 		g_parsing->commande = cmd_complete(g_parsing->tokens);
 		head = g_parsing->tokens;
 		ft_set_index_for_exec(&g_parsing->tokens);
+        //exec(g_parsing->tokens, g_parsing->commande, *env);
         if (g_parsing->commande->cmd)
-		    ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing);
+		    ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing, &g_exec);
 		// while (g_parsing->tokens)
 		// {
 		// 	printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
@@ -205,13 +206,16 @@ int main(int argc, char **argv, char **env)
 {
 	(void)argc;
 	(void)argv;
+    t_global_exec *g_exec;
+    g_exec = malloc(sizeof(t_global_exec));
+    g_exec->export =NULL;
 	char **env_cpy;
 	env_cpy = ft_db_array_dup(env);
 	struct sigaction s_sigaction;
 
 	s_sigaction.sa_handler = int_handler; // Nom de la fonction de gestionnaire
 	sigaction(SIGINT, &s_sigaction, NULL);// Gestionnaire de signal
-	minishell_loop(&env_cpy);
+	minishell_loop(&env_cpy, g_exec);
 	if (env_cpy)
 		free_db_array(env_cpy);
 	return 0;

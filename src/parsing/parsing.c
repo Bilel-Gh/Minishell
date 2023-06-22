@@ -115,7 +115,11 @@ char	**ft_parsing(int *nb_args, char **args, int *error, char ***env)
 	if (search_error_args(type_args, nb_args, args))
 		return (args);
 	expande(type_args, *nb_args, args, *env);
-	no_quote_args = kick_quote(type_args, *nb_args, args);
+    no_quote_args = kick_quote(type_args, *nb_args, args);
+    if (ft_strcmp(no_quote_args[0], "export") == 0)
+    {
+        no_quote_args = ft_db_array_dup(args);
+    }
 	new_args = join_inter_space(no_quote_args, type_args, nb_args);
 	new_type_args = ft_get_info_args(new_args, nb_args);
 	free_db_array(args);

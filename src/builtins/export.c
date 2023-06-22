@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   b_export.c                                         :+:      :+:    :+:   */
+/*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 02:56:40 by bghandri          #+#    #+#             */
-/*   Updated: 2023/05/25 08:05:34 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/21 22:10:11 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,13 @@ char *get_name(char *arg)
 
     i = 0;
     j = 0;
-    while (arg[i] != '=')
+    while (arg[i] != '=' && arg[i] != 0)
         i++;
+    if (i == 0)
+        return (NULL);
     name = malloc(sizeof(char) * i);
+    if (name == NULL)
+        return (NULL);
     while (j < i)
     {
         name[j] = arg[j];
@@ -50,10 +54,14 @@ char *get_value(char *arg)
 
     i = 0;
     j = 0;
-    while (arg[i] != '=')
+    while (arg[i] != '=' && arg[i] != 0)
         i++;
+    if (arg[i] == 0)
+        return (NULL);
     i++;
     value = malloc(sizeof(char) * (ft_strlen(arg) - i));
+    if (value == NULL)
+        return (NULL);
     while (arg[i] != 0)
     {
         value[j] = arg[i];
@@ -76,6 +84,11 @@ char *ft_get_env_to_add(char *name, char *value)
         new_env[i] = name[i];
         i++;
     }
+    if (value == NULL)
+    {
+        new_env[i] = '\0';
+        return (new_env);
+    }
     new_env[i] = '=';
     i++;
     j = 0;
@@ -88,19 +101,64 @@ char *ft_get_env_to_add(char *name, char *value)
     return (new_env);
 }
 
-void ft_add_env(char *name, char *value, char ***env)
+char **ft_add_to_db_tab(char **tab, char *str, char *name)
+{
+    int i;
+    char **new_tab;
+    i = 0;
+    if (tab == NULL)
+    {
+        printf("\033[0;31mft_add_to_db_tab: tab is NULL\033[0m\n");
+        new_tab = malloc(sizeof(char *) * 2);
+        new_tab[0] = ft_strdup(str);
+        new_tab[1] = NULL;
+        return (new_tab);
+    }
+    new_tab = malloc(sizeof(char *) * (ft_db_tablen(tab) + 2));
+    new_tab= ft_db_array_dup(tab);
+    i = 0;
+    while (new_tab[i] != NULL && ft_strncmp(new_tab[i], name, ft_strlen(name + 6)) != 0)
+    {
+        i++;
+        free(new_tab[i]);
+    }
+    new_tab[i] = ft_strdup(str);
+    new_tab[i + 1] = NULL;
+    return (new_tab);
+}
+
+void ft_add_to_export(t_global_exec **g_exec, char *new_env, char *name)
+{
+    int j = 0;
+    char *env_to_add_to_export;
+    char *pre_export;
+    env_to_add_to_export = ft_strdup(new_env);
+    pre_export = ft_strdup("export ");
+    (*g_exec)->export = ft_add_to_db_tab((*g_exec)->export, ft_strjoin(pre_export, env_to_add_to_export), name);
+    while ((*g_exec)->export[j] != NULL)
+    {
+        printf("\033[0;31m g_exec->export[%d]: %s\n \033[0m", j, (*g_exec)->export[j]);
+        j++;
+    }
+}
+
+void ft_add_env(char *name, char *value, char ***env, t_global_exec **g_exec)
 {
     int i;
     char **new_env;
+    char* env_to_add;
 
     i = 0;
     new_env = malloc(sizeof(char *) * (ft_db_tablen(*env) + 2));
-    while ((*env)[i] != NULL)
+    while ((*env)[i] != NULL && ft_strncmp((*env)[i], name, ft_strlen(name)) != 0)
     {
         new_env[i] = ft_strdup((*env)[i]);
         i++;
     }
-    new_env[i] = ft_get_env_to_add(name, value);
+    env_to_add = ft_get_env_to_add(name, value);
+    if (value != NULL)
+        new_env[i] = env_to_add;
+    ft_add_to_export(g_exec, env_to_add, name);
     printf("new_env[i]: %s\n", new_env[i]);
     new_env[i + 1] = NULL;
     *env = new_env;
@@ -130,26 +188,137 @@ void ft_sort_env(char ***env) // a voir comment trier car sur mac je n'ai pas le
     }
 }
 
-void builtin_export(char **args, char ***env)
+int ft_is_alpha(char c)
+{
+    if (c >= 'a' && c <= 'z')
+        return (1);
+    if (c >= 'A' && c <= 'Z')
+        return (1);
+    return (0);
+}
+
+int ft_is_alnum(char c)
+{
+    if (ft_is_alpha(c) == 1)
+        return (1);
+    if (c >= '0' && c <= '9')
+        return (1);
+    return (0);
+}
+
+bool ft_check_name(char *name) {
+    // Vérification de la première lettre
+    if (!ft_is_alpha(name[0]) && name[0] != '_') {
+        return false;
+    }
+    // Vérification des caractères suivants
+    for (int i = 1; name[i] != '\0'; i++) {
+        if (!ft_is_alnum(name[i]) && name[i] != '_') {
+            return false;
+        }
+    }
+    return true;
+}
+
+char *ft_clean_value(char *value)
+{
+    int i;
+    char *new_value;
+    int len;
+    int new_len;
+    char first_char;
+    char last_char;
+
+    len = ft_strlen(value);
+    i = 0;
+    first_char = value[0];
+    last_char = value[len - 1];
+    if ((first_char == '"' && last_char == '"') || (first_char == '\'' && last_char == '\''))
+    {
+        new_len = len - 2;
+        new_value = malloc(sizeof(char) * (new_len + 1));
+        if (new_value == NULL)
+            return (NULL);
+        while (value[i + 1] != '\0')
+        {
+            new_value[i] = value[i + 1];
+            i++;
+        }
+        new_value[i - 1] = '\0';
+        return (ft_strtrim(new_value, " "));
+    }
+    return (ft_strtrim(value, " "));
+}
+
+void builtin_export(char **args, char ***env, t_global_exec **g_exec)
 {
     (void)env;
     char *name;
     char *value;
     (void )value;
-
+    int nb_args;
+    nb_args = ft_db_tablen(args);
+    int x = 0;
+    while (args[x] != NULL)
+    {
+        printf("args[%d]: %s\n", x, args[x]);
+        x++;
+    }
+    int i;
+    i = 0;
+    if (nb_args > 2)
+    {
+        while (args[i] != NULL)
+        {
+            if (args[i][0] == '=')
+            {
+                printf("minishell: export: `%s': not a valid identifier\n", args[i]);
+                return ;
+            }
+            i++;
+        }
+    }
+    if (args[1] == NULL)
+    {
+        i = 0;
+        if ((*g_exec)->export == NULL)
+            return ;
+        while ((*g_exec)->export[i] != NULL)
+        {
+            printf("%s\n", (*g_exec)->export[i]);
+            i++;
+        }
+        return ;
+    }
+    char *invalid_chars;
+    invalid_chars = "=+%?-@!*#$&(){}[]^~|\\<>\"';,./123456789";
+    //gerer le cas ou value n'est pas un identifiant valide pour export
+    if(args[1][0] == '\0' || ft_strchr(invalid_chars, args[1][0]) != NULL)
+    {
+        printf("minishell: export: `%s': not a valid identifier\n", args[1]);
+        return ;
+    }
     name = get_name(args[1]);
+    if (!ft_check_name(name))
+    {
+        printf("minishell: export: `%s': not a valid identifier\n", args[1]);
+        return ;
+    }
     printf("name: %s\n", name);
     value = get_value(args[1]);
-    printf("value: %s\n", value);
-
-    ft_add_env(name, value, env);
+    if (value != NULL)
+        value = ft_clean_value(value);
+    ft_add_env(name, value, env, g_exec);
     ft_sort_env(env);
     // printf env
-    int i;
     i = 0;
     while ((*env)[i] != NULL)
     {
         printf("%s\n", (*env)[i]);
         i++;
     }
+    if (name != NULL)
+        free(name);
+    if (value != NULL)
+        free(value);
 }
