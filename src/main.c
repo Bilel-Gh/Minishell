@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/21 16:00:32 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/23 17:39:26 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		//		args = ft_split_line_to_character(line);
 		int nb_args;
 		g_parsing->args = ft_lexeur(g_parsing->line);
-		g_parsing->info_args = ft_get_info_args(g_parsing->args, &nb_args); // anciennement info_token
+		g_parsing->info_args = ft_get_info_args(g_parsing->args, &nb_args);
 		int error;
 		error = 0;
 		//char **for_test = 0;
@@ -151,22 +151,23 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		if (!g_parsing->args)
 			continue;
 		g_parsing->tokens = ft_get_tokens_with_infos(g_parsing->args, nb_args);
+//		  while (g_parsing->tokens)
+//		  {
+//		  	printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
+//		 	printf("\033[1;33mtoken type = %d\n\033[0m", g_parsing->tokens->info->type);
+//		 	printf("\033[1;34mtoken index = %d\n\033[0m", g_parsing->tokens->token_index);
+//		 	if (g_parsing->tokens->prev)
+//		 		printf("\033[1;35mtoken prev value = %s\n\033[0m", g_parsing->tokens->prev->value);
+//		 	printf("\n\n");
+//		 	g_parsing->tokens = g_parsing->tokens->next;
+//		 }
 		g_parsing->commande = cmd_complete(g_parsing->tokens);
 		head = g_parsing->tokens;
 		ft_set_index_for_exec(&g_parsing->tokens);
+		(void)g_exec;
         //exec(g_parsing->tokens, g_parsing->commande, *env);
         if (g_parsing->commande->cmd)
 		    ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing, &g_exec);
-		// while (g_parsing->tokens)
-		// {
-		// 	printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
-		// 	printf("\033[1;33mtoken type = %d\n\033[0m", g_parsing->tokens->info->type);
-		// 	printf("\033[1;34mtoken index = %d\n\033[0m", g_parsing->tokens->token_index);
-		// 	if (g_parsing->tokens->prev)
-		// 		printf("\033[1;35mtoken prev value = %s\n\033[0m", g_parsing->tokens->prev->value);
-		// 	printf("\n\n");
-		// 	g_parsing->tokens = g_parsing->tokens->next;
-		// }
 		g_parsing->tokens = head;
 		//		while (args[i])
 		//		{

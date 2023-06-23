@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 16:18:20 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/13 19:33:49 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/23 16:41:21 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ char	**kick_args_space(char **new_args, int *type_args, int *nb_args)
 char	**ft_parsing(int *nb_args, char **args, int *error, char ***env)
 {
 	char	**new_args;
-	char	**no_quote_args;
+	//char	**no_quote_args;
 	int		*new_type_args;
 	int		*type_args;
 
@@ -115,15 +115,15 @@ char	**ft_parsing(int *nb_args, char **args, int *error, char ***env)
 	if (search_error_args(type_args, nb_args, args))
 		return (args);
 	expande(type_args, *nb_args, args, *env);
-    no_quote_args = kick_quote(type_args, *nb_args, args);
-    if (ft_strcmp(no_quote_args[0], "export") == 0)
-    {
-        no_quote_args = ft_db_array_dup(args);
-    }
-	new_args = join_inter_space(no_quote_args, type_args, nb_args);
+    // no_quote_args = kick_quote(type_args, *nb_args, args);
+// 	if (ft_strcmp(no_quote_args[0], "export") == 0)
+//     {
+          //no_quote_args = ft_db_array_dup(args);
+//     }
+	new_args = join_inter_space(args, type_args, nb_args);
 	new_type_args = ft_get_info_args(new_args, nb_args);
 	free_db_array(args);
-	args = kick_args_space(new_args, type_args, nb_args);
+	args = kick_args_space(new_args, new_type_args, nb_args);
 	free_db_array(new_args);
 	free(type_args);
 	free(new_type_args);
@@ -133,6 +133,5 @@ char	**ft_parsing(int *nb_args, char **args, int *error, char ***env)
 	printf("^^^^^^^^^^^ no error grammaticale ^^^^^^^^^^^^^^^^\n");
 	*error = 1;
 	free(new_type_args);
-	free_db_array(no_quote_args);
 	return (args);
 }

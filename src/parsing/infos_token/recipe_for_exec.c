@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 22:49:57 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/14 16:42:47 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/24 01:53:50 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,61 +115,139 @@ char	**give_cmd_join(t_token *token, int nb_cdm)
 		if (i != nb_cdm)
 			tok_sch = tok_sch->next;
 	}
+    int z = 0;
+    while (cmd_join[z])
+    {
+        printf("@@@@@@@@cmd_join[%d] = %s\n", z, cmd_join[z]);
+        z++;
+    }
 	return (cmd_join);
 }
 
-char **ft_join_for_export(char **cmd_join)
+// char **ft_join_for_export(char **cmd_join)
+// {
+//     int i = 0;
+//     int l = 0;
+//     char *tmp;
+//     char **cmd_join2;
+
+//     int count = 0;
+//     while (cmd_join[count])
+//         count++;
+
+//     cmd_join2 = malloc(sizeof(char *) * (count + 1));
+//     if (!cmd_join2)
+//         return NULL;
+
+//     while (cmd_join[i])
+//     {
+//         if (ft_strchr(cmd_join[i], '"') || ft_strchr(cmd_join[i], '\''))
+//         {
+//             tmp = ft_strdup(cmd_join[i]);
+//             i++;
+//             while (cmd_join[i] && !ft_strchr(cmd_join[i], '"') && !ft_strchr(cmd_join[i], '\''))
+//             {
+//                 tmp = ft_strjoin(tmp, " ");
+//                 tmp = ft_strjoin(tmp, cmd_join[i]);
+//                 free(cmd_join[i]);
+//                 i++;
+//             }
+//             if (cmd_join[i])
+//             {
+//                 tmp = ft_strjoin(tmp, " ");
+//                 tmp = ft_strjoin(tmp, cmd_join[i]);
+//                 free(cmd_join[i]);
+//                 i++;
+//             }
+//             cmd_join2[l] = tmp;
+//             l++;
+//         }
+//         else
+//         {
+//             cmd_join2[l] = cmd_join[i];
+//             l++;
+//             i++;
+//         }
+//     }
+//     cmd_join2[l] = NULL; // Terminer le tableau de sortie
+//     free(cmd_join);
+//     return cmd_join2;
+// }
+
+char	*ft_strncpy(char *dest, char *src, unsigned int n)
 {
-    int i = 0;
-    int l = 0;
-    char *tmp;
-    char **cmd_join2;
+    unsigned int	i;
 
-    int count = 0;
-    while (cmd_join[count])
-        count++;
-
-    cmd_join2 = malloc(sizeof(char *) * (count + 1));
-    if (!cmd_join2)
-        return NULL;
-
-    while (cmd_join[i])
+    i = 0;
+    while (src[i] != '\0' && i < n)
     {
-        if (ft_strchr(cmd_join[i], '"') || ft_strchr(cmd_join[i], '\''))
-        {
-            tmp = ft_strdup(cmd_join[i]);
-            i++;
-            while (cmd_join[i] && !ft_strchr(cmd_join[i], '"') && !ft_strchr(cmd_join[i], '\''))
-            {
-                tmp = ft_strjoin(tmp, " ");
-                tmp = ft_strjoin(tmp, cmd_join[i]);
-                free(cmd_join[i]);
-                i++;
-            }
-            if (cmd_join[i])
-            {
-                tmp = ft_strjoin(tmp, " ");
-                tmp = ft_strjoin(tmp, cmd_join[i]);
-                free(cmd_join[i]);
-                i++;
-            }
-            cmd_join2[l] = tmp;
-            l++;
-        }
-        else
-        {
-            cmd_join2[l] = cmd_join[i];
-            l++;
-            i++;
-        }
+        dest[i] = src[i];
+        ++i;
     }
-    cmd_join2[l] = NULL; // Terminer le tableau de sortie
-    free(cmd_join);
-    return cmd_join2;
+    while (i < n)
+    {
+        dest[i] = '\0';
+        i++;
+    }
+    return (dest);
 }
 
+char** ft_custom_split(char* str) {
+    int count;
+    char** result;
+    int space_count;
+    int i;
+    int len;
+    // Vérifier si la chaîne est nulle ou vide
+    if (str == NULL || ft_strlen(str) == 0)
+        return NULL;
 
+    // Calculer le nombre d'espaces potentiels de séparation
+    len = ft_strlen(str);
+    space_count = 0;
+    count = 0;
+    i = 0;
+    while (i < len)
+    {
+        if (str[i] == ' ')
+            space_count++;
+        i++;
+    }
 
+    // Allouer de la mémoire pour le tableau de chaînes de caractères
+    result = (char**)malloc((space_count + 1) * sizeof(char*));
+
+    // Parcourir la chaîne de caractères et effectuer le découpage
+    int in_quotes = 0;
+    int start = 0;
+    i = 0;
+    while (i < len) {
+        if (str[i] == '"' || str[i] == '\'')
+            in_quotes = !in_quotes;
+
+        if (str[i] == ' ' && !in_quotes) {
+            int len_str_to_add = i - start;
+            if (len_str_to_add > 0) {
+                result[count] = (char*)malloc((len_str_to_add + 1) * sizeof(char));
+                ft_strncpy(result[count], str + start, len_str_to_add);
+                result[count][len_str_to_add] = '\0';
+                (count)++;
+            }
+            start = i + 1;
+        }
+        i++;
+    }
+    // Traiter la dernière sous-chaîne
+    int len_str_to_add = i - start;
+    if (len_str_to_add > 0) {
+        result[count] = (char*)malloc((len_str_to_add + 1) * sizeof(char));
+        ft_strncpy(result[count], str + start, len_str_to_add);
+        result[count][len_str_to_add] = '\0';
+        (count)++;
+    }
+
+    return result;
+}
 
 
 void	add_cmd_to_list_commande(t_commande *list_commande, char **cmd_join)
@@ -181,11 +259,12 @@ void	add_cmd_to_list_commande(t_commande *list_commande, char **cmd_join)
 	i = 0;
 	while (list_cmd)
 	{
-		list_cmd->cmd = ft_split(cmd_join[i], ' ');
-        list_cmd->cmd = ft_join_for_export(list_cmd->cmd);
+
+		list_cmd->cmd = ft_custom_split(cmd_join[i]);
+        // list_cmd->cmd = ft_join_for_export(list_cmd->cmd);
         while (list_cmd->cmd[i])
         {
-            printf("cmd_join[%d] = %s\n", i, list_cmd->cmd[i]);
+            printf("+++++++++ cmd_join[%d] = %s\n", i, list_cmd->cmd[i]);
             i++;
         }
 		i++;
@@ -247,6 +326,128 @@ void	free_list_commande(t_commande *commande)
 //    return (cmd_join_cpy);
 //}
 
+int ft_db_arr_len(char **arr)
+{
+    int i;
+
+    i = 0;
+    while (arr[i])
+        i++;
+    return (i);
+}
+
+int	ft_get_type2(char *const *line_split, int i, int *type)
+{
+    while (line_split[i])
+    {
+        if (line_split[i][0] == 34) // "
+            type[i] = QUOTE_D;
+        else if (line_split[i][0] == 39)
+            type[i] = QUOTE_S;
+        else if (line_split[i][0] == ' ')
+            type[i] = ESPACE;
+        else if (line_split[i][0] == '>' || line_split[i][0] == '<')
+        {
+            type[i] = REDIRECT;
+        }
+        else if (line_split[i][0] == '|')
+        {
+            type[i] = PIPE;
+        }
+        else if (ft_isprint(line_split[i][0]))
+        {
+            type[i] = ALPHANUM;
+        }
+        i++;
+    }
+    return (i);
+}
+
+int	*ft_get_info_args2(char **line_split, int *give_nb_args)
+{
+    int	nb_args;
+    int	i;
+    int	*type;
+
+    nb_args = 0;
+    i = 0;
+    if (line_split == NULL)
+        return (NULL);
+    while (line_split[nb_args])
+        nb_args++;
+    type = malloc(sizeof(int) * nb_args);
+    i = ft_get_type2(line_split, i, type);
+    *give_nb_args = i;
+    i = 0;
+    return (type);
+}
+
+char* ft_db_array_join(char** strings, int count)
+{
+    int total_len;
+    int i;
+    char* result;
+    int current_index;
+
+    if (strings == NULL || count == 0) {
+        return NULL;
+    }
+    total_len = 0;
+    i = 0;
+    while (i < count) {
+        total_len += ft_strlen(strings[i]);
+        i++;
+    }
+    result = (char*)malloc((total_len + 1) * sizeof(char));
+	current_index = 0;
+    i = 0;
+    while (i < count) {
+        int len = ft_strlen(strings[i]);
+        ft_strncpy(result + current_index, strings[i], len);
+        current_index += len;
+        i++;
+    }
+    result[current_index] = '\0';
+    return result;
+}
+
+void change_cmd_list(t_commande *list_commande)
+{
+    char **arg_to_unquote;
+    int* type_arg_to_unquote;
+    int nb_arg_to_unquote;
+    char	**no_quote_args;
+
+    while (list_commande)
+    {
+        if (ft_strcmp(list_commande->cmd[0], "export") != 0)
+        {
+            int i = 0;
+
+            while (list_commande->cmd[i])
+            {
+                arg_to_unquote = ft_lexeur(list_commande->cmd[i]);
+                nb_arg_to_unquote = ft_db_arr_len(arg_to_unquote);
+                type_arg_to_unquote = ft_get_info_args2(arg_to_unquote, &nb_arg_to_unquote);
+                no_quote_args = kick_quote(type_arg_to_unquote, nb_arg_to_unquote, arg_to_unquote);
+                list_commande->cmd[i] = ft_db_array_join(no_quote_args, ft_db_arr_len(no_quote_args));
+//                printf("\033[0;35m            FINAL VALUE = %s \033[0m\n", list_commande->cmd[i]);
+//                int z = 0;
+//                while (no_quote_args[z])
+//                {
+//                    printf("\033[0;35m                      no_quote_args[%d] = %s \033[0m\n", z, no_quote_args[z]);
+//                    printf("\033[0;35m                           type_arg_to_unquote[%d] = %d \033[0m\n", z, type_arg_to_unquote[z]);
+//                    z++;
+//                }
+                i++;
+            }
+            list_commande = list_commande->next;
+        }
+        else
+            list_commande = list_commande->next;
+    }
+}
+
 t_commande	*cmd_complete(t_token *token)
 {
 	t_commande	*list_commande;
@@ -264,14 +465,9 @@ t_commande	*cmd_complete(t_token *token)
 	list_commande = head;
 	cmd_join = give_cmd_join(token, nb_node);
     // cmd_join = ft_gestion_export(cmd_join);
-    int i = 0;
-    while (cmd_join[i] != 0)
-    {
-        printf("\033[0;33m cmd_join = %s \033[0m\n", cmd_join[i]);
-        i++;
-    }
 	add_cmd_to_list_commande(list_commande, cmd_join);
 	list_commande = head;
+    change_cmd_list(list_commande);
 	free_db_array(cmd_join);
 	return (head);
 }
