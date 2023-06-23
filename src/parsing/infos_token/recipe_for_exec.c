@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 22:49:57 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/13 23:34:25 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/23 23:05:16 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ t_commande	*cmd_complete(t_token *token)
 	int			nb_node;
 	t_commande	*head;
 	char		**cmd_join;
-
+	int i = 0;
 	nb_node = nb_pipe(token) + 1;
 	list_commande = malloc(sizeof(t_commande));
 	if (!list_commande)
@@ -166,8 +166,14 @@ t_commande	*cmd_complete(t_token *token)
 	creat_cmd_list(list_commande, nb_node);
 	list_commande = head;
 	cmd_join = give_cmd_join(token, nb_node);
+	 while (cmd_join[i] != 0)
+    {
+        printf("\033[0;33m cmd_join = %s \033[0m\n", cmd_join[i]);
+        i++;
+    }
 	add_cmd_to_list_commande(list_commande, cmd_join);
 	list_commande = head;
+	printf("ggggg = %s",list_commande->cmd[0]);
 	free_db_array(cmd_join);
 	return (head);
 }

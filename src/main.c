@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/21 16:13:31 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/23 22:36:01 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ void minishell_loop(char **env)
 		head = g_parsing->tokens;
 		ft_set_index_for_exec(&g_parsing->tokens);
 		exec(g_parsing->tokens, g_parsing->commande, env);
-/*		while (g_parsing->tokens)
+		while (g_parsing->tokens)
 		{
 			printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
 			printf("\033[1;33mtoken type = %d\n\033[0m", g_parsing->tokens->info->type);
@@ -165,14 +165,15 @@ void minishell_loop(char **env)
 				printf("\033[1;35mtoken prev value = %s\n\033[0m", g_parsing->tokens->prev->value);
 			printf("\n\n");
 			g_parsing->tokens = g_parsing->tokens->next;
-		}*/
+		}
+		int i = 0;
 		g_parsing->tokens = head;
-		//		while (args[i])
-		//		{
-		//			printf("token nb %d = %s avec len = %d\n", i, args[i], ft_strlen(args[i]));
-		//			i++;
-		//		}
-		//
+			while (g_parsing->args[i])
+				{
+					printf("token nb %d = %s \n", i, g_parsing->args[i]);
+					i++;
+				}
+		
 		//execute_command(args);
 		//else
 		// printf("Commande introuvable\n");

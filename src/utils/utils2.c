@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 22:52:58 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/10 21:27:53 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/23 23:47:16 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,3 +98,6 @@ char	*ft_strtrim(char *s1, char *set)
 	ft_strlcpy(str, &s1[start], end - start + 2);
 	return (str);
 }
+
+
+

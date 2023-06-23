@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/22 19:36:27 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/24 00:35:15 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,7 @@ void	new_infile(t_exec *exec, t_token *token)
 	{
 		close (exec->fd_heredoc);
 		free(exec->limiteur);
+		unlink("/tmp/here_doc_minishell");
 		exec->limiteur = NULL;
 	}
 	exec->infile = ft_strdup(token->value);
@@ -163,10 +164,31 @@ void	new_infile(t_exec *exec, t_token *token)
 	exec->fd_infile = open(exec->infile, O_RDONLY);
 }
 
-/*void	start_heredoc(t_exec *exec)
+void	start_heredoc(t_exec *exec)
   {
+	char *line;
+	line = NULL;
+	unsigned int size_limiteur;
 
-  }*/
+	size_limiteur = ft_strlen(exec->limiteur);
+	exec->fd_heredoc = open("/tmp/here_doc_minishell", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	// TODO security
+	while (1)
+	{
+		write(1, "> ",2);
+	//	line = get_next_line(0);
+		if(!ft_strncmp(line, exec->limiteur, size_limiteur))
+			break;
+		write(exec->fd_heredoc, line, ft_strlen(line));
+		free(line);		
+	} 
+	free(line);
+	//get_next_line(0);
+	close(exec->fd_heredoc);
+	exec->fd_heredoc = open("/tmp/here_doc_minishell", O_RDONLY);
+	// TODO security
+  }
+
 
 void	new_heredoc(t_exec *exec, t_token *token)
 {
@@ -180,12 +202,13 @@ void	new_heredoc(t_exec *exec, t_token *token)
 	{
 		close (exec->fd_heredoc);
 		free(exec->limiteur);
+		unlink("/tmp/here_doc_minishell");
 		exec->limiteur = NULL;
 	}
 	exec->limiteur = ft_strdup(token->value);
 	if (!exec->limiteur)
 		return ;
-	//	start_heredoc(exec);
+	start_heredoc(exec);
 }
 
 void	set_new_infile(t_exec *exec, t_token *tokens)
@@ -464,6 +487,7 @@ int	start_exec(char **cdm, t_exec *info, char **env)
 	info->nb_cmd--;
 	return (1);
 }
+//###################################################################
 void	close_for_solo(t_exec *info)
 {
 	if (info->infile || info->limiteur)
@@ -519,7 +543,7 @@ void	set_exec_and_start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char
 	if (solo_exec(cmd, exec, env) == -1)
 		return ; // faire le destruction en cascade ou autre 
 }
-
+//#######################################################################################
 
 void	set_exec_and_start_exec(t_token *tokens, char **cmd, t_exec *exec, char **env)
 {

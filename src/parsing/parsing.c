@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 16:18:20 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/13 19:33:49 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/23 22:48:51 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ char	**ft_parsing(int *nb_args, char **args, int *error, char **env)
 	new_args = join_inter_space(no_quote_args, type_args, nb_args);
 	new_type_args = ft_get_info_args(new_args, nb_args);
 	free_db_array(args);
-	args = kick_args_space(new_args, type_args, nb_args);
+	args = kick_args_space(new_args, new_type_args, nb_args);
 	free_db_array(new_args);
 	free(type_args);
 	free(new_type_args);

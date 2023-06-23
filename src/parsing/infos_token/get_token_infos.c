@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_token_infos.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 21:08:43 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/10 21:09:46 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/23 22:42:50 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ t_token	*create_token(t_token *head, char *value, int index)
 	t_token	*new_token;
 	t_token	*current;
 
+	printf("creat = %s\n",value);
 	value = ft_strtrim(value, " ");
 	new_token = (t_token *)malloc(sizeof(t_token));
 	new_token->value = value;
