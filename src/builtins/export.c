@@ -34,7 +34,7 @@ char *get_name(char *arg)
         i++;
     if (i == 0)
         return (NULL);
-    name = malloc(sizeof(char) * i);
+    name = malloc(sizeof(char) * (i + 1));
     if (name == NULL)
         return (NULL);
     while (j < i)
@@ -59,7 +59,7 @@ char *get_value(char *arg)
     if (arg[i] == 0)
         return (NULL);
     i++;
-    value = malloc(sizeof(char) * (ft_strlen(arg) - i));
+    value = malloc(sizeof(char) * ((ft_strlen(arg) - i) + 1));
     if (value == NULL)
         return (NULL);
     while (arg[i] != 0)

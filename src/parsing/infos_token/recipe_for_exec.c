@@ -192,12 +192,30 @@ char	*ft_strncpy(char *dest, char *src, unsigned int n)
     return (dest);
 }
 
+void	ft_free_db_by_len(char **array, int len)
+{
+	int	i;
+
+	i = 0;
+	if (array == NULL)
+		return ;
+	while (i < len)
+	{
+		free(array[i]);
+		i++;
+	}
+	free(array);
+	array = 0;
+}
+
 char** ft_custom_split(char* str) {
     int count;
     char** result;
     int space_count;
     int i;
     int len;
+
+    result = NULL;
     // Vérifier si la chaîne est nulle ou vide
     if (str == NULL || ft_strlen(str) == 0)
         return NULL;
@@ -216,6 +234,7 @@ char** ft_custom_split(char* str) {
 
     // Allouer de la mémoire pour le tableau de chaînes de caractères
     result = (char**)malloc((space_count + 1) * sizeof(char*));
+    b_zero_for_cmd_join(result, space_count, 0);
 
     // Parcourir la chaîne de caractères et effectuer le découpage
     int in_quotes = 0;
@@ -245,7 +264,8 @@ char** ft_custom_split(char* str) {
         result[count][len_str_to_add] = '\0';
         (count)++;
     }
-
+    
+    i = 0;
     return result;
 }
 
@@ -262,10 +282,11 @@ void	add_cmd_to_list_commande(t_commande *list_commande, char **cmd_join)
 
 		list_cmd->cmd = ft_custom_split(cmd_join[i]);
         // list_cmd->cmd = ft_join_for_export(list_cmd->cmd);
-        while (list_cmd->cmd[i])
+        int z = 0;
+        while (list_cmd->cmd[z])
         {
-            printf("+++++++++ cmd_join[%d] = %s\n", i, list_cmd->cmd[i]);
-            i++;
+            printf("+++++++++ cmd_join[%d] = %s\n", z, list_cmd->cmd[z]);
+            z++;
         }
 		i++;
 		if (list_cmd->next == 0)
@@ -417,6 +438,9 @@ void change_cmd_list(t_commande *list_commande)
     int* type_arg_to_unquote;
     int nb_arg_to_unquote;
     char	**no_quote_args;
+    // t_commande *cpy_list_commande;
+    // cpy_list_commande = ft_dup_list(list_commande);
+    // free_list_commande(list_commande);
 
     while (list_commande)
     {
@@ -430,7 +454,11 @@ void change_cmd_list(t_commande *list_commande)
                 nb_arg_to_unquote = ft_db_arr_len(arg_to_unquote);
                 type_arg_to_unquote = ft_get_info_args2(arg_to_unquote, &nb_arg_to_unquote);
                 no_quote_args = kick_quote(type_arg_to_unquote, nb_arg_to_unquote, arg_to_unquote);
+                free_db_array(arg_to_unquote);
+                free(list_commande->cmd[i]);
                 list_commande->cmd[i] = ft_db_array_join(no_quote_args, ft_db_arr_len(no_quote_args));
+                free_db_array(no_quote_args);
+                free(type_arg_to_unquote);
 //                printf("\033[0;35m            FINAL VALUE = %s \033[0m\n", list_commande->cmd[i]);
 //                int z = 0;
 //                while (no_quote_args[z])

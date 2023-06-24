@@ -166,9 +166,9 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		head = g_parsing->tokens;
 		ft_set_index_for_exec(&g_parsing->tokens);
 		(void)g_exec;
-        //exec(g_parsing->tokens, g_parsing->commande, *env);
-        if (g_parsing->commande->cmd)
-		    ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing, &g_exec);
+        exec(g_parsing->tokens, g_parsing->commande, *env);
+       // if (g_parsing->commande->cmd)
+		  //  ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing, &g_exec);
 		g_parsing->tokens = head;
 			// while (g_parsing->args[i])
 			// 	{
@@ -193,7 +193,7 @@ char **ft_db_array_dup(char **db_array)
 		i++;
 	db_array_cpy = malloc(sizeof(char*) * (i + 1));
 	if (!db_array_cpy)
-		exit(0) ;
+		return (NULL);// TODO !!!
 	i = 0;
 	while (db_array[i])
 	{
