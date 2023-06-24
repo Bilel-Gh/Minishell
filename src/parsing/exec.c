@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/24 00:35:15 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/24 13:27:18 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ t_token	*creat_info_token_list(t_token *tokens, int nb_node)
 		for_creat = for_creat->next;
 		i++;
 	}
+	for_creat = NULL;
 	return (head);
 }
 
@@ -143,6 +144,7 @@ bool	is_token_redi_in(t_token *token)
 	return (false);
 
 }
+
 void	new_infile(t_exec *exec, t_token *token)
 {
 	if (exec->infile)
@@ -353,7 +355,7 @@ int	exec_cmd(t_exec *info, char **env, char **cmd)
 	}
 	if (execve(info->path_cmd, cmd, env) == -1)
 	{
-		free_db_array(info->path);
+		free(info->path_cmd);
 		return (perror("cdm"), exit(-1), -1);
 	}
 	return (1);
@@ -488,12 +490,14 @@ int	start_exec(char **cdm, t_exec *info, char **env)
 	return (1);
 }
 //###################################################################
-void	close_for_solo(t_exec *info)
+void	close_for_solo_and_free(t_exec *info)
 {
 	if (info->infile || info->limiteur)
 		close(info->fd_infile);
 	if (info->outfile)
 		close(info->fd_outfile);
+	if (info->path_cmd)
+		free(info->path_cmd);
 }
 
 int	file_solo(t_exec *info)
@@ -529,7 +533,7 @@ int	solo_exec(char **cmd, t_exec *info, char **env)
 	}
 	while (waitpid(-1, NULL, 0) != -1)
 		;
-	close_for_solo(info);
+	close_for_solo_and_free(info);
 	return (0);
 }
 
@@ -616,9 +620,16 @@ void	exec(t_token *tokens, t_commande *cmd, char **env)
 			printf("\033[1;33mtoken type = %d\n\033[0m", for_print->info->type);
 			printf("\033[1;34mtoken index = %d\n\033[0m", for_print->token_index);
 			printf("\n\n");
-			for_print = for_print->next;
+			for_print	if (info->infile || info->limiteur)
+		close(info->fd_infile);
+	if (info->outfile)
+		close(info->fd_outfile);
+ = for_print->next;
 			}
 			printf("next \n\n");*/
+			
 		free_list_tokens(info_token);
+		free(exec.path_cmd);
 	}
+	free_db_array(exec.path);
 }
