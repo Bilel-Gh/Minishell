@@ -13,7 +13,6 @@ LDLIBS = -lreadline
 # /* ~~~~~~ SOURCES ~~~~~~ */
 SRCS_DIR = ./src/
 SRCS =	main.c \
-		exec.c \
 
 OBJS = ${addprefix ${SRCS_DIR}, ${SRCS:.c=.o}}
 
@@ -50,6 +49,7 @@ PARSING =	get_info_args.c \
 			/error_args/utils_error_args.c \
 			/expand/expand.c \
 			/expand/expand2.c \
+			/exec.c \
 
 OBJS_PARSING = ${addprefix ${PARSING_DIR}, ${PARSING:.c=.o}}
 

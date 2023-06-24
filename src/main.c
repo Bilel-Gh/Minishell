@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/24 20:12:28 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/23 17:39:26 by bghandri         ###   ########.fr       */
+/*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
+/*   Updated: 2023/06/24 13:50:36 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../includes/minishell.h"
 #include <string.h> // a supprimer
@@ -169,12 +170,12 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
         if (g_parsing->commande->cmd)
 		    ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing, &g_exec);
 		g_parsing->tokens = head;
-		//		while (args[i])
-		//		{
-		//			printf("token nb %d = %s avec len = %d\n", i, args[i], ft_strlen(args[i]));
-		//			i++;
-		//		}
-		//
+			// while (g_parsing->args[i])
+			// 	{
+			// 		printf("token nb %d = %s \n", i, g_parsing->args[i]);
+			// 		i++;
+			// 	}
+
 		//execute_command(args);
 		//else
 		// printf("Commande introuvable\n");

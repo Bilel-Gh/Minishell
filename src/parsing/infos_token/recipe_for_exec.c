@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 22:49:57 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/24 01:53:50 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/24 13:51:50 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -454,7 +454,6 @@ t_commande	*cmd_complete(t_token *token)
 	int			nb_node;
 	t_commande	*head;
 	char		**cmd_join;
-
 	nb_node = nb_pipe(token) + 1;
 	list_commande = malloc(sizeof(t_commande));
 	if (!list_commande)
