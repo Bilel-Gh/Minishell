@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/24 13:50:36 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/25 16:26:55 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,24 +152,27 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		if (!g_parsing->args)
 			continue;
 		g_parsing->tokens = ft_get_tokens_with_infos(g_parsing->args, nb_args);
-//		  while (g_parsing->tokens)
-//		  {
-//		  	printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
-//		 	printf("\033[1;33mtoken type = %d\n\033[0m", g_parsing->tokens->info->type);
-//		 	printf("\033[1;34mtoken index = %d\n\033[0m", g_parsing->tokens->token_index);
-//		 	if (g_parsing->tokens->prev)
-//		 		printf("\033[1;35mtoken prev value = %s\n\033[0m", g_parsing->tokens->prev->value);
-//		 	printf("\n\n");
-//		 	g_parsing->tokens = g_parsing->tokens->next;
-//		 }
+		 
 		g_parsing->commande = cmd_complete(g_parsing->tokens);
-		head = g_parsing->tokens;
+		
 		ft_set_index_for_exec(&g_parsing->tokens);
 		(void)g_exec;
+		 head = g_parsing->tokens;
+		//  while (g_parsing->tokens)
+		//   {
+		//   	printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
+		//  	printf("\033[1;33mtoken type = %d\n\033[0m", g_parsing->tokens->info->type);
+		//  	printf("\033[1;34mtoken index = %d\n\033[0m", g_parsing->tokens->token_index);
+		//  	if (g_parsing->tokens->prev)
+		//  		printf("\033[1;35mtoken prev value = %s\n\033[0m", g_parsing->tokens->prev->value);
+		//  	printf("\n\n");
+		//  	g_parsing->tokens = g_parsing->tokens->next;
+		//  }
+		//  g_parsing->tokens = head;
         exec(g_parsing->tokens, g_parsing->commande, *env);
        // if (g_parsing->commande->cmd)
 		  //  ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing, &g_exec);
-		g_parsing->tokens = head;
+		//g_parsing->tokens = head;
 			// while (g_parsing->args[i])
 			// 	{
 			// 		printf("token nb %d = %s \n", i, g_parsing->args[i]);

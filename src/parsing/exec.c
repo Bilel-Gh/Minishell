@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/24 13:27:18 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/25 16:53:40 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ t_token	*creat_info_token_list(t_token *tokens, int nb_node)
 		for_creat = for_creat->next;
 		i++;
 	}
-	for_creat = NULL;
+	//for_creat = NULL;
 	return (head);
 }
 
@@ -93,6 +93,7 @@ void	copy_cont_token(t_token *dest, t_token *src)
 	dest->value = ft_strdup(src->value);
 	dest->info = (t_token_info *)malloc(sizeof(t_token_info));
 	dest->info->type = src->info->type;
+	dest->prev = NULL;
 	// TODO gestion d errerur a faire et il faudrait meme reflechir  aune autre facon de faire 
 }
 
@@ -125,6 +126,7 @@ t_token *get_info_token(t_token *tokens, int index)
 	if (nb_token == 0)
 		return (info_token);
 	info_token = malloc(sizeof(t_token));
+	info_token->next = NULL;
 	if (!info_token)
 		return (NULL);
 	info_token = creat_info_token_list(info_token, nb_token);
@@ -133,8 +135,6 @@ t_token *get_info_token(t_token *tokens, int index)
 	info_token = dup_info(info_token, tokens, index);
 	return (info_token);
 }
-
-
 
 //########################################################################
 bool	is_token_redi_in(t_token *token)
@@ -155,7 +155,7 @@ void	new_infile(t_exec *exec, t_token *token)
 	}
 	if (exec->limiteur)
 	{
-		close (exec->fd_heredoc);
+		close (exec->fd_infile);
 		free(exec->limiteur);
 		unlink("/tmp/here_doc_minishell");
 		exec->limiteur = NULL;
@@ -173,21 +173,20 @@ void	start_heredoc(t_exec *exec)
 	unsigned int size_limiteur;
 
 	size_limiteur = ft_strlen(exec->limiteur);
-	exec->fd_heredoc = open("/tmp/here_doc_minishell", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	exec->fd_infile = open("/tmp/here_doc_minishell", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	// TODO security
 	while (1)
 	{
-		write(1, "> ",2);
-	//	line = get_next_line(0);
+		line = readline("> ");
 		if(!ft_strncmp(line, exec->limiteur, size_limiteur))
 			break;
-		write(exec->fd_heredoc, line, ft_strlen(line));
-		free(line);		
+		write(exec->fd_infile, line, ft_strlen(line));
+		write(exec->fd_infile, "\n", 1);
+		free(line);
 	} 
 	free(line);
-	//get_next_line(0);
-	close(exec->fd_heredoc);
-	exec->fd_heredoc = open("/tmp/here_doc_minishell", O_RDONLY);
+	close(exec->fd_infile);
+	exec->fd_infile = open("/tmp/here_doc_minishell", O_RDONLY);
 	// TODO security
   }
 
@@ -202,7 +201,7 @@ void	new_heredoc(t_exec *exec, t_token *token)
 	}
 	if (exec->limiteur)
 	{
-		close (exec->fd_heredoc);
+		close (exec->fd_infile);
 		free(exec->limiteur);
 		unlink("/tmp/here_doc_minishell");
 		exec->limiteur = NULL;
@@ -502,7 +501,7 @@ void	close_for_solo_and_free(t_exec *info)
 
 int	file_solo(t_exec *info)
 {
-	if (!info->infile)
+	if (!info->infile && !info->limiteur)
 		info->fd_infile = 0;
 	if (!info->outfile)
 		info->fd_outfile = 1;
@@ -542,8 +541,8 @@ void	set_exec_and_start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char
 	gestion_infile(tokens, exec);
 	(void)cmd;
 	gestion_outfile(tokens, exec);
-	printf("exec->outfile = %s\n", exec->outfile);
-	printf("exec->fd_outfile = %d\n", exec->fd_outfile);
+	// printf("exec->outfile = %s\n", exec->outfile);
+	// printf("exec->fd_outfile = %d\n", exec->fd_outfile);
 	if (solo_exec(cmd, exec, env) == -1)
 		return ; // faire le destruction en cascade ou autre 
 }
@@ -554,8 +553,8 @@ void	set_exec_and_start_exec(t_token *tokens, char **cmd, t_exec *exec, char **e
 	gestion_infile(tokens, exec);
 	(void)cmd;
 	gestion_outfile(tokens, exec);
-	printf("exec->outfile = %s\n", exec->outfile);
-	printf("exec->fd_outfile = %d\n", exec->fd_outfile);
+	// printf("exec->outfile = %s\n", exec->outfile);
+	// printf("exec->fd_outfile = %d\n", exec->fd_outfile);
 	if (start_exec(cmd, exec, env) == -1)
 		return ; // faire le destruction en cascade ou autre 
 }
@@ -585,7 +584,7 @@ int	get_path(t_exec *exec, char **envp)
 void	exec(t_token *tokens, t_commande *cmd, char **env)
 {
 	t_token *info_token;
-	//	t_token *for_print;
+	t_token *for_print;
 	t_commande *commande;
 	t_exec exec;
 	printf("%c\n",env[0][0]);
@@ -613,7 +612,7 @@ void	exec(t_token *tokens, t_commande *cmd, char **env)
 		i++;
 		set_exec_and_start_exec(info_token, commande->cmd, &exec, env);
 		commande = commande->next;
-		//	for_print = info_token;
+			for_print = info_token;
 		/*	while (for_print)
 			{
 			printf("\033[1;31mtoken value = %s\n\033[0m", for_print->value);
