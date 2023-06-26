@@ -1,4 +1,4 @@
-#include "../../includes/get_next_line.h"
+#include "../../includes/minishell.h"
 
 char	*ft_get_stash_from_read(int fd, char *tmp)
 {

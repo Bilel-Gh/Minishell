@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/25 16:26:55 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/26 17:54:28 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,26 +152,37 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		if (!g_parsing->args)
 			continue;
 		g_parsing->tokens = ft_get_tokens_with_infos(g_parsing->args, nb_args);
-		 
+ head = g_parsing->tokens;
+		 while (g_parsing->tokens)
+		  {
+		  	printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
+		 	printf("\033[1;33mtoken type = %d\n\033[0m", g_parsing->tokens->info->type);
+		 	printf("\033[1;34mtoken index = %d\n\033[0m", g_parsing->tokens->token_index);
+		 	if (g_parsing->tokens->prev)
+		 		printf("\033[1;35mtoken prev value = %s\n\033[0m", g_parsing->tokens->prev->value);
+		 	printf("\n\n");
+		 	g_parsing->tokens = g_parsing->tokens->next;
+		 }
+		 g_parsing->tokens = head;
 		g_parsing->commande = cmd_complete(g_parsing->tokens);
-		
+
 		ft_set_index_for_exec(&g_parsing->tokens);
 		(void)g_exec;
 		 head = g_parsing->tokens;
-		//  while (g_parsing->tokens)
-		//   {
-		//   	printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
-		//  	printf("\033[1;33mtoken type = %d\n\033[0m", g_parsing->tokens->info->type);
-		//  	printf("\033[1;34mtoken index = %d\n\033[0m", g_parsing->tokens->token_index);
-		//  	if (g_parsing->tokens->prev)
-		//  		printf("\033[1;35mtoken prev value = %s\n\033[0m", g_parsing->tokens->prev->value);
-		//  	printf("\n\n");
-		//  	g_parsing->tokens = g_parsing->tokens->next;
-		//  }
-		//  g_parsing->tokens = head;
-        exec(g_parsing->tokens, g_parsing->commande, *env);
-       // if (g_parsing->commande->cmd)
-		  //  ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing, &g_exec);
+		 while (g_parsing->tokens)
+		  {
+		  	printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
+		 	printf("\033[1;33mtoken type = %d\n\033[0m", g_parsing->tokens->info->type);
+		 	printf("\033[1;34mtoken index = %d\n\033[0m", g_parsing->tokens->token_index);
+		 	if (g_parsing->tokens->prev)
+		 		printf("\033[1;35mtoken prev value = %s\n\033[0m", g_parsing->tokens->prev->value);
+		 	printf("\n\n");
+		 	g_parsing->tokens = g_parsing->tokens->next;
+		 }
+		 g_parsing->tokens = head;
+         exec(g_parsing->tokens, g_parsing->commande, *env);
+       //if (g_parsing->commande->cmd)
+		 //  ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing, &g_exec);
 		//g_parsing->tokens = head;
 			// while (g_parsing->args[i])
 			// 	{
@@ -207,16 +218,46 @@ char **ft_db_array_dup(char **db_array)
 	return (db_array_cpy);
 }
 
+char **ft_get_export(char **env)
+{
+	int i;
+	int j;
+	char **export;
+	char *suffix;
+
+	export = NULL;
+	suffix = ft_strdup("export ");
+	if (!suffix)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (env[i])
+		i++;
+	export = malloc(sizeof(char*) * (i + 1));
+	export[i] = NULL;
+	while (j < i)
+	{
+		export[j] = ft_strjoin(suffix, env[j]);
+		suffix = ft_strdup("export ");
+		if (!suffix)
+			return (NULL);
+		j++;
+	}
+	free(suffix);
+	return (export);
+}
+
 int main(int argc, char **argv, char **env)
 {
 	(void)argc;
 	(void)argv;
-    t_global_exec *g_exec;
-    g_exec = malloc(sizeof(t_global_exec));
-    g_exec->export =NULL;
 	char **env_cpy;
 	env_cpy = ft_db_array_dup(env);
+	t_global_exec *g_exec;
+    g_exec = malloc(sizeof(t_global_exec));
+    g_exec->export = ft_get_export(env_cpy);
 	struct sigaction s_sigaction;
+	unlink("/tmp/here_doc_minishell");
 
 	s_sigaction.sa_handler = int_handler; // Nom de la fonction de gestionnaire
 	sigaction(SIGINT, &s_sigaction, NULL);// Gestionnaire de signal

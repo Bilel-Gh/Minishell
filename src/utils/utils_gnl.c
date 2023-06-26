@@ -1,45 +1,56 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_gnl.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/26 17:37:32 by bghandri          #+#    #+#             */
+/*   Updated: 2023/06/26 17:37:35 by bghandri         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include "../../includes/get_next_line.h"
+#include "../../includes/minishell.h"
 
-size_t	ft_strlen(const char *s)
-{
-	size_t	i;
+// size_t	ft_strlen(const char *s)
+// {
+// 	size_t	i;
 
-	i = 0;
-	while (s[i])
-	{
-		i++;
-	}
-	return (i);
-}
+// 	i = 0;
+// 	while (s[i])
+// 	{
+// 		i++;
+// 	}
+// 	return (i);
+// }
 
-char	*ft_strjoin(char const *stash, char const *b)
-{
-	char	*str;
-	int		i;
-	int		j;
+// char	*ft_strjoin(char const *stash, char const *b)
+// {
+// 	char	*str;
+// 	int		i;
+// 	int		j;
 
-	j = 0;
-	i = 0;
-	str = (char *)malloc(sizeof(char) * (ft_strlen(stash) + ft_strlen(b) + 1));
-	if (!str)
-		return (NULL);
-	while (stash[i])
-	{
-		str[j] = stash[i];
-		i++;
-		j++;
-	}
-	i = 0;
-	while (b[i])
-	{
-		str[j] = b[i];
-		i++;
-		j++;
-	}
-	str[j] = '\0';
-	return (str);
-}
+// 	j = 0;
+// 	i = 0;
+// 	str = (char *)malloc(sizeof(char) * (ft_strlen(stash) + ft_strlen(b) + 1));
+// 	if (!str)
+// 		return (NULL);
+// 	while (stash[i])
+// 	{
+// 		str[j] = stash[i];
+// 		i++;
+// 		j++;
+// 	}
+// 	i = 0;
+// 	while (b[i])
+// 	{
+// 		str[j] = b[i];
+// 		i++;
+// 		j++;
+// 	}
+// 	str[j] = '\0';
+// 	return (str);
+// }
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {
@@ -65,38 +76,38 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (ptr);
 }
 
-char	*ft_strchr(const char *s, int c)
-{
-	unsigned int	i;
+// char	*ft_strchr(const char *s, int c)
+// {
+// 	unsigned int	i;
 
-	i = 0;
-	if (c == 0)
-		return (ft_strlen(s) + (char *)s);
-	while (s[i])
-	{
-		if (s[i] == (char)c)
-			return ((char *)(&s[i]));
-		i++;
-	}
-	return (NULL);
-}
+// 	i = 0;
+// 	if (c == 0)
+// 		return (ft_strlen(s) + (char *)s);
+// 	while (s[i])
+// 	{
+// 		if (s[i] == (char)c)
+// 			return ((char *)(&s[i]));
+// 		i++;
+// 	}
+// 	return (NULL);
+// }
 
-char	*ft_strdup(const char *s)
-{
-	char			*str;
-	unsigned int	s_len;
-	unsigned int	i;
+// char	*ft_strdup(const char *s)
+// {
+// 	char			*str;
+// 	unsigned int	s_len;
+// 	unsigned int	i;
 
-	i = 0;
-	s_len = ft_strlen(s);
-	str = (char *)malloc(sizeof(char) * (s_len + 1));
-	if (!str)
-		return (NULL);
-	while (i < s_len)
-	{
-		str[i] = s[i];
-		i++;
-	}
-	str[i] = '\0';
-	return (str);
-}
+// 	i = 0;
+// 	s_len = ft_strlen(s);
+// 	str = (char *)malloc(sizeof(char) * (s_len + 1));
+// 	if (!str)
+// 		return (NULL);
+// 	while (i < s_len)
+// 	{
+// 		str[i] = s[i];
+// 		i++;
+// 	}
+// 	str[i] = '\0';
+// 	return (str);
+// }

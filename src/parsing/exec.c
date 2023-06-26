@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/25 16:53:40 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/26 18:28:16 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	init_exec(t_exec *exec)
 	exec->infile = NULL;
 	exec->outfile = NULL;
 	exec->limiteur = NULL;
+	exec->path_cmd = NULL;
 	exec->fd_infile = -1;
 	exec->fd_outfile = -1;
 	exec->fd_in_last_pipe = -1;
@@ -94,7 +95,7 @@ void	copy_cont_token(t_token *dest, t_token *src)
 	dest->info = (t_token_info *)malloc(sizeof(t_token_info));
 	dest->info->type = src->info->type;
 	dest->prev = NULL;
-	// TODO gestion d errerur a faire et il faudrait meme reflechir  aune autre facon de faire 
+	// TODO gestion d errerur a faire et il faudrait meme reflechir  aune autre facon de faire
 }
 
 t_token	*dup_info(t_token *info_token, t_token *tokens, int index)
@@ -173,20 +174,33 @@ void	start_heredoc(t_exec *exec)
 	unsigned int size_limiteur;
 
 	size_limiteur = ft_strlen(exec->limiteur);
+	printf("\033[1;31mexec->limiteur = %s\n\033[0m", exec->limiteur);
 	exec->fd_infile = open("/tmp/here_doc_minishell", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	if (exec->fd_infile == -1)
+		perror("open");
+	int count = 0;
 	// TODO security
 	while (1)
 	{
 		line = readline("> ");
-		if(!ft_strncmp(line, exec->limiteur, size_limiteur))
+		printf("\033[1;37mline = %s\n\033[0m", line);
+		printf("\033[1;37mexec limiteur = %s\n\n\033[0m", exec->limiteur);
+		count++;
+		printf("\033[1;37mexec->fd_infile = %d\n\033[0m", exec->fd_infile);
+		if (count == 15)
+			break;
+		if(!ft_strcmp(line, exec->limiteur))
 			break;
 		write(exec->fd_infile, line, ft_strlen(line));
 		write(exec->fd_infile, "\n", 1);
 		free(line);
-	} 
+	}
 	free(line);
 	close(exec->fd_infile);
 	exec->fd_infile = open("/tmp/here_doc_minishell", O_RDONLY);
+	printf("\033[1;34mexec->fd_infile2 = %d\n\033[0m", exec->fd_infile);
+	if (exec->fd_infile == -1)
+		perror("open");
 	// TODO security
   }
 
@@ -228,6 +242,7 @@ void	gestion_infile(t_token *tokens, t_exec *exec)
 	t_token *seach_tok_in;
 
 	seach_tok_in = tokens;
+	printf("\033[1;32m+++exec->fd_infile = %d\n\033[0m", exec->fd_infile);
 	while (seach_tok_in)
 	{
 		if (is_token_redi_in(seach_tok_in))
@@ -338,7 +353,7 @@ int	creat_pipe_and_file(t_exec *info, int *pipefd)
 {
 	if (pipe(pipefd) == -1)
 		return (perror("error pipe"), -1);
-	if (!info->infile)
+	if (!info->infile && !info->limiteur)
 		info->fd_infile = 0;
 	if (!info->outfile)
 		info->fd_outfile = pipefd[1];
@@ -377,6 +392,11 @@ int	first(char **cmd, t_exec *info, char **env)
 
 	if (creat_pipe_and_file(info, pipefd) > 0)
 	{
+		close_for_first(pipefd, info);
+		return (-1);
+	}
+	if (cmd[0] != NULL)
+	{
 		find_path(info->path, cmd[0], info);
 		pid = fork();
 		if (pid == -1)
@@ -414,6 +434,10 @@ int	inter(char **cmd, t_exec *info, char **env)
 	if (pipe(pipefd) == -1)
 		return (perror("error pipe"), -1);
 	gestion_file_inter(info, pipefd);
+	if (cmd[0] != NULL)
+	{
+
+
 	find_path(info->path, cmd[0], info);
 	pid = fork();
 	if (pid == -1)
@@ -426,6 +450,7 @@ int	inter(char **cmd, t_exec *info, char **env)
 		close(pipefd[1]);
 		if (exec_cmd(info, env, cmd) == -1)
 			return (1);
+	}
 	}
 	close(pipefd[1]);
 	if (info->infile || info->limiteur)
@@ -452,6 +477,8 @@ int	last(char **cmd, t_exec *info, char **env)
 	pid_t	pid;
 
 	gestion_file_last(info);
+	if (cmd[0] != NULL)
+	{
 	find_path(info->path, cmd[0], info);
 	pid = fork();
 	if (pid == -1)
@@ -464,6 +491,7 @@ int	last(char **cmd, t_exec *info, char **env)
 			close(info->fd_outfile);
 		if (exec_cmd(info, env, cmd) == 1)
 			return (1);
+	}
 	}
 	if (info->infile || info->limiteur)
 		close(info->fd_infile);
@@ -541,10 +569,15 @@ void	set_exec_and_start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char
 	gestion_infile(tokens, exec);
 	(void)cmd;
 	gestion_outfile(tokens, exec);
+	if (cmd[0] == NULL)
+	{
+		close_for_solo_and_free(exec);
+		return ;
+	}
 	// printf("exec->outfile = %s\n", exec->outfile);
 	// printf("exec->fd_outfile = %d\n", exec->fd_outfile);
 	if (solo_exec(cmd, exec, env) == -1)
-		return ; // faire le destruction en cascade ou autre 
+		return ; // faire le destruction en cascade ou autre
 }
 //#######################################################################################
 
@@ -556,7 +589,7 @@ void	set_exec_and_start_exec(t_token *tokens, char **cmd, t_exec *exec, char **e
 	// printf("exec->outfile = %s\n", exec->outfile);
 	// printf("exec->fd_outfile = %d\n", exec->fd_outfile);
 	if (start_exec(cmd, exec, env) == -1)
-		return ; // faire le destruction en cascade ou autre 
+		return ; // faire le destruction en cascade ou autre
 }
 
 int	get_path(t_exec *exec, char **envp)
@@ -626,7 +659,7 @@ void	exec(t_token *tokens, t_commande *cmd, char **env)
  = for_print->next;
 			}
 			printf("next \n\n");*/
-			
+
 		free_list_tokens(info_token);
 		free(exec.path_cmd);
 	}

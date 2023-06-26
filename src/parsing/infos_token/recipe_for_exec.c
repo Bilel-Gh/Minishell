@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 22:49:57 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/25 16:31:33 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/26 14:42:48 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,9 +101,9 @@ char	**give_cmd_join(t_token *token, int nb_cdm)
 	if (!cmd_join)
 		return (0);
 	b_zero_for_cmd_join(cmd_join, nb_cdm, i);
-	while (tok_sch && i != nb_cdm)
+	while (tok_sch)
 	{
-		while (tok_sch)
+		while (tok_sch && i < nb_cdm)
 		{
 			if (tok_sch->info->type == COMMANDE || tok_sch->info->type == ARG)
 				cmd_join[i] = ft_join_cmd(cmd_join[i], tok_sch->value);
@@ -123,56 +123,6 @@ char	**give_cmd_join(t_token *token, int nb_cdm)
     }
 	return (cmd_join);
 }
-
-// char **ft_join_for_export(char **cmd_join)
-// {
-//     int i = 0;
-//     int l = 0;
-//     char *tmp;
-//     char **cmd_join2;
-
-//     int count = 0;
-//     while (cmd_join[count])
-//         count++;
-
-//     cmd_join2 = malloc(sizeof(char *) * (count + 1));
-//     if (!cmd_join2)
-//         return NULL;
-
-//     while (cmd_join[i])
-//     {
-//         if (ft_strchr(cmd_join[i], '"') || ft_strchr(cmd_join[i], '\''))
-//         {
-//             tmp = ft_strdup(cmd_join[i]);
-//             i++;
-//             while (cmd_join[i] && !ft_strchr(cmd_join[i], '"') && !ft_strchr(cmd_join[i], '\''))
-//             {
-//                 tmp = ft_strjoin(tmp, " ");
-//                 tmp = ft_strjoin(tmp, cmd_join[i]);
-//                 free(cmd_join[i]);
-//                 i++;
-//             }
-//             if (cmd_join[i])
-//             {
-//                 tmp = ft_strjoin(tmp, " ");
-//                 tmp = ft_strjoin(tmp, cmd_join[i]);
-//                 free(cmd_join[i]);
-//                 i++;
-//             }
-//             cmd_join2[l] = tmp;
-//             l++;
-//         }
-//         else
-//         {
-//             cmd_join2[l] = cmd_join[i];
-//             l++;
-//             i++;
-//         }
-//     }
-//     cmd_join2[l] = NULL; // Terminer le tableau de sortie
-//     free(cmd_join);
-//     return cmd_join2;
-// }
 
 char	*ft_strncpy(char *dest, char *src, unsigned int n)
 {
@@ -218,7 +168,11 @@ char** ft_custom_split(char* str) {
     result = NULL;
     // Vérifier si la chaîne est nulle ou vide
     if (str == NULL || ft_strlen(str) == 0)
-        return NULL;
+    {
+        result = (char**)malloc(sizeof(char*));
+        result[0] = NULL;
+        return result;
+    }
 
     // Calculer le nombre d'espaces potentiels de séparation
     len = ft_strlen(str);
@@ -264,7 +218,7 @@ char** ft_custom_split(char* str) {
         result[count][len_str_to_add] = '\0';
         (count)++;
     }
-    
+
     i = 0;
     return result;
 }
@@ -279,7 +233,6 @@ void	add_cmd_to_list_commande(t_commande *list_commande, char **cmd_join)
 	i = 0;
 	while (list_cmd)
 	{
-
 		list_cmd->cmd = ft_custom_split(cmd_join[i]);
         // list_cmd->cmd = ft_join_for_export(list_cmd->cmd);
         int z = 0;
@@ -482,7 +435,10 @@ t_commande	*cmd_complete(t_token *token)
 	int			nb_node;
 	t_commande	*head;
 	char		**cmd_join;
+
+    cmd_join = NULL;
 	nb_node = nb_pipe(token) + 1;
+    printf("\033[0;32m nb_node = %d \033[0m\n", nb_node);
 	list_commande = malloc(sizeof(t_commande));
 	if (!list_commande)
 		return (list_commande);
@@ -492,6 +448,10 @@ t_commande	*cmd_complete(t_token *token)
 	list_commande = head;
 	cmd_join = give_cmd_join(token, nb_node);
     // cmd_join = ft_gestion_export(cmd_join);
+    if (!cmd_join)
+    {
+        return (NULL);
+    }
 	add_cmd_to_list_commande(list_commande, cmd_join);
 	list_commande = head;
     change_cmd_list(list_commande);

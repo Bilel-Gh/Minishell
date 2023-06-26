@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/24 13:41:59 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/26 17:42:37 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,8 @@ int ft_is_outfile(t_token *token);
 int ft_is_infile(t_token *token);
 t_token* addtoken(t_token* head, char* value);
 int ft_get_infos_by_pos(t_token *token);
+char	*copy_cont(char *str);
+char	*copy_sans_quote(char *args);
 
 // Dossier UTILS
 void	ft_complete( char const *s, char *str, int *i);

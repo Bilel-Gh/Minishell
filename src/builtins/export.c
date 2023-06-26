@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 02:56:40 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/23 15:55:50 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/26 13:30:19 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,17 +150,12 @@ char **ft_add_to_db_tab(char **tab, char *str, char *name)
 
 void ft_add_to_export(t_global_exec **g_exec, char *new_env, char *name)
 {
-    int j = 0;
     char *env_to_add_to_export;
     char *pre_export;
     env_to_add_to_export = ft_strdup(new_env);
     pre_export = ft_strdup("export ");
     (*g_exec)->export = ft_add_to_db_tab((*g_exec)->export, ft_strjoin(pre_export, env_to_add_to_export), name);
-    while ((*g_exec)->export[j] != NULL)
-    {
-        printf("\033[0;31m g_exec->export[%d]: %s\n \033[0m", j, (*g_exec)->export[j]);
-        j++;
-    }
+    // todo ajouter avec guillemets !!
 }
 
 void ft_add_env(char *name, char *value, char ***env, t_global_exec **g_exec)

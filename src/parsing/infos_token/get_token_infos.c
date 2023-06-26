@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_token_infos.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 21:08:43 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/23 22:42:50 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/26 16:19:33 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,27 @@ t_token	*create_token(t_token *head, char *value, int index)
 	return (head);
 }
 
+
+
+void handle_kick_quote(t_token *token)
+{
+	t_token *head;
+	head = token;
+	char *tmp;
+
+	while (head)
+	{
+		tmp = head->value;
+		if ((head->info->type == INFILE || head->info->type == OUTFILE || head->info->type == LIMITEUR)
+		 && (head->value[0] == '\'' || head->value[0] == '\"'))
+				head->value = copy_sans_quote(head->value);
+		else
+			head->value = copy_cont(head->value);
+		free(tmp);
+		head = head->next;
+	}
+}
+
 t_token	*ft_get_tokens_with_infos(char **args, int nb_args)
 {
 	int		i;
@@ -108,5 +129,6 @@ t_token	*ft_get_tokens_with_infos(char **args, int nb_args)
 		current = current->next;
 	}
 	token_head = ft_verif_cmd(&token_head);
+	handle_kick_quote(token_head);
 	return (token_head);
 }
