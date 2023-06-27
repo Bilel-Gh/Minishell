@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 22:49:57 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/26 14:42:48 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/27 15:16:13 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,7 +259,8 @@ void	free_list_commande(t_commande *commande)
 		free_db_array(head->cmd);
 		free(head);
 	}
-	free_db_array(commande->cmd);
+	if (commande->cmd)
+		free_db_array(commande->cmd);
 	free(commande);
 }
 

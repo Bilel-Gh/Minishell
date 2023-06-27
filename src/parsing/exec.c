@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/26 18:28:16 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/06/27 15:09:59 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,21 +174,13 @@ void	start_heredoc(t_exec *exec)
 	unsigned int size_limiteur;
 
 	size_limiteur = ft_strlen(exec->limiteur);
-	printf("\033[1;31mexec->limiteur = %s\n\033[0m", exec->limiteur);
 	exec->fd_infile = open("/tmp/here_doc_minishell", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	if (exec->fd_infile == -1)
 		perror("open");
-	int count = 0;
 	// TODO security
 	while (1)
 	{
 		line = readline("> ");
-		printf("\033[1;37mline = %s\n\033[0m", line);
-		printf("\033[1;37mexec limiteur = %s\n\n\033[0m", exec->limiteur);
-		count++;
-		printf("\033[1;37mexec->fd_infile = %d\n\033[0m", exec->fd_infile);
-		if (count == 15)
-			break;
 		if(!ft_strcmp(line, exec->limiteur))
 			break;
 		write(exec->fd_infile, line, ft_strlen(line));
@@ -242,7 +234,6 @@ void	gestion_infile(t_token *tokens, t_exec *exec)
 	t_token *seach_tok_in;
 
 	seach_tok_in = tokens;
-	printf("\033[1;32m+++exec->fd_infile = %d\n\033[0m", exec->fd_infile);
 	while (seach_tok_in)
 	{
 		if (is_token_redi_in(seach_tok_in))
@@ -390,13 +381,15 @@ int	first(char **cmd, t_exec *info, char **env)
 	int		pipefd[2];
 	pid_t	pid;
 
-	if (creat_pipe_and_file(info, pipefd) > 0)
+	if (creat_pipe_and_file(info, pipefd) < 0)
 	{
 		close_for_first(pipefd, info);
 		return (-1);
 	}
-	if (cmd[0] != NULL)
+	write(1,"ff", 2);
+//	if (cmd[0] != NULL)
 	{
+//		printf("dd");
 		find_path(info->path, cmd[0], info);
 		pid = fork();
 		if (pid == -1)
@@ -506,12 +499,22 @@ int	last(char **cmd, t_exec *info, char **env)
 
 int	start_exec(char **cdm, t_exec *info, char **env)
 {
+	printf("cdm [0] ======= %s\n", cdm[0]);
 	if (info->pos == FIRST)
+	{
+		printf("first");
 		first(cdm, info, env);
+	}
 	else if(info->nb_cmd == DERNIER)
+	{
+		printf("last");
 		last(cdm, info, env);
+	}
 	else if(info->pos == INTER)
+	{
+		printf("inter");
 		inter(cdm, info, env);
+	}
 	info->pos = INTER;
 	info->nb_cmd--;
 	return (1);
@@ -639,6 +642,7 @@ void	exec(t_token *tokens, t_commande *cmd, char **env)
 	}
 	while (commande)
 	{
+		printf("hh");
 		info_token = get_info_token(tokens, i);
 		if (!info_token)
 			return ;
