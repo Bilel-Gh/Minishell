@@ -619,52 +619,53 @@ int	get_path(t_exec *exec, char **envp)
 
 void	exec(t_token *tokens, t_commande *cmd, char **env)
 {
-	t_token *info_token;
-	//t_token *for_print;
-	t_exec exec;
-	printf("%c\n",env[0][0]);
-	int i;
+    t_token *info_token;
+    //t_token *for_print;
+    t_commande *commande;
+    t_exec exec;
+    printf("%c\n",env[0][0]);
+    int i;
 
-	i = 0;
-	commande = cmd;
-	get_path(&exec, env);
-	init_exec(&exec);
-	exec.nb_cmd = nb_pipe(tokens) + 1;
-	if (exec.nb_cmd == 1)
-	{
-		info_token = get_info_token(tokens, i);
-		if (!info_token)
-			return ;
-		set_exec_and_start_exec_one(info_token, commande->cmd, &exec, env);
-		commande = commande->next;
-		free_list_tokens(info_token);
-	}
-	while (commande)
-	{
-		printf("hh");
-		info_token = get_info_token(tokens, i);
-		if (!info_token)
-			return ;
-		i++;
-		set_exec_and_start_exec(info_token, commande->cmd, &exec, env);
-		commande = commande->next;
-			//for_print = info_token;
-		/*	while (for_print)
-			{
-			printf("\033[1;31mtoken value = %s\n\033[0m", for_print->value);
-			printf("\033[1;33mtoken type = %d\n\033[0m", for_print->info->type);
-			printf("\033[1;34mtoken index = %d\n\033[0m", for_print->token_index);
-			printf("\n\n");
-			for_print	if (info->infile || info->limiteur)
-		close(info->fd_infile);
-	if (info->outfile)
-		close(info->fd_outfile);
+    i = 0;
+    commande = cmd;
+    get_path(&exec, env);
+    init_exec(&exec);
+    exec.nb_cmd = nb_pipe(tokens) + 1;
+    if (exec.nb_cmd == 1)
+    {
+        info_token = get_info_token(tokens, i);
+        if (!info_token)
+            return ;
+        set_exec_and_start_exec_one(info_token, commande->cmd, &exec, env);
+        commande = commande->next;
+        free_list_tokens(info_token);
+    }
+    while (commande)
+    {
+        printf("hh");
+        info_token = get_info_token(tokens, i);
+        if (!info_token)
+            return ;
+        i++;
+        set_exec_and_start_exec(info_token, commande->cmd, &exec, env);
+        commande = commande->next;
+        //for_print = info_token;
+        /*	while (for_print)
+            {
+            printf("\033[1;31mtoken value = %s\n\033[0m", for_print->value);
+            printf("\033[1;33mtoken type = %d\n\033[0m", for_print->info->type);
+            printf("\033[1;34mtoken index = %d\n\033[0m", for_print->token_index);
+            printf("\n\n");
+            for_print	if (info->infile || info->limiteur)
+        close(info->fd_infile);
+    if (info->outfile)
+        close(info->fd_outfile);
  = for_print->next;
-			}
-			printf("next \n\n");*/
+            }
+            printf("next \n\n");*/
 
-		free_list_tokens(info_token);
-		free(exec.path_cmd);
-	}
-	free_db_array(exec.path);
+        free_list_tokens(info_token);
+        free(exec.path_cmd);
+    }
+    free_db_array(exec.path);
 }

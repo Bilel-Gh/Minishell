@@ -98,7 +98,7 @@ void	expande(int *type_args, int nb_args, t_global_parsing **g_pars, char **env)
                 printf("\n \n PRESANCE EXPANDE\n");
                 if (ft_strncmp((*g_pars)->args[i], "$?", 2) == 0)
                 {
-                    exit_code = ft_itoa((*g_pars)->exec->exit_code);
+                    exit_code = ft_itoa(g_code_exit);
                     if (ft_strlen((*g_pars)->args[i]) > 2)
                     {
                         suite = ft_strdup((*g_pars)->args[i] + 2);

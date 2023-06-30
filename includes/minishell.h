@@ -39,6 +39,8 @@ extern char					**environ;
 # define DERNIER 1
 # define INTER 2
 
+int g_code_exit;
+
 enum						e_character_type
 {
 	ALPHANUM = 0,
@@ -113,7 +115,6 @@ typedef struct commande
 typedef struct s_global_exec
 {
 	char					**export;
-	int						exit_code;
 }							t_global_exec;
 
 typedef struct s_global_parsing

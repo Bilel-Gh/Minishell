@@ -20,8 +20,6 @@
 #define MAX_ARGS 64
 #define MAX_ARG_LENGTH 256
 
-void ft_set_exit_code(t_global_exec *g_exec, t_global_parsing *g_parsing);
-
 // Gestionnaire de signal SIGINT //
 void int_handler(int sig)
 {
@@ -122,31 +120,32 @@ void ft_set_index_for_exec(t_token **tokens)
 	*tokens = head;
 }
 
-void ft_set_exit_code(t_global_exec *g_exec, t_global_parsing *g_parsing) {
+void ft_set_exit_code(t_global_parsing *g_parsing)
+{
     char *invalid_char;
 
     invalid_char = "_@°]=+£$?.";
     if(g_parsing->args[0][0] == '&')
     {
         printf("syntax error near unexpected token `%s'\n", g_parsing->args[0]);
-        g_exec->exit_code = MISUSE;
+        g_code_exit = MISUSE;
     }
     else if (ft_strchr(invalid_char, g_parsing->args[0][0]))
     {
         printf("bash: %s: command not found\n", g_parsing->args[0]);
-        g_exec->exit_code = NOTFOUND;
+        g_code_exit = NOTFOUND;
     }
     else if (ft_strcmp(g_parsing->args[0], "!") == 0)
-        g_exec->exit_code = ERROR;
+        g_code_exit = ERROR;
     else if (access(g_parsing->args[0], F_OK) == 0)
     {
         printf("bash: %s: is a directory\n", g_parsing->args[0]);
-        g_exec->exit_code = CANTEXEC;
+        g_code_exit = CANTEXEC;
     }
     else if (access(g_parsing->args[0], F_OK) == -1)
     {
         printf("bash: %s: command not found\n", g_parsing->args[0]);
-        g_exec->exit_code = NOTFOUND;
+        g_code_exit = NOTFOUND;
     }
     ft_free_g_parsing(g_parsing);
 }
@@ -174,8 +173,8 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		g_parsing->args = ft_lexeur(g_parsing->line);
         if (ft_db_tablen(g_parsing->args) == 1)
         {
-            ft_set_exit_code(g_exec, g_parsing);
-            printf("\033[1;36mexit code = %d\n\033[0m", g_exec->exit_code);
+            ft_set_exit_code(g_parsing);
+            printf("\033[1;36mexit code = %d\n\033[0m", g_code_exit);
             continue;
         }
 		g_parsing->info_args = ft_get_info_args(g_parsing->args, &nb_args);
@@ -187,14 +186,14 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		{
 			printf("\n@@@@@@@@@@@@@ ERROR DETECT !!!! @@@@@@@@@@@@@@@\n");
 			//free(info_args);
-            g_exec->exit_code = MISUSE;
-			printf("\033[1;36mexit code = %d\n\033[0m", g_exec->exit_code);
+            g_code_exit = MISUSE;
+			printf("\033[1;36mexit code = %d\n\033[0m", g_code_exit);
 			free_db_array(g_parsing->args);
 			continue;
 		}
 		else
 			printf("############# validation ###############\n");
-		g_exec->exit_code = 0;
+        g_code_exit = 0;
 		if (!g_parsing->args)
 			continue;
 		g_parsing->tokens = ft_get_tokens_with_infos(g_parsing->args, nb_args);
@@ -240,7 +239,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		//else
 		// printf("Commande introuvable\n");
 		// Libérez la mémoire allouée par readline
-		printf("\033[1;36mexit code = %d\n\033[0m", g_exec->exit_code);
+		printf("\033[1;36mexit code = %d\n\033[0m", g_code_exit);
 		ft_free_g_parsing(g_parsing);
 	}
 }
@@ -298,12 +297,12 @@ int main(int argc, char **argv, char **env)
 {
 	(void)argc;
 	(void)argv;
+    g_code_exit = 0;
 	char **env_cpy;
 	env_cpy = ft_db_array_dup(env);
 	t_global_exec *g_exec;
     g_exec = malloc(sizeof(t_global_exec));
     g_exec->export = ft_get_export(env_cpy);
-    g_exec->exit_code = 0;
 	struct sigaction s_sigaction;
 	unlink("/tmp/here_doc_minishell");
 
