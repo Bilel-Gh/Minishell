@@ -21,7 +21,8 @@ void	free_db_array(char **array)
 		return ;
 	while (array[i])
 	{
-		free(array[i]);
+        if (array[i][0] != '\0')
+		    free(array[i]);
 		i++;
 	}
 	free(array);

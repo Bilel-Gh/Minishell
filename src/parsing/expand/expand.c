@@ -45,12 +45,18 @@ char	*replace_expande(char *args, int i, char **env)
 char	*importe_expande(char *args, char **env)
 {
 	int	i;
+    char *tmp;
 
 	i = 0;
+    tmp = NULL;
 	while (args[i])
 	{
 		if (args[i] == '$')
-			args = replace_expande(args, i, env);
+        {
+            tmp = ft_strdup(args);
+            free(args);
+            args = replace_expande(tmp, i, env);
+        }
 		i++;
 	}
 	return (args);
@@ -70,19 +76,50 @@ bool	have_expande(char *args)
 	return (false);
 }
 
-void	expande(int *type_args, int nb_args, char **args, char **env)
+void	expande(int *type_args, int nb_args, t_global_parsing **g_pars, char **env)
 {
 	int	i;
+     char *suite;
+     char *exit_code;
+     char *new_args;
+    //int len_expande;
 
 	i = 0;
+    suite = NULL;
+    new_args = NULL;
 	while (i < nb_args)
 	{
 		if (type_args[i] == ALPHANUM || type_args[i] == QUOTE_D)
 		{
-			if (have_expande(args[i]))
+			if (have_expande((*g_pars)->args[i]))
 			{
-				printf("\n \n PRESANCE EXPANDE\n");
-				args[i] = importe_expande(args[i], env);
+//                tmp = ft_strdup((*g_pars)->args[i]);
+//                (void)tmp;
+                printf("\n \n PRESANCE EXPANDE\n");
+                if (ft_strncmp((*g_pars)->args[i], "$?", 2) == 0)
+                {
+                    exit_code = ft_itoa((*g_pars)->exec->exit_code);
+                    if (ft_strlen((*g_pars)->args[i]) > 2)
+                    {
+                        suite = ft_strdup((*g_pars)->args[i] + 2);
+                        if (!suite)
+                            return ;
+                        new_args = ft_strcat(exit_code, suite);
+                        free((*g_pars)->args[i]);
+                        (*g_pars)->args[i] = ft_strdup(new_args);
+                        free(suite);
+                    }
+                    else
+                    {
+                        free((*g_pars)->args[i]);
+                        (*g_pars)->args[i] = ft_strdup(exit_code);
+                    }
+                    free(exit_code);
+                }
+                else
+                {
+                    (*g_pars)->args[i] = importe_expande((*g_pars)->args[i], env);
+                }
 			}
 		}
 		i++;

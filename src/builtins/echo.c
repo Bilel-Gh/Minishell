@@ -75,5 +75,5 @@ void builtin_echo(char **args)
         free(full_arg);
     }
     if (print_newline)
-        putchar('\n');
+        printf("\n");
 }

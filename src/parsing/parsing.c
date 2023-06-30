@@ -104,34 +104,34 @@ char	**kick_args_space(char **new_args, int *type_args, int *nb_args)
 	return (*nb_args = nb_new_args, last_args);
 }
 
-char	**ft_parsing(int *nb_args, char **args, int *error, char ***env)
+char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, int *error, char ***env)
 {
 	char	**new_args;
 	//char	**no_quote_args;
 	int		*new_type_args;
 	int		*type_args;
 
-	type_args = ft_get_info_args(args, nb_args);
-	if (search_error_args(type_args, nb_args, args))
-		return (args);
-	expande(type_args, *nb_args, args, *env);
+	type_args = ft_get_info_args((*g_pars)->args, nb_args);
+	if (search_error_args(type_args, nb_args, (*g_pars)->args))
+		return ((*g_pars)->args);
+	expande(type_args, *nb_args, g_pars, *env);
     // no_quote_args = kick_quote(type_args, *nb_args, args);
 // 	if (ft_strcmp(no_quote_args[0], "export") == 0)
 //     {
           //no_quote_args = ft_db_array_dup(args);
 //     }
-	new_args = join_inter_space(args, type_args, nb_args);
+	new_args = join_inter_space((*g_pars)->args, type_args, nb_args);
 	new_type_args = ft_get_info_args(new_args, nb_args);
-	free_db_array(args);
-	args = kick_args_space(new_args, new_type_args, nb_args);
+	free_db_array((*g_pars)->args);
+    (*g_pars)->args = kick_args_space(new_args, new_type_args, nb_args);
 	free_db_array(new_args);
 	free(type_args);
 	free(new_type_args);
-	new_type_args = ft_get_info_args(args, nb_args);
+	new_type_args = ft_get_info_args((*g_pars)->args, nb_args);
 	if (error_grammaticale(new_type_args, *nb_args))
-		return (args);
+		return ((*g_pars)->args);
 	printf("^^^^^^^^^^^ no error grammaticale ^^^^^^^^^^^^^^^^\n");
 	*error = 1;
 	free(new_type_args);
-	return (args);
+	return ((*g_pars)->args);
 }

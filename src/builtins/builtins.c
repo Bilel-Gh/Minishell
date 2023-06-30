@@ -92,26 +92,51 @@ void ft_exec_cmd(char **args, char ***env)
     }
 }
 
+char *ft_strrchr(const char *s, int c)
+{
+    int	i;
+
+    i = 0;
+    while (s[i])
+        i++;
+    while (i >= 0)
+    {
+        if (s[i] == (char)c)
+            return ((char*)(s + i));
+        i--;
+    }
+    return (NULL);
+}
+
 void ft_exec_bultins(char **args, char ***env, t_global_parsing **g_pars, t_global_exec **g_exec)
 {
+    char *command;
     if (args[0] == NULL)
         return;
-    if (ft_strcmp(args[0], "echo") == 0)
-        builtin_echo(args);
-    else if (ft_strcmp(args[0], "cd") == 0)
-        builtin_cd(args, env);
-    else if (ft_strcmp(args[0], "pwd") == 0)
-        builtin_pwd();
-    else if (ft_strcmp(args[0], "unset") == 0)
-        builtin_unset(args, env);
-    else if (ft_strcmp(args[0], "env") == 0)
-        builtin_env(args, *env);
-    else if (ft_strcmp(args[0], "exit") == 0)
-        builtin_exit(args, g_pars);
-    else if (ft_strcmp(args[0], "export") == 0)
-        builtin_export(args, env, g_exec);
+    if(access(args[0], F_OK) == 0)
+    {
+        command = ft_strrchr(args[0], 'bin/');
+        command = ft_substr(command, 1, ft_strlen(command));
+        printf("                     command: %s\n", command);
+    }
     else
-        ft_exec_cmd(args, env);
+        command = args[0];
+    if (ft_strcmp(command, "echo") == 0)
+        builtin_echo(args);
+    else if (ft_strcmp(command, "cd") == 0)
+        builtin_cd(args, env, (*g_exec)->export);
+    else if (ft_strcmp(command, "pwd") == 0)
+        builtin_pwd(args);
+    else if (ft_strcmp(command, "unset") == 0)
+        builtin_unset(args, env, g_exec);
+    else if (ft_strcmp(command, "env") == 0)
+        builtin_env(args, *env);
+    else if (ft_strcmp(command, "exit") == 0)
+        builtin_exit(args, g_pars);
+    else if (ft_strcmp(command, "export") == 0)
+        builtin_export(args, env, g_exec);
+//    else
+//        ft_exec_cmd(args, env);
 }
 
 

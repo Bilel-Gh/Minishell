@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/27 15:09:59 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/06/30 19:07:19 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,9 +171,9 @@ void	start_heredoc(t_exec *exec)
   {
 	char *line;
 	line = NULL;
-	unsigned int size_limiteur;
-
-	size_limiteur = ft_strlen(exec->limiteur);
+//	unsigned int size_limiteur;
+//
+//	size_limiteur = ft_strlen(exec->limiteur);
 	exec->fd_infile = open("/tmp/here_doc_minishell", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	if (exec->fd_infile == -1)
 		perror("open");
@@ -620,8 +620,7 @@ int	get_path(t_exec *exec, char **envp)
 void	exec(t_token *tokens, t_commande *cmd, char **env)
 {
 	t_token *info_token;
-	t_token *for_print;
-	t_commande *commande;
+	//t_token *for_print;
 	t_exec exec;
 	printf("%c\n",env[0][0]);
 	int i;
@@ -649,7 +648,7 @@ void	exec(t_token *tokens, t_commande *cmd, char **env)
 		i++;
 		set_exec_and_start_exec(info_token, commande->cmd, &exec, env);
 		commande = commande->next;
-			for_print = info_token;
+			//for_print = info_token;
 		/*	while (for_print)
 			{
 			printf("\033[1;31mtoken value = %s\n\033[0m", for_print->value);

@@ -22,6 +22,8 @@ UTILS =	split.c \
 		ft_strjoin.c \
 		utils.c \
 		utils2.c \
+		utils3.c \
+		utils_debug.c \
 
 OBJS_UTILS = ${addprefix ${UTILS_DIR}, ${UTILS:.c=.o}}
 
