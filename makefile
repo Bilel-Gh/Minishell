@@ -22,6 +22,7 @@ UTILS =	split.c \
 		ft_strjoin.c \
 		utils.c \
 		utils2.c \
+		ft_itoa.c \
 
 OBJS_UTILS = ${addprefix ${UTILS_DIR}, ${UTILS:.c=.o}}
 

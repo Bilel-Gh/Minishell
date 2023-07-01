@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:13:01 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/25 13:03:12 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/01 16:05:47 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int	ft_size_of_expende(char *expande)
 			|| (expande[size] == '#' && size > 1)
 			|| (expande[size] == '[' && size > 1)
 			|| (expande[size] == ']' && size > 1)
+			|| (expande[size] == '/' && size > 1)
 			|| (expande[size] == '-' && size > 1))
 		{
 			break ;

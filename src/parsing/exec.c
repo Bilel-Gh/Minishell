@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/27 15:09:59 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/01 18:24:27 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -361,7 +361,7 @@ int	exec_cmd(t_exec *info, char **env, char **cmd)
 	if (execve(info->path_cmd, cmd, env) == -1)
 	{
 		free(info->path_cmd);
-		return (perror("cdm"), exit(-1), -1);
+		return (perror("cdm"), exit(127), -1);
 	}
 	return (1);
 }
@@ -492,7 +492,7 @@ int	last(char **cmd, t_exec *info, char **env)
 		close(info->fd_outfile);
 	if (info->fd_in_last_pipe)
 		close(info->fd_in_last_pipe);
-	while (waitpid(-1, NULL, 0) != -1)
+	while (waitpid(-1, &g_code_exit, 0) != -1)
 		;
 	return (0);
 }
@@ -561,8 +561,9 @@ int	solo_exec(char **cmd, t_exec *info, char **env)
 			}
 		}
 	}
-	while (waitpid(-1, NULL, 0) != -1)
+	while (waitpid(-1, &g_code_exit, 0) != -1)
 		;
+	g_code_exit = g_code_exit / 256;
 	close_for_solo_and_free(info);
 	return (0);
 }

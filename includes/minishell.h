@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/26 17:42:37 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/01 14:08:57 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ extern char **environ;
 # define FIRST 0
 # define DERNIER 1
 # define INTER 2
+
+extern int g_code_exit;
 
 enum e_character_type {
     ALPHANUM = 0,
@@ -165,6 +167,7 @@ void	free_db_array(char **array);
 void free_list_tokens(t_token* tokens);
 void free_list_commande(t_commande *commande);
 void ft_free_g_parsing(t_global_parsing *g_parsing);
+char	*ft_itoa(int n);
 
 // Dossier LEXEUR
 t_token* merge_characters(t_character* head);
