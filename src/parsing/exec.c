@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/01 18:24:27 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/02 16:49:59 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,7 +321,7 @@ int	find_path(char **path, char *cmd, t_exec *info)
 	test = ft_strchr(cmd, 47);
 	if (test != 0 || path == NULL)
 	{
-		info->path_cmd = cmd;
+		info->path_cmd = ft_strdup(cmd);
 		info->path_input = 1;
 		return (1);
 	}
@@ -494,6 +494,7 @@ int	last(char **cmd, t_exec *info, char **env)
 		close(info->fd_in_last_pipe);
 	while (waitpid(-1, &g_code_exit, 0) != -1)
 		;
+	g_code_exit = g_code_exit / 256;
 	return (0);
 }
 

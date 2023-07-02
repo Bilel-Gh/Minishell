@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 16:18:20 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/24 13:44:22 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/02 16:37:52 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,10 @@ int	count_nb_space(int *type_args, int nb_args)
 
 	i = 0;
 	nb_space = 0;
-	while (i < nb_args)
+	printf("nb_args = %d",nb_args);
+	if (type_args == NULL)
+		return (nb_space);
+	while (i < nb_args - 1)
 	{
 		if (type_args[i] == ESPACE)
 			nb_space++;

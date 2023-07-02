@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:10:02 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/01 18:39:45 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/02 14:22:55 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,8 @@ char	*importe_expande(char *args, char **env)
 	{
 		if (args[i] == '$')
 			args = replace_expande(args, i, env);
+		if (args == NULL)
+			return (args);
 		i++;
 	}
 	return (args);
