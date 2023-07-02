@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/01 19:15:26 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/02 23:39:59 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #define MAX_ARGS 64
 #define MAX_ARG_LENGTH 256
 
+int g_code_exit = 0;
 // Gestionnaire de signal SIGINT //
 void int_handler(int sig)
 {
@@ -149,7 +150,6 @@ int ft_is_bash_command(char *args, char **env)
     builtin_cmd = "echo cd pwd export unset env exit";
     if (ft_strstr(builtin_cmd, args) != NULL)
         return 1;
-
     path = ft_getenv("PATH", env);
     path_tab = ft_split(path, ':');
     i = 0;
@@ -174,6 +174,7 @@ int ft_is_bash_command(char *args, char **env)
 void ft_set_exit_code(t_global_parsing *g_parsing, char ***env)
 {
     char *invalid_char;
+	(void)env;
 
     invalid_char = ";(){}<>|&.";
     if(only_misuse(g_parsing->args[0], invalid_char))
@@ -182,8 +183,6 @@ void ft_set_exit_code(t_global_parsing *g_parsing, char ***env)
         g_code_exit = MISUSE;
         return ;
     }
-    else if (ft_is_bash_command(g_parsing->args[0], *env))
-        g_code_exit = CMD_FOUND;
     else if (access(g_parsing->args[0], F_OK) == -1
     || ft_strncmp(g_parsing->args[0], "makefile", 8) == 0
     || ft_strncmp(g_parsing->args[0], "Makefile", 8) == 0)
@@ -206,7 +205,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 
 	// char *line_cpy;
 	t_token* head;
-    t_commande *head_cmd;
+    // t_commande *head_cmd;
 	while (1)
 	{
 		g_parsing = ft_init_global_parsing();
@@ -269,10 +268,10 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
         head = g_parsing->tokens;
 		 while (g_parsing->tokens)
 		  {
-             if (g_parsing->tokens->info->type == 1 && !ft_is_bash_command(g_parsing->tokens->value, *env))
-             {
-                 printf("bash: %s: command not found\n", g_parsing->tokens->value);
-             }
+            //  if (g_parsing->tokens->info->type == 1 && !ft_is_bash_command(g_parsing->tokens->value, *env))
+            //  {
+            //      printf("bash: %s: command not found\n", g_parsing->tokens->value);
+            //  }
 		  	printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
 		 	printf("\033[1;33mtoken type = %d\n\033[0m", g_parsing->tokens->info->type);
 		 	printf("\033[1;34mtoken index = %d\n\033[0m", g_parsing->tokens->token_index);
@@ -283,21 +282,21 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		 }
 		 g_parsing->tokens = head;
 		g_parsing->commande = cmd_complete(g_parsing->tokens);
-        head_cmd = g_parsing->commande;
-        while (g_parsing->commande)
-        {
-            if (!ft_is_bash_command(g_parsing->args[0], *env))
-            {
-                printf("bash: syntax error near unexpected token `newline'\n");
-                g_code_exit = MISUSE;
-            }
-            g_parsing->commande = g_parsing->commande->next;
-        }
-        g_parsing->commande = head_cmd;
+        // head_cmd = g_parsing->commande;
+        // while (g_parsing->commande)
+        // {
+        //     if (!ft_is_bash_command(g_parsing->commande->cmd[0], *env))
+        //     {
+        //         printf("bash: syntax error near unexpected token `newline'\n");
+        //         g_code_exit = MISUSE;
+        //     }
+        //     g_parsing->commande = g_parsing->commande->next;
+        // }
+        // g_parsing->commande = head_cmd;
 		ft_set_index_for_exec(&g_parsing->tokens);
-         //exec(g_parsing->tokens, g_parsing->commande, *env);
-       if (g_parsing->commande->cmd)
-		   ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing, &g_exec);
+        exec(g_parsing->tokens, g_parsing->commande, *env);
+    //    if (g_parsing->commande->cmd)
+	// 	   ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing, &g_exec);
 		printf("\033[1;36mexit code = %d\n\033[0m", g_code_exit);
 		ft_free_g_parsing(g_parsing);
 	}

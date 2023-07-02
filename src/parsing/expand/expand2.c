@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:13:01 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/25 13:03:12 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/02 14:20:35 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int	ft_size_of_expende(char *expande)
 			|| (expande[size] == '#' && size > 1)
 			|| (expande[size] == '[' && size > 1)
 			|| (expande[size] == ']' && size > 1)
+			|| (expande[size] == '/' && size > 1)
 			|| (expande[size] == '-' && size > 1))
 		{
 			break ;
@@ -110,6 +111,12 @@ char	*join_and_rp_args(char *args_con, char *expande, int s_extract)
 	expande_in = false;
 	i = 0;
 	j = 0;
+	new_args = NULL;
+	if ((strlen(args_con) - s_extract == 0) && (expande == NULL))
+		return (new_args);
+	printf("expande = %s\n", expande);
+	printf("s_extract = %d\n", s_extract);
+	printf("size args_con  = %ld \n", strlen(args_con));
 	if (!expande)
 		new_args = malloc(strlen(args_con) - s_extract);
 	else

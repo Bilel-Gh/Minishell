@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/29 19:47:20 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/02 22:26:51 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ extern char					**environ;
 # define DERNIER 1
 # define INTER 2
 
-int g_code_exit;
+extern int g_code_exit;
 
 enum						e_character_type
 {
