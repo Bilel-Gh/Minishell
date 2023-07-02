@@ -12,6 +12,8 @@
 
 #include "../../../includes/minishell.h"
 
+int getInt(int *nb_args, t_global_parsing *const *g_pars, int i);
+
 char	*traslate_expand(char *arg_ct, char *ext_exp, int size_ext, char **env)
 {
 	char	*get_expande;
@@ -19,12 +21,17 @@ char	*traslate_expand(char *arg_ct, char *ext_exp, int size_ext, char **env)
 
 	get_expande = give_env_expand(ext_exp, size_ext, env);
 	if (get_expande)
-		printf("\n my extratc = %s\n", get_expande);
+    {
+        printf("\n my extratc yes\n");
+        new_args = join_and_rp_args(arg_ct, get_expande, size_ext);
+        return (new_args);
+    }
 	else
-		printf("\n my extratc no\n");
-	new_args = join_and_rp_args(arg_ct, get_expande, size_ext);
-    // SEGFAULT VIEN DE LA FONCTION JOIN_AND_RP_ARGS JE CROIS
-	return (new_args);
+    {
+        printf("\n my extratc no\n");
+        new_args = join_and_rp_args(arg_ct, "NO EXPAND", size_ext);
+        return (new_args);
+    }
 }
 
 char	*replace_expande(char *args, int i, char **env)
@@ -77,27 +84,81 @@ bool	have_expande(char *args)
 	return (false);
 }
 
-void	expande(int *type_args, int nb_args, t_global_parsing **g_pars, char **env)
+void remove_db_tab(char **str, int index_to_remove) {
+    int i;
+    int size;
+
+    size = 0;
+    // Afficher le tableau résultant
+    i = 0;
+//    while (str[i] != NULL) {
+//        printf("\033[0;32m str_BEFORE[%d] = %s\n\033[0m", i, str[i]);
+//        i++;
+//    }
+//    printf("\n");
+    while (str[size] != NULL) {
+        size++;
+    }
+    if (index_to_remove < 0 || index_to_remove >= size) {
+        printf("Index à supprimer invalide.\n");
+        return;
+    }
+    free(str[index_to_remove]);
+    i = index_to_remove;
+    while (i < size - 1) {
+        str[i] = str[i + 1];
+        i++;
+    }
+    str[size - 1] = NULL;
+
+//    // Afficher le tableau résultant
+//    i = 0;
+//    while (str[i] != NULL) {
+//        printf("\033[0;32m str_AFTER[%d] = %s\n\033[0m", i, str[i]);
+//        i++;
+//    }
+//    printf("\n");
+}
+
+int delete_if_no_expand(int *nb_args, t_global_parsing **g_pars, int i) {
+    if (ft_strncmp((*g_pars)->args[i], "NO EXPAND", 9) == 0)
+    {
+        remove_db_tab((*g_pars)->args, i);
+        (*nb_args)--;
+        if (i > 0)
+            i--;
+        if (ft_strcmp((*g_pars)->args[i + 1], " ") == 0 || (*g_pars)->args[i + 1] == NULL)
+        {
+            remove_db_tab((*g_pars)->args, i);
+            (*nb_args)--;
+            if (i > 0)
+                i--;
+        }
+    }
+    return i;
+}
+
+
+void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **env)
 {
 	int	i;
      char *suite;
      char *exit_code;
      char *new_args;
+    int *new_type_args;
     //int len_expande;
 
 	i = 0;
     suite = NULL;
     new_args = NULL;
-	while (i < nb_args)
+    new_type_args = NULL;
+	while (i < *nb_args)
 	{
-		if (type_args[i] == ALPHANUM || type_args[i] == QUOTE_D)
+		if ((*type_args)[i] == ALPHANUM || (*type_args)[i] == QUOTE_D)
 		{
 			if (have_expande((*g_pars)->args[i]))
 			{
-//                tmp = ft_strdup((*g_pars)->args[i]);
-//                (void)tmp;
                 printf("\n \n PRESANCE EXPANDE\n");
-                // ou que le deuxieme char est un numero
                 if (ft_is_digit((*g_pars)->args[i][1]))
                 {
                     new_args = ft_strdup((*g_pars)->args[i] + 2);
@@ -128,6 +189,11 @@ void	expande(int *type_args, int nb_args, t_global_parsing **g_pars, char **env)
                 else
                 {
                     (*g_pars)->args[i] = importe_expande((*g_pars)->args[i], env);
+                    // on supprimer l'argument du tableau si l'expand n'est pas trouver
+                    i = delete_if_no_expand(nb_args, g_pars, i);
+                    new_type_args = ft_get_info_args((*g_pars)->args, nb_args);
+                    free(*type_args);
+                    *type_args = new_type_args;
                 }
 			}
 		}

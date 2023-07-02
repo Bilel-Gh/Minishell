@@ -145,7 +145,20 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, int *error, char ***e
 	type_args = ft_get_info_args((*g_pars)->args, nb_args);
 	if (search_error_args(type_args, nb_args, (*g_pars)->args))
 		return ((*g_pars)->args);
-	expande(type_args, *nb_args, g_pars, *env);
+	expande(&type_args, nb_args, g_pars, *env);
+    printf("\033[1;31m APRES EXPAND \033[0m\n");
+    printf("nb_args = %d\n", *nb_args);
+    int w = 0;
+    while ((*g_pars)->args[w])
+    {
+        printf("\033[1;31m             APRES EXPAND args[%d] = %s \033[0m\n", w, (*g_pars)->args[w]);
+        w++;
+    }
+    if (*nb_args == 0)
+    {
+        *error = 1;
+        return ((*g_pars)->args);
+    }
 // 	if (ft_strcmp(no_quote_args[0], "export") == 0)
 //     {
           //no_quote_args = ft_db_array_dup(args);

@@ -82,7 +82,6 @@ void ft_free_g_parsing(t_global_parsing *g_parsing)
 		free(g_parsing->line);
 	if (g_parsing->args)
 		free_db_array(g_parsing->args);
-    printf("free g_parsing->args ok\n");
 	if (g_parsing->info_args)
 		free(g_parsing->info_args);
 	if (g_parsing->tokens)
@@ -234,6 +233,13 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		error = 0;
 		//char **for_test = 0;
 		g_parsing->args = ft_parsing(&nb_args, &g_parsing, &error, env);
+        printf("\033[1;35m nb_args MAIN = %d\n\033[0m", nb_args);
+        if (nb_args == 0)
+        {
+            g_code_exit = SUCCESS;
+            ft_free_g_parsing(g_parsing);
+            continue;
+        }
         g_code_exit = SUCCESS;
 		if (error == 0)
 		{

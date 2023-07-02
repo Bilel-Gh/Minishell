@@ -225,7 +225,7 @@ void						give_sp_args_redi(char *args, int *type_args,
 bool						quote_is_open(char *args);
 
 // Dossier EXPAND
-void						expande(int *type_args, int nb_args,
+void						expande(int **type_args, int *nb_args,
 								t_global_parsing **g_pars, char **env);
 char						*join_and_rp_args(char *args_con, char *expande,
 								int size_extract);
