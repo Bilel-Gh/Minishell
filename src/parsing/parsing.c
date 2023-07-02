@@ -104,10 +104,41 @@ char	**kick_args_space(char **new_args, int *type_args, int *nb_args)
 	return (*nb_args = nb_new_args, last_args);
 }
 
+char* remove_double_quotes(char* str) {
+    int len;
+    int count_quotes;
+    int i;
+    int j;
+
+    i = 0;
+    j = 0;
+    count_quotes = 0;
+    len = ft_strlen(str);
+    while (i < len) {
+        if (str[i] == '"' || str[i] == '\'') {
+            count_quotes++;
+        }
+        i++;
+    }
+    if (count_quotes == len)
+        return ft_strdup(str);
+    char* result = (char*)malloc((len - count_quotes + 1) * sizeof(char));
+    i = 0;
+    while (i < len) {
+        if (str[i] != '"' && str[i] != '\'') {
+            result[j] = str[i];
+            j++;
+        }
+        i++;
+    }
+    result[j] = '\0';  // Ajouter la terminaison de la chaîne
+    return result;
+}
+
 char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, int *error, char ***env)
 {
 	char	**new_args;
-	//char	**no_quote_args;
+//	char	**no_quote_cmd;
 	int		*new_type_args;
 	int		*type_args;
 
@@ -115,11 +146,11 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, int *error, char ***e
 	if (search_error_args(type_args, nb_args, (*g_pars)->args))
 		return ((*g_pars)->args);
 	expande(type_args, *nb_args, g_pars, *env);
-    // no_quote_args = kick_quote(type_args, *nb_args, args);
 // 	if (ft_strcmp(no_quote_args[0], "export") == 0)
 //     {
           //no_quote_args = ft_db_array_dup(args);
 //     }
+    // printf tout le tableau (*g_pars)->args
 	new_args = join_inter_space((*g_pars)->args, type_args, nb_args);
 	new_type_args = ft_get_info_args(new_args, nb_args);
 	free_db_array((*g_pars)->args);
@@ -131,6 +162,26 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, int *error, char ***e
 	if (error_grammaticale(new_type_args, *nb_args))
 		return ((*g_pars)->args);
 	printf("^^^^^^^^^^^ no error grammaticale ^^^^^^^^^^^^^^^^\n");
+    int z = 0;
+    while ((*g_pars)->args[z])
+    {
+        printf("\033[0;35m ARGUMENT PARSING : %s\033[0m\n", (*g_pars)->args[z]);
+        z++;
+    }
+    char *first_arg = remove_double_quotes((*g_pars)->args[0]);
+    if (ft_strcmp(first_arg, (*g_pars)->args[0]) != 0)
+    {
+        free((*g_pars)->args[0]);
+        (*g_pars)->args[0] = first_arg;
+    }
+    else
+        free(first_arg);
+    z = 0;
+    while ((*g_pars)->args[z])
+    {
+        printf("\033[0;35m ARGUMENT PARSING sans quotes: %s\033[0m\n", (*g_pars)->args[z]);
+        z++;
+    }
 	*error = 1;
 	free(new_type_args);
 	return ((*g_pars)->args);

@@ -102,6 +102,7 @@ void builtin_unset(char **args, char ***env, t_global_exec **g_exec)
         if (!ft_check_name(name))
         {
             printf("minishell: unset: `%s': not a valid identifier !\n", name);
+            g_code_exit = ERROR;
             i++;
             continue;
         }
@@ -113,14 +114,20 @@ void builtin_unset(char **args, char ***env, t_global_exec **g_exec)
 
         // Supprimer la variable d'environnement spécifiée
         if (ft_unset_export(name, (*g_exec)->export) != 0)
-            perror("unset");
+        {
+            i++;
+            continue;
+        }
         if (ft_is_in_env(name, *env) == 0)
         {
             i++;
             continue;
         }
         if (ft_unsetenv(name, env) != 0)
-            perror("unset");
+        {
+            i++;
+            continue;
+        }
         i++;
     }
 }

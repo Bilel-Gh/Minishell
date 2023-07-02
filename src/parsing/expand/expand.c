@@ -23,6 +23,7 @@ char	*traslate_expand(char *arg_ct, char *ext_exp, int size_ext, char **env)
 	else
 		printf("\n my extratc no\n");
 	new_args = join_and_rp_args(arg_ct, get_expande, size_ext);
+    // SEGFAULT VIEN DE LA FONCTION JOIN_AND_RP_ARGS JE CROIS
 	return (new_args);
 }
 

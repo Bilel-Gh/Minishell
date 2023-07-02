@@ -204,6 +204,7 @@ int ft_is_digit(char c);
 char *ft_substr(char *s, unsigned int start, size_t len);
 char *ft_strstr(char *str, char *to_find);
 int is_only_space(char *str);
+int ft_db_arr_len(char **arr);
 
 // Dossier LEXEUR
 t_token						*merge_characters(t_character *head);
