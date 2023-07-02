@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 01:44:34 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/21 16:07:29 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/01 19:30:07 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 // pour recuperer une partie d'une chaine de caracteres
 // par exemple pour recuperer tout ce qui a apres le = dans la variable d'environnement PATH
-char *ft_substr(char const *s, unsigned int start, size_t len)
+char *ft_substr(char *s, unsigned int start, size_t len)
 {
     size_t	i;
     size_t	j;
@@ -57,7 +57,7 @@ char *ft_get_path_cmd(char **args, char **env)
     path_tab = ft_split(path, ':');
     i = 0;
     while (path_tab[i] != NULL) {
-        path_cmd = ft_strjoin(path_tab[i], "/");
+        path_cmd = ft_strjoin(ft_strdup(path_tab[i]), "/");
         path_cmd = ft_strjoin(path_cmd, args[0]);
         if (access(path_cmd, F_OK) == 0)
             break ;
@@ -65,6 +65,7 @@ char *ft_get_path_cmd(char **args, char **env)
             path_cmd = NULL;
         i++;
     }
+    free_db_array(path_tab);
     return (path_cmd);
 }
 

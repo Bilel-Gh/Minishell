@@ -27,11 +27,34 @@ char *get_name(char *arg)
     int i;
     int j;
     char *name;
+    int in_quote;
+    char type_quote;
+    int len_name;
 
     i = 0;
     j = 0;
-    while (arg[i] != '=' && arg[i] != 0)
-        i++;
+    in_quote = 0;
+    type_quote = 0;
+    len_name = 0;
+    while (arg[i] != '=' && arg[i] != '\0')
+    {
+        if (arg[i] == '"' || arg[i] == '\'')
+        {
+            in_quote = !in_quote;
+            type_quote = arg[i];
+            i++;
+            while (arg[i] != '\0' && arg[i] != type_quote)
+                i++;
+            if (arg[i] == type_quote)
+                in_quote = 0;
+            i++;
+        }
+        else
+        {
+            len_name = i - len_name + 1;
+            i++;
+        }
+    }
     if (i == 0)
         return (NULL);
     name = malloc(sizeof(char) * (i + 1));
@@ -101,7 +124,7 @@ char *ft_get_env_to_add(char *name, char *value)
     return (new_env);
 }
 
-char **ft_add_to_db_tab(char **tab, char *str, char *name)
+char **ft_add_to_db_tab_export(char **tab, char *str, char *name)
 {
     int i;
     char **new_tab;
@@ -111,7 +134,6 @@ char **ft_add_to_db_tab(char **tab, char *str, char *name)
     i = 0;
     if (tab == NULL)
     {
-        printf("\033[0;31mft_add_to_db_tab: tab is NULL\033[0m\n");
         new_tab = malloc(sizeof(char *) * 2);
         new_tab[0] = ft_strdup(str);
         new_tab[1] = NULL;
@@ -148,14 +170,59 @@ char **ft_add_to_db_tab(char **tab, char *str, char *name)
     }
 }
 
+char **ft_add_to_db_tab(char **tab, char *str, char *name)
+{
+    int i;
+    char **new_tab;
+    int db_tablen;
+    int len_name;
+
+    i = 0;
+    if (tab == NULL)
+    {
+        new_tab = malloc(sizeof(char *) * 2);
+        new_tab[0] = ft_strdup(str);
+        new_tab[1] = NULL;
+        return (new_tab);
+    }
+    db_tablen = ft_db_tablen(tab);
+    len_name = ft_strlen(name);
+    // stocker la valeur de tab[i] dans une variable sans les 6 premiers char
+//    char *test = ft_strdup(tab[i] + 7);
+//    printf("\033[0;31m name: %s\n \033[0m", name);
+//    printf("\033[0;31m tab[i] sans export: %s\n \033[0m", test);
+    while (tab[i] != NULL && ft_strncmp(ft_strdup(tab[i]), name, len_name) != 0)
+        i++;
+    if (i < db_tablen)
+    {
+        free(tab[i]);
+        tab[i] = ft_strdup(str);
+        return (tab);
+    }
+    else
+    {
+        new_tab = malloc(sizeof(char *) * (db_tablen + 2));
+        i = 0;
+        while (i < db_tablen)
+        {
+            new_tab[i] = ft_strdup(tab[i]);
+            free(tab[i]);
+            i++;
+        }
+        new_tab[i] = ft_strdup(str);
+        new_tab[i + 1] = NULL;
+        free(tab);
+        return (new_tab);
+    }
+}
+
 void ft_add_to_export(t_global_exec **g_exec, char *new_env, char *name)
 {
     char *env_to_add_to_export;
     char *pre_export;
     env_to_add_to_export = ft_strdup(new_env);
     pre_export = ft_strdup("export ");
-    (*g_exec)->export = ft_add_to_db_tab((*g_exec)->export, ft_strjoin(pre_export, env_to_add_to_export), name);
-    // todo ajouter avec guillemets !!
+    (*g_exec)->export = ft_add_to_db_tab_export((*g_exec)->export, ft_strjoin(pre_export, env_to_add_to_export), name);
 }
 
 char *ft_clean_value(char *value)
@@ -190,17 +257,18 @@ char *ft_clean_value(char *value)
 
 void ft_add_env(char *name, char *value, char ***env, t_global_exec **g_exec)
 {
-    int i;
-    int j;
-    char **new_env;
+//    int i;
+//    int j;
+//    char **new_env;
     char *env_to_add;
     char *env_to_add_export;
 
-    i = 0;
-    j = 0;
-    new_env = NULL;
-    while ((*env)[j] != NULL && ft_strcmp((*env)[j], name) != 0)
-        j++;
+//    i = 0;
+//    j = 0;
+//    new_env = NULL;
+//    while ((*env)[j] != NULL && ft_strcmp((*env)[j], name) != 0)
+//        j++;
+//    printf("\033[0;31m j EXIST : %d\n \033[0m", j);
     env_to_add_export = ft_get_env_to_add(name, value);
     if (value == NULL)
     {
@@ -211,31 +279,7 @@ void ft_add_env(char *name, char *value, char ***env, t_global_exec **g_exec)
     while (value != NULL && (value[0] == '"' || value[0] == '\''))
         value = ft_clean_value(value);
     env_to_add = ft_get_env_to_add(name, value);
-    if (j < ft_db_tablen(*env))
-    {
-        if (value != NULL)
-        {
-            free((*env)[j]);
-            (*env)[j] = env_to_add;
-        }
-    }
-    else
-    {
-        if (value != NULL)
-        {
-            new_env = malloc(sizeof(char *) * (ft_db_tablen(*env) + 2));
-            while (i < ft_db_tablen(*env))
-            {
-                new_env[i] = ft_strdup((*env)[i]);
-                free((*env)[i]);
-                i++;
-            }
-            new_env[i] = env_to_add;
-            free((*env)[i]);
-            new_env[i + 1] = NULL;
-            *env = new_env;
-        }
-    }
+    (*env) = ft_add_to_db_tab((*env), env_to_add, name);
     ft_add_to_export(g_exec, env_to_add_export, name);
 }
 
@@ -339,10 +383,17 @@ int ft_check_no_args(char **args, t_global_exec **g_exec)
 int ft_check_solo_invalid_arg(char *args)
 {
     char *invalid_chars;
-    invalid_chars = "=+%?-@!*#$&(){}[]^~|\\<>\"';,./123456789";
+    invalid_chars = "=+%?-@!*#$&(){}[]^~|\\<>;,./123456789";
     if(args[0] == '\0' || ft_strchr(invalid_chars, args[0]) != NULL)
     {
+        if (args[0] == '-' && args[1] != '\0')
+        {
+            g_code_exit = MISUSE;
+            printf("minishell: export: `%c%c': invalid option\n", args[0], args[1]);
+            return 1;
+        }
         printf("minishell: `%s': not a valid identifier\n", args);
+        g_code_exit = ERROR;
         return 1;
     }
     return 0;
@@ -371,15 +422,17 @@ void builtin_export(char **args, char ***env, t_global_exec **g_exec)
     while (args[i] != NULL)
     {
         if (ft_check_solo_invalid_arg(args[i]))
-        {
-            i++;
-            continue;
-        }
+            return ;
         name = get_name(args[i]);
+        printf("name = %s\n", name);
+        name = ft_clean_value(name);
+        printf("name2 = %s\n", name);
         if (!ft_check_name(name))
         {
+            g_code_exit = ERROR;
             printf("minishell: export: `%s': not a valid identifier\n", args[i]);
-            return ;
+            i++;
+            continue;
         }
         value = get_value(args[i]);
         ft_add_env(name, value, env, g_exec);

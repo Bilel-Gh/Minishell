@@ -25,6 +25,7 @@ void builtin_env(char **args, char **env)
     }
     if (args[i + 1] != NULL) {
         printf("env: should not have arguments\n");
+        g_code_exit = MISUSE;
         return ;
     }
     while (env[i] != NULL) {

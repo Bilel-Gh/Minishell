@@ -78,7 +78,8 @@ enum
 	MISUSE = 2,
 	CANTEXEC = 126,
 	NOTFOUND = 127,
-	CSIGINT = 130
+	CSIGINT = 130,
+    CMD_FOUND = 200,
 };
 
 // test de ce a quoi vont les structures
@@ -175,6 +176,7 @@ t_token						*addtoken(t_token *head, char *value);
 int							ft_get_infos_by_pos(t_token *token);
 char						*copy_cont(char *str);
 char						*copy_sans_quote(char *args);
+char	*copy_sans_quote(char *args);
 
 // Dossier UTILS
 void						ft_complete(char const *s, char *str, int *i);
@@ -198,6 +200,10 @@ int							ft_db_tablen(char **tab);
 void						ft_free_g_parsing(t_global_parsing *g_parsing);
 char						*ft_itoa(int num);
 char	*ft_strcat(char *s1, const char *s2);
+int ft_is_digit(char c);
+char *ft_substr(char *s, unsigned int start, size_t len);
+char *ft_strstr(char *str, char *to_find);
+int is_only_space(char *str);
 
 // Dossier LEXEUR
 t_token						*merge_characters(t_character *head);

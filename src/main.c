@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/30 19:03:49 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/01 19:15:26 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,19 +80,15 @@ void ft_free_g_parsing(t_global_parsing *g_parsing)
 {
 	if (g_parsing->line)
 		free(g_parsing->line);
-    printf("free g_parsing->line ok\n");
 	if (g_parsing->args)
 		free_db_array(g_parsing->args);
     printf("free g_parsing->args ok\n");
 	if (g_parsing->info_args)
 		free(g_parsing->info_args);
-    printf("free g_parsing->info_args ok\n");
 	if (g_parsing->tokens)
 		free_list_tokens(g_parsing->tokens);
-    printf("free g_parsing->tokens ok\n");
 	if (g_parsing->commande)
 		free_list_commande(g_parsing->commande);
-    printf("free g_parsing->commande ok\n");
 	free(g_parsing);
 }
 
@@ -120,17 +116,78 @@ void ft_set_index_for_exec(t_token **tokens)
 	*tokens = head;
 }
 
-void ft_set_exit_code(t_global_parsing *g_parsing)
+int only_misuse(char *str, char *invalid_char)
+{
+    int i;
+    int j;
+
+    i = 0;
+    while (str[i] != '\0')
+    {
+        j = 0;
+        while (invalid_char[j] != '\0')
+        {
+            if (str[i] == invalid_char[j])
+                break;
+            j++;
+        }
+        if (invalid_char[j] == '\0')
+            return 0;
+        i++;
+    }
+    return 1;
+}
+
+int ft_is_bash_command(char *args, char **env)
+{
+    char *path;
+    char **path_tab;
+    char *path_cmd;
+    char *builtin_cmd;
+    int i;
+    int result = 0;
+
+    builtin_cmd = "echo cd pwd export unset env exit";
+    if (ft_strstr(builtin_cmd, args) != NULL)
+        return 1;
+
+    path = ft_getenv("PATH", env);
+    path_tab = ft_split(path, ':');
+    i = 0;
+    while (path_tab[i] != NULL) {
+        path_cmd = ft_strjoin(ft_strdup(path_tab[i]), "/");
+        path_cmd = ft_strjoin(path_cmd, args);
+
+        if (access(path_cmd, F_OK) == 0) {
+            result = 1;
+            break;
+        }
+
+        i++;
+        free(path_cmd);
+    }
+    free_db_array(path_tab);
+    return result;
+}
+
+
+
+void ft_set_exit_code(t_global_parsing *g_parsing, char ***env)
 {
     char *invalid_char;
 
-    invalid_char = "_@°]=+£$?.";
-    if(g_parsing->args[0][0] == '&')
+    invalid_char = ";(){}<>|&.";
+    if(only_misuse(g_parsing->args[0], invalid_char))
     {
         printf("syntax error near unexpected token `%s'\n", g_parsing->args[0]);
         g_code_exit = MISUSE;
+        return ;
     }
-    else if (ft_strchr(invalid_char, g_parsing->args[0][0]))
+    else if (ft_is_bash_command(g_parsing->args[0], *env))
+        g_code_exit = CMD_FOUND;
+    else if (access(g_parsing->args[0], F_OK) == -1
+    || ft_strncmp(g_parsing->args[0], "makefile", 8) == 0
+    || ft_strncmp(g_parsing->args[0], "Makefile", 8) == 0)
     {
         printf("bash: %s: command not found\n", g_parsing->args[0]);
         g_code_exit = NOTFOUND;
@@ -142,12 +199,6 @@ void ft_set_exit_code(t_global_parsing *g_parsing)
         printf("bash: %s: is a directory\n", g_parsing->args[0]);
         g_code_exit = CANTEXEC;
     }
-    else if (access(g_parsing->args[0], F_OK) == -1)
-    {
-        printf("bash: %s: command not found\n", g_parsing->args[0]);
-        g_code_exit = NOTFOUND;
-    }
-    ft_free_g_parsing(g_parsing);
 }
 
 void minishell_loop(char ***env, t_global_exec *g_exec)
@@ -156,6 +207,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 
 	// char *line_cpy;
 	t_token* head;
+    t_commande *head_cmd;
 	while (1)
 	{
 		g_parsing = ft_init_global_parsing();
@@ -165,39 +217,80 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		g_parsing->line = readline("\033[1;32mminishell >\033[0m"); // TODO : BUG affichage quand on ecrit plein de caracteres
 		if (g_parsing->line == NULL)
 			exit(0);
-		if (strlen(g_parsing->line) == 0)
-			continue;
+		if (strlen(g_parsing->line) == 0
+        || ft_strcmp(g_parsing->line, ":") == 0
+         || ft_strcmp(g_parsing->line, ";") == 0
+         || is_only_space(g_parsing->line) == 1)
+        {
+            g_code_exit = SUCCESS;
+            continue;
+        }
 
 		//		args = ft_split_line_to_character(line);
 		int nb_args;
 		g_parsing->args = ft_lexeur(g_parsing->line);
-        if (ft_db_tablen(g_parsing->args) == 1)
-        {
-            ft_set_exit_code(g_parsing);
-            printf("\033[1;36mexit code = %d\n\033[0m", g_code_exit);
-            continue;
-        }
 		g_parsing->info_args = ft_get_info_args(g_parsing->args, &nb_args);
 		int error;
 		error = 0;
 		//char **for_test = 0;
 		g_parsing->args = ft_parsing(&nb_args, &g_parsing, &error, env);
+        g_code_exit = SUCCESS;
 		if (error == 0)
 		{
 			printf("\n@@@@@@@@@@@@@ ERROR DETECT !!!! @@@@@@@@@@@@@@@\n");
 			//free(info_args);
             g_code_exit = MISUSE;
-			printf("\033[1;36mexit code = %d\n\033[0m", g_code_exit);
+			printf("\033[1;36mexit code2 = %d\n\033[0m", g_code_exit);
 			free_db_array(g_parsing->args);
 			continue;
 		}
 		else
 			printf("############# validation ###############\n");
-        g_code_exit = 0;
+        if (ft_db_tablen(g_parsing->args) == 1)
+        {
+            ft_set_exit_code(g_parsing, env);
+            printf("\033[1;36mexit code3 = %d\n\033[0m", g_code_exit);
+            if (g_code_exit != CMD_FOUND && g_code_exit != SUCCESS)
+            {
+                ft_free_g_parsing(g_parsing);
+                continue;
+            }
+        }
+        g_code_exit = SUCCESS;
 		if (!g_parsing->args)
-			continue;
+            continue;
 		g_parsing->tokens = ft_get_tokens_with_infos(g_parsing->args, nb_args);
-//        head = g_parsing->tokens;
+        head = g_parsing->tokens;
+		 while (g_parsing->tokens)
+		  {
+             if (g_parsing->tokens->info->type == 1 && !ft_is_bash_command(g_parsing->tokens->value, *env))
+             {
+                 printf("bash: %s: command not found\n", g_parsing->tokens->value);
+             }
+		  	printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
+		 	printf("\033[1;33mtoken type = %d\n\033[0m", g_parsing->tokens->info->type);
+		 	printf("\033[1;34mtoken index = %d\n\033[0m", g_parsing->tokens->token_index);
+		 	if (g_parsing->tokens->prev)
+		 		printf("\033[1;35mtoken prev value = %s\n\033[0m", g_parsing->tokens->prev->value);
+		 	printf("\n\n");
+		 	g_parsing->tokens = g_parsing->tokens->next;
+		 }
+		 g_parsing->tokens = head;
+		g_parsing->commande = cmd_complete(g_parsing->tokens);
+        head_cmd = g_parsing->commande;
+        while (g_parsing->commande)
+        {
+            if (!ft_is_bash_command(g_parsing->args[0], *env))
+            {
+                printf("bash: syntax error near unexpected token `newline'\n");
+                g_code_exit = MISUSE;
+            }
+            g_parsing->commande = g_parsing->commande->next;
+        }
+        g_parsing->commande = head_cmd;
+		ft_set_index_for_exec(&g_parsing->tokens);
+		(void)g_exec;
+//		 head = g_parsing->tokens;
 //		 while (g_parsing->tokens)
 //		  {
 //		  	printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
@@ -209,22 +302,6 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 //		 	g_parsing->tokens = g_parsing->tokens->next;
 //		 }
 //		 g_parsing->tokens = head;
-		g_parsing->commande = cmd_complete(g_parsing->tokens);
-
-		ft_set_index_for_exec(&g_parsing->tokens);
-		(void)g_exec;
-		 head = g_parsing->tokens;
-		 while (g_parsing->tokens)
-		  {
-		  	printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
-		 	printf("\033[1;33mtoken type = %d\n\033[0m", g_parsing->tokens->info->type);
-		 	printf("\033[1;34mtoken index = %d\n\033[0m", g_parsing->tokens->token_index);
-		 	if (g_parsing->tokens->prev)
-		 		printf("\033[1;35mtoken prev value = %s\n\033[0m", g_parsing->tokens->prev->value);
-		 	printf("\n\n");
-		 	g_parsing->tokens = g_parsing->tokens->next;
-		 }
-		 g_parsing->tokens = head;
          //exec(g_parsing->tokens, g_parsing->commande, *env);
        if (g_parsing->commande->cmd)
 		   ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing, &g_exec);

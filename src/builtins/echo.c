@@ -51,12 +51,10 @@ void ft_get_full_arg(char **args, char **full_arg, int i)
 void builtin_echo(char **args)
 {
     int i;
-    int len;
     int print_newline;
     char *full_arg;
 
     i = 1;
-    len = 0;
     print_newline = 1; // Variable pour gérer l'option -n
     full_arg = NULL;
     // Vérifier si l'option -n est spécifiée
@@ -70,8 +68,10 @@ void builtin_echo(char **args)
     ft_get_full_arg(args, &full_arg, i);
     if (full_arg != NULL)
     {
-        len = strlen(full_arg);
-        write(1, full_arg, len);
+        // si full_arg commence par un $ et qu'il y a des charactères après on enleve le dollard
+        if (full_arg[0] == '$' && full_arg[1] != '\0')
+            full_arg = ft_substr(full_arg, 1, ft_strlen(full_arg) - 1);
+        printf("%s", full_arg);
         free(full_arg);
     }
     if (print_newline)

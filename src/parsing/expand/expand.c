@@ -96,7 +96,15 @@ void	expande(int *type_args, int nb_args, t_global_parsing **g_pars, char **env)
 //                tmp = ft_strdup((*g_pars)->args[i]);
 //                (void)tmp;
                 printf("\n \n PRESANCE EXPANDE\n");
-                if (ft_strncmp((*g_pars)->args[i], "$?", 2) == 0)
+                // ou que le deuxieme char est un numero
+                if (ft_is_digit((*g_pars)->args[i][1]))
+                {
+                    new_args = ft_strdup((*g_pars)->args[i] + 2);
+                    free((*g_pars)->args[i]);
+                    (*g_pars)->args[i] = ft_strdup(new_args);
+                    free(new_args);
+                }
+                else if (ft_strncmp((*g_pars)->args[i], "$?", 2) == 0)
                 {
                     exit_code = ft_itoa(g_code_exit);
                     if (ft_strlen((*g_pars)->args[i]) > 2)

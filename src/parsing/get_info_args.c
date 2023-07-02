@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 17:34:33 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/10 23:02:10 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/01 20:23:29 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,14 @@ int	*ft_get_info_args(char **line_split, int *give_nb_args)
 		nb_args++;
 	type = malloc(sizeof(int) * nb_args);
 	i = ft_get_type(line_split, i, type);
-    int z = 0;
-    while (line_split[z])
-    {
-        printf("line_split[%d] = %s\n", z, line_split[z]);
-        printf("type[%d] = %d\n", z, type[z]);
-        z++;
-    }
-    printf("\033[0;35m SEGFAULT HERE \033[0m\n");
+    // int z = 0;
+    // while (line_split[z])
+    // {
+    //     printf("line_split[%d] = %s\n", z, line_split[z]);
+    //     printf("type[%d] = %d\n", z, type[z]);
+    //     z++;
+    // }
+    // printf("\033[0;35m SEGFAULT HERE \033[0m\n");
 	*give_nb_args = i;
 	i = 0;
 	return (type);
