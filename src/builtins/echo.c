@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 15:59:33 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/04 11:54:23 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/04 15:06:18 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void builtin_echo(char **args)
     char *full_arg;
 
     i = 1;
-	printf("42 echo");
+	printf("42 echo\n");
     print_newline = 1; // Variable pour gérer l'option -n
     full_arg = NULL;
     // Vérifier si l'option -n est spécifiée

@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 17:58:56 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/29 13:52:57 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/04 16:34:17 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int	ft_setenv(char *name, char *value, char ***env)
 		if ((*env)[i][j] == '=')
 		{
 			new_env = ft_replace_env(name, value);
-			free(env[i]);
+			free((*env)[i]);
 			(*env)[i] = new_env;
 			return (0);
 		}
