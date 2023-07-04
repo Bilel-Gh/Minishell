@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/02 22:27:25 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/03 19:25:22 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef struct		exec
 	int path_input;
 	char	**path;
 	char	*path_cmd;
+	t_global_parsing	**g_parsing;
 }					t_exec;
 
 void	init_exec(t_exec *exec)
@@ -168,12 +169,12 @@ void	new_infile(t_exec *exec, t_token *token)
 }
 
 void	start_heredoc(t_exec *exec)
-  {
+{
 	char *line;
 	line = NULL;
-//	unsigned int size_limiteur;
-//
-//	size_limiteur = ft_strlen(exec->limiteur);
+	//	unsigned int size_limiteur;
+	//
+	//	size_limiteur = ft_strlen(exec->limiteur);
 	exec->fd_infile = open("/tmp/here_doc_minishell", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	if (exec->fd_infile == -1)
 		perror("open");
@@ -194,7 +195,7 @@ void	start_heredoc(t_exec *exec)
 	if (exec->fd_infile == -1)
 		perror("open");
 	// TODO security
-  }
+}
 
 
 void	new_heredoc(t_exec *exec, t_token *token)
@@ -351,14 +352,47 @@ int	creat_pipe_and_file(t_exec *info, int *pipefd)
 	return (1);
 }
 
+int ft_bultins_fork(char **cmd, char **env)
+{
+	int is_bultin;
+
+	is_bultin = 0;
+	if (ft_strcmp(cmd[0], "echo") == 0)
+	{
+		builtin_echo(cmd);
+		is_bultin = 1;
+	}
+	else if (ft_strcmp(cmd[0], "pwd") == 0)
+	{
+		builtin_pwd(cmd);
+		is_bultin = 1;
+	}
+	else if (ft_strcmp(cmd[0], "env") == 0)
+	{
+		builtin_env(cmd, env);
+		is_bultin = 1;
+	}
+	return (is_bultin);
+}
+
+
+
 int	exec_cmd(t_exec *info, char **env, char **cmd)
 {
+	int exec_bultins;
+
 	if (info->fd_infile != 0)
 	{
 		dup2(info->fd_infile, 0);
-	close(info->fd_infile);
+		close(info->fd_infile);
 	}
-	if (execve(info->path_cmd, cmd, env) == -1)
+	exec_bultins = ft_bultins_fork(cmd, env);//env ; pwd; echo;
+	if (exec_bultins != 0)
+	{
+		free(info->path_cmd);
+		return (exit(g_code_exit), -1);
+	}
+	if (execve(info->path_cmd, cmd, 0) == -1)
 	{
 		free(info->path_cmd);
 		return (perror("cdm"), exit(127), -1);
@@ -387,9 +421,9 @@ int	first(char **cmd, t_exec *info, char **env)
 		return (-1);
 	}
 	write(1,"ff", 2);
-//	if (cmd[0] != NULL)
+	//	if (cmd[0] != NULL)
 	{
-//		printf("dd");
+		//		printf("dd");
 		find_path(info->path, cmd[0], info);
 		pid = fork();
 		if (pid == -1)
@@ -431,19 +465,19 @@ int	inter(char **cmd, t_exec *info, char **env)
 	{
 
 
-	find_path(info->path, cmd[0], info);
-	pid = fork();
-	if (pid == -1)
-		return (perror("error fork"), -1);
-	if (pid == 0)
-	{
-		if (dup2(pipefd[1], 1) == -1)
-			return (perror("error dup"), -1);
-		close(pipefd[0]);
-		close(pipefd[1]);
-		if (exec_cmd(info, env, cmd) == -1)
-			return (1);
-	}
+		find_path(info->path, cmd[0], info);
+		pid = fork();
+		if (pid == -1)
+			return (perror("error fork"), -1);
+		if (pid == 0)
+		{
+			if (dup2(pipefd[1], 1) == -1)
+				return (perror("error dup"), -1);
+			close(pipefd[0]);
+			close(pipefd[1]);
+			if (exec_cmd(info, env, cmd) == -1)
+				return (1);
+		}
 	}
 	close(pipefd[1]);
 	if (info->infile || info->limiteur)
@@ -472,19 +506,19 @@ int	last(char **cmd, t_exec *info, char **env)
 	gestion_file_last(info);
 	if (cmd[0] != NULL)
 	{
-	find_path(info->path, cmd[0], info);
-	pid = fork();
-	if (pid == -1)
-		return (perror("error fork"), -1);
-	if (pid == 0)
-	{
-		if (dup2(info->fd_outfile, 1) == -1)
-			return (perror("error dup first"), -1);
-		if (info->outfile)
-			close(info->fd_outfile);
-		if (exec_cmd(info, env, cmd) == 1)
-			return (1);
-	}
+		find_path(info->path, cmd[0], info);
+		pid = fork();
+		if (pid == -1)
+			return (perror("error fork"), -1);
+		if (pid == 0)
+		{
+			if (dup2(info->fd_outfile, 1) == -1)
+				return (perror("error dup first"), -1);
+			if (info->outfile)
+				close(info->fd_outfile);
+			if (exec_cmd(info, env, cmd) == 1)
+				return (1);
+		}
 	}
 	if (info->infile || info->limiteur)
 		close(info->fd_infile);
@@ -540,6 +574,37 @@ int	file_solo(t_exec *info)
 	return (1);
 }
 
+int is_bultins_not_fork(char **cmd, char ***env, t_exec *info)
+{
+	t_global_parsing **info_parsing;
+	t_global_exec *g_exec;
+
+	//	g_exec = NULL;
+	info_parsing = info->g_parsing;
+	g_exec = (*info_parsing)->exec;
+	if (ft_strcmp(cmd[0], "cd") == 0)
+	{
+		builtin_cd(cmd, env, g_exec->export);
+		return(0);
+	}
+	else if (ft_strcmp(cmd[0], "unset") == 0)
+	{
+		builtin_unset(cmd, env, &g_exec);
+		return(0);
+	}
+	else if (ft_strcmp(cmd[0], "exit") == 0)
+	{
+		builtin_exit(cmd, info_parsing);
+		return(0);
+	}
+	else if (ft_strcmp(cmd[0], "export") == 0)
+	{
+		builtin_export(cmd, env, &g_exec);
+		return(0);
+	}
+	return (1);
+}
+
 int	solo_exec(char **cmd, t_exec *info, char **env)
 {
 	pid_t	pid;
@@ -548,17 +613,20 @@ int	solo_exec(char **cmd, t_exec *info, char **env)
 	{
 		find_path(info->path, cmd[0], info);
 		{
-			pid = fork();
-			if (pid == -1)
-				return (perror("error fork"), -1);
-			if (pid == 0)
+			if (is_bultins_not_fork(cmd, &env, info))
 			{
-				if (dup2(info->fd_outfile, 1) == -1)
-					return (perror("error dup first"), -1);
-				if (info->outfile)
-					close(info->fd_outfile);
-				if (exec_cmd(info, env, cmd) == 1)
-					return (1);
+				pid = fork();
+				if (pid == -1)
+					return (perror("error fork"), -1);
+				if (pid == 0)
+				{
+					if (dup2(info->fd_outfile, 1) == -1)
+						return (perror("error dup first"), -1);
+					if (info->outfile)
+						close(info->fd_outfile);
+					if (exec_cmd(info, env, cmd) == 1)
+						return (1);
+				}
 			}
 		}
 	}
@@ -619,55 +687,55 @@ int	get_path(t_exec *exec, char **envp)
 	return (1);
 }
 
-void	exec(t_token *tokens, t_commande *cmd, char **env)
+void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pars)
 {
-    t_token *info_token;
-    //t_token *for_print;
-    t_commande *commande;
-    t_exec exec;
-    printf("%c\n",env[0][0]);
-    int i;
+	t_token *info_token;
+	//t_token *for_print;
+	t_commande *commande;
+	t_exec exec;
+	int i;
 
-    i = 0;
-    commande = cmd;
-    get_path(&exec, env);
-    init_exec(&exec);
-    exec.nb_cmd = nb_pipe(tokens) + 1;
-    if (exec.nb_cmd == 1)
-    {
-        info_token = get_info_token(tokens, i);
-        if (!info_token)
-            return ;
-        set_exec_and_start_exec_one(info_token, commande->cmd, &exec, env);
-        commande = commande->next;
-        free_list_tokens(info_token);
-    }
-    while (commande)
-    {
-        printf("hh");
-        info_token = get_info_token(tokens, i);
-        if (!info_token)
-            return ;
-        i++;
-        set_exec_and_start_exec(info_token, commande->cmd, &exec, env);
-        commande = commande->next;
-        //for_print = info_token;
-        /*	while (for_print)
-            {
-            printf("\033[1;31mtoken value = %s\n\033[0m", for_print->value);
-            printf("\033[1;33mtoken type = %d\n\033[0m", for_print->info->type);
-            printf("\033[1;34mtoken index = %d\n\033[0m", for_print->token_index);
-            printf("\n\n");
-            for_print	if (info->infile || info->limiteur)
-        close(info->fd_infile);
-    if (info->outfile)
-        close(info->fd_outfile);
- = for_print->next;
-            }
-            printf("next \n\n");*/
+	i = 0;
+	commande = cmd;
+	get_path(&exec, *env);
+	init_exec(&exec);
+	exec.g_parsing = g_pars;
+	exec.nb_cmd = nb_pipe(tokens) + 1;
+	if (exec.nb_cmd == 1)
+	{
+		info_token = get_info_token(tokens, i);
+		if (!info_token)
+			return ;
+		set_exec_and_start_exec_one(info_token, commande->cmd, &exec, *env);
+		commande = commande->next;
+		free_list_tokens(info_token);
+	}
+	while (commande)
+	{
+		printf("hh");
+		info_token = get_info_token(tokens, i);
+		if (!info_token)
+			return ;
+		i++;
+		set_exec_and_start_exec(info_token, commande->cmd, &exec, *env);
+		commande = commande->next;
+		//for_print = info_token;
+		/*	while (for_print)
+			{
+			printf("\033[1;31mtoken value = %s\n\033[0m", for_print->value);
+			printf("\033[1;33mtoken type = %d\n\033[0m", for_print->info->type);
+			printf("\033[1;34mtoken index = %d\n\033[0m", for_print->token_index);
+			printf("\n\n");
+			for_print	if (info->infile || info->limiteur)
+			close(info->fd_infile);
+			if (info->outfile)
+			close(info->fd_outfile);
+			= for_print->next;
+			}
+			printf("next \n\n");*/
 
-        free_list_tokens(info_token);
-        free(exec.path_cmd);
-    }
-    free_db_array(exec.path);
+		free_list_tokens(info_token);
+		free(exec.path_cmd);
+	}
+	free_db_array(exec.path);
 }

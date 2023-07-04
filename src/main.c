@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/02 23:39:59 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/03 19:00:34 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,7 +253,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 			printf("############# validation ###############\n");
         if (ft_db_tablen(g_parsing->args) == 1)
         {
-            ft_set_exit_code(g_parsing, env);
+           // ft_set_exit_code(g_parsing, env);
             printf("\033[1;36mexit code3 = %d\n\033[0m", g_code_exit);
             if (g_code_exit != CMD_FOUND && g_code_exit != SUCCESS)
             {
@@ -294,7 +294,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
         // }
         // g_parsing->commande = head_cmd;
 		ft_set_index_for_exec(&g_parsing->tokens);
-        exec(g_parsing->tokens, g_parsing->commande, *env);
+        exec(g_parsing->tokens, g_parsing->commande, env, &g_parsing);
     //    if (g_parsing->commande->cmd)
 	// 	   ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing, &g_exec);
 		printf("\033[1;36mexit code = %d\n\033[0m", g_code_exit);

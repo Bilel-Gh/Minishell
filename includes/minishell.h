@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/02 22:26:51 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/03 16:40:00 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,9 +132,6 @@ typedef struct s_global_parsing
 void						verifyString(const char *str);
 
 // DOSSIER EXEC
-void						exec(t_token *tokens, t_commande *commande,
-								char **env);
-
 char						**ft_lexeur(char *line);
 char						**ft_db_array_dup(char **db_array);
 char						*get_name(char *arg);
@@ -258,7 +255,6 @@ void						ft_free_paths2(char **path_splited, char *pathCopy,
 int							nb_pipe(t_token *info);
 
 // Dossier exec
-void						exec(t_token *tokens, t_commande *commande,
-								char **env);
+void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pars);
 
 #endif
