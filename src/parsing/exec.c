@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/03 19:25:22 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/04 12:28:32 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef struct		exec
 	int path_input;
 	char	**path;
 	char	*path_cmd;
-	t_global_parsing	**g_parsing;
+	t_global_parsing	*g_parsing;
 }					t_exec;
 
 void	init_exec(t_exec *exec)
@@ -577,19 +577,21 @@ int	file_solo(t_exec *info)
 int is_bultins_not_fork(char **cmd, char ***env, t_exec *info)
 {
 	t_global_parsing **info_parsing;
-	t_global_exec *g_exec;
+	t_global_exec **g_exec;
 
 	//	g_exec = NULL;
-	info_parsing = info->g_parsing;
-	g_exec = (*info_parsing)->exec;
+	info_parsing = &(info->g_parsing);
+	g_exec = &(info->g_parsing->exec);
+
+	// ft_exec_bultins(cmd, env, &(info->g_parsing),  &(info->g_parsing->exec));
 	if (ft_strcmp(cmd[0], "cd") == 0)
 	{
-		builtin_cd(cmd, env, g_exec->export);
+		builtin_cd(cmd, env, (*g_exec)->export);
 		return(0);
 	}
 	else if (ft_strcmp(cmd[0], "unset") == 0)
 	{
-		builtin_unset(cmd, env, &g_exec);
+		builtin_unset(cmd, env, g_exec);
 		return(0);
 	}
 	else if (ft_strcmp(cmd[0], "exit") == 0)
@@ -599,13 +601,13 @@ int is_bultins_not_fork(char **cmd, char ***env, t_exec *info)
 	}
 	else if (ft_strcmp(cmd[0], "export") == 0)
 	{
-		builtin_export(cmd, env, &g_exec);
+		builtin_export(cmd, env, g_exec);
 		return(0);
 	}
 	return (1);
 }
 
-int	solo_exec(char **cmd, t_exec *info, char **env)
+int	solo_exec(char **cmd, t_exec *info, char ***env)
 {
 	pid_t	pid;
 
@@ -613,7 +615,7 @@ int	solo_exec(char **cmd, t_exec *info, char **env)
 	{
 		find_path(info->path, cmd[0], info);
 		{
-			if (is_bultins_not_fork(cmd, &env, info))
+			if (is_bultins_not_fork(cmd, env, info))
 			{
 				pid = fork();
 				if (pid == -1)
@@ -624,7 +626,7 @@ int	solo_exec(char **cmd, t_exec *info, char **env)
 						return (perror("error dup first"), -1);
 					if (info->outfile)
 						close(info->fd_outfile);
-					if (exec_cmd(info, env, cmd) == 1)
+					if (exec_cmd(info, *env, cmd) == 1)
 						return (1);
 				}
 			}
@@ -637,7 +639,7 @@ int	solo_exec(char **cmd, t_exec *info, char **env)
 	return (0);
 }
 
-void	set_exec_and_start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char **env)
+void	set_exec_and_start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char ***env)
 {
 	gestion_infile(tokens, exec);
 	(void)cmd;
@@ -699,14 +701,14 @@ void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pa
 	commande = cmd;
 	get_path(&exec, *env);
 	init_exec(&exec);
-	exec.g_parsing = g_pars;
+	exec.g_parsing = *g_pars;
 	exec.nb_cmd = nb_pipe(tokens) + 1;
 	if (exec.nb_cmd == 1)
 	{
 		info_token = get_info_token(tokens, i);
 		if (!info_token)
 			return ;
-		set_exec_and_start_exec_one(info_token, commande->cmd, &exec, *env);
+		set_exec_and_start_exec_one(info_token, commande->cmd, &exec, env);
 		commande = commande->next;
 		free_list_tokens(info_token);
 	}

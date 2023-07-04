@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 01:44:34 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/03 13:50:36 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/04 12:22:59 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,14 +114,7 @@ void ft_exec_bultins(char **args, char ***env, t_global_parsing **g_pars, t_glob
 	char *command;
 	if (args[0] == NULL)
 		return;
-	if(access(args[0], F_OK) == 0)
-	{
-		command = ft_strrchr(args[0], 'bin/');
-		command = ft_substr(command, 1, ft_strlen(command));
-		printf("                     command: %s\n", command);
-	}
-	else
-		command = args[0];
+	command = args[0];
 	if (ft_strcmp(command, "echo") == 0)
 		builtin_echo(args);
 	else if (ft_strcmp(command, "pwd") == 0)
