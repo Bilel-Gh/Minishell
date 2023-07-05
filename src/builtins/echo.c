@@ -39,22 +39,26 @@ void ft_get_full_arg(char **args, char **full_arg, int i)
     j = i;
     if (args[j] == NULL)
         return;
-    *full_arg = ft_strdup(args[j]);
-    j++;
+    // *full_arg = ft_strdup(args[j]);
+    // j++;
     while (args[j] != NULL)
     {
-        *full_arg = ft_join_cmd(*full_arg, args[j]);
+        *full_arg = ft_strjoin(*full_arg, args[j]);
         j++;
+        if (args[j] != NULL)
+            *full_arg = ft_strjoin(*full_arg, " ");
     }
 }
 
 void builtin_echo(char **args)
 {
     int i;
+    int j;
     int print_newline;
     char *full_arg;
 
     i = 1;
+    j = 0;
 	printf("42 echo\n");
     print_newline = 1; // Variable pour gérer l'option -n
     full_arg = NULL;
@@ -66,14 +70,20 @@ void builtin_echo(char **args)
         while (args[i] != NULL && ft_is_option_echo(args[i]))
             i++;
     }
+    char *tmp = full_arg;
     ft_get_full_arg(args, &full_arg, i);
+    printf("full_arg = '%s'\n", full_arg);
+    free(tmp);
     if (full_arg != NULL)
     {
         // si full_arg commence par un $ et qu'il y a des charactères après on enleve le dollard
-        if (full_arg[0] == '$' && full_arg[1] != '\0')
-            full_arg = ft_substr(full_arg, 1, ft_strlen(full_arg) - 1);
+        if (full_arg[j] == '$' && full_arg[j + 1] != '\0')
+            j++;
+        char *tmp = full_arg;
+        full_arg = ft_substr(full_arg, j, ft_strlen(full_arg));
         printf("%s", full_arg);
         free(full_arg);
+        free(tmp);
     }
     if (print_newline)
         printf("\n");

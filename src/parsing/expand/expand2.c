@@ -25,6 +25,7 @@ int	ft_size_of_expende(char *expande)
 			|| (expande[size] == '[' && size > 1)
 			|| (expande[size] == ']' && size > 1)
 			|| (expande[size] == '/' && size > 1)
+			|| (expande[size] == '=' && size > 1)
 			|| (expande[size] == '-' && size > 1))
 		{
 			break ;

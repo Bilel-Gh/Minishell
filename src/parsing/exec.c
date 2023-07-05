@@ -250,7 +250,8 @@ void set_new_outfile(t_exec *exec, t_token *token)
 		close(exec->fd_outfile);
 		free(exec->outfile);
 	}
-	exec->outfile = ft_strdup(token->next->value);
+	if (token->next)
+		exec->outfile = ft_strdup(token->next->value);
 	// TODO protection malloc
 	if (token->info->type == REDIRECT_OUT)
 	{
@@ -385,6 +386,11 @@ int ft_bultins_fork(char **cmd, char ***env , t_exec *info)
 		builtin_env(cmd, *env);
 		is_bultin = 1;
 	}
+	else if (ft_strcmp(cmd[0], "export") == 0)
+	{
+		builtin_export(cmd, env, g_exec);
+		is_bultin = 1;
+	}
 	return (is_bultin);
 }
 
@@ -397,6 +403,8 @@ int is_bultins_not_fork(char **cmd, char ***env, t_exec *info, int pos)
 	info_parsing = &(info->g_parsing);
 	g_exec = &(info->g_parsing->exec);
 
+	//if (dup2(info->fd_outfile, 1) == -1)
+	//	return (0);
 	// ft_exec_bultins(cmd, env, &(info->g_parsing),  &(info->g_parsing->exec));
 	if ((ft_strcmp(cmd[0], "cd") == 0) && (pos == DERNIER))
 	{
@@ -413,7 +421,7 @@ int is_bultins_not_fork(char **cmd, char ***env, t_exec *info, int pos)
 		builtin_exit(cmd, info_parsing);
 		return(0);
 	}
-	else if (ft_strcmp(cmd[0], "export") == 0)
+	else if ((ft_strcmp(cmd[0], "export") == 0) && (cmd[1] != NULL))
 	{
 		builtin_export(cmd, env, g_exec);
 		return(0);

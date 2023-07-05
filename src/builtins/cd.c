@@ -53,6 +53,11 @@ char	*ft_replace_env(char *name, char *value)
 	new_env[i] = '=';
 	i++;
 	j = 0;
+	if (value == NULL)
+	{
+			new_env[i] = '\0';
+			return (new_env);
+	}
 	while (value[j] != '\0')
 	{
 		new_env[i] = value[j];

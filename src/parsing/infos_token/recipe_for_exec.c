@@ -407,7 +407,7 @@ void change_cmd_list(t_commande *list_commande)
                 arg_to_unquote = ft_lexeur(list_commande->cmd[i]);
                 nb_arg_to_unquote = ft_db_arr_len(arg_to_unquote);
                 type_arg_to_unquote = ft_get_info_args2(arg_to_unquote, &nb_arg_to_unquote);
-                no_quote_args = kick_quote(type_arg_to_unquote, nb_arg_to_unquote, arg_to_unquote);
+                no_quote_args = kick_quote(type_arg_to_unquote, nb_arg_to_unquote, arg_to_unquote); //! [ERROR] {null, null}
                 free_db_array(arg_to_unquote);
                 free(list_commande->cmd[i]);
                 list_commande->cmd[i] = ft_db_array_join(no_quote_args, ft_db_arr_len(no_quote_args));
