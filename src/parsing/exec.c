@@ -356,12 +356,12 @@ int	creat_pipe_and_file(t_exec *info, int *pipefd)
 int ft_bultins_fork(char **cmd, char ***env , t_exec *info)
 {
 	int is_bultin;
-	t_global_parsing **info_parsing;
+	// t_global_parsing **info_parsing;
 	t_global_exec **g_exec;
 
 	//	g_exec = NULL;
 	is_bultin = 0;
-	info_parsing = &(info->g_parsing);
+	// info_parsing = &(info->g_parsing);
 	g_exec = &(info->g_parsing->exec);
 
 	if ((ft_strcmp(cmd[0], "cd") == 0))
@@ -429,7 +429,6 @@ int is_bultins_not_fork(char **cmd, char ***env, t_exec *info, int pos)
 	return (1);
 }
 
-
 int	exec_cmd(t_exec *info, char ***env, char **cmd)
 {
 	int exec_bultins;
@@ -448,7 +447,9 @@ int	exec_cmd(t_exec *info, char ***env, char **cmd)
 	if (execve(info->path_cmd, cmd, 0) == -1)
 	{
 		free(info->path_cmd);
-		return (perror("cdm"), exit(127), -1);
+        printf("errno = %d\n", errno);
+        ft_check_error_exec(cmd);
+        return (exit(g_code_exit), -1);
 	}
 	return (1);
 }

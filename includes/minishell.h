@@ -24,6 +24,9 @@
 #include <stdbool.h>
 #include <string.h>
 #include <fcntl.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 // #include "../src/builtins/builtins.c"
 // #include "../src/builtins/b_export.c"
@@ -80,6 +83,11 @@ enum
 	NOTFOUND = 127,
 	CSIGINT = 130,
     CMD_FOUND = 200,
+    ERROR_PIPE = 201,
+    ERROR_REDIRECT = 202,
+    ERROR_PIPE2 = 203,
+    ERROR_QUOTE_S = 204,
+    ERROR_QUOTE_D = 205,
 };
 
 // test de ce a quoi vont les structures
@@ -157,7 +165,7 @@ bool						ft_check_name(char *name);
 
 // Dossier PARSING
 char						**ft_parsing(int *nb_args,
-								t_global_parsing **g_pars, int *error,
+								t_global_parsing **g_pars,
 								char ***env);
 int							*ft_get_info_args(char **line_split,
 								int *give_nb_token);
@@ -256,5 +264,6 @@ int							nb_pipe(t_token *info);
 
 // Dossier exec
 void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pars);
+void ft_check_error_exec(char **cmd);
 
 #endif

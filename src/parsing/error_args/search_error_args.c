@@ -23,7 +23,18 @@ bool	error_quote(int *type_args, int nb_args, char **args)
 		if (args[i][0] == 34 || args[i][0] == 39)
 		{
 			if (quote_is_open(args[i]))
-				return (true);
+            {
+                if (args[i][0] == '"')
+                    g_code_exit = ERROR_QUOTE_D;
+                else
+                    g_code_exit = ERROR_QUOTE_S;
+                return (true);
+            }
+            if (ft_strlen(args[i]) == 2)
+            {
+                g_code_exit = NOTFOUND;
+                return (true);
+            }
 			if (args[i][0] == 34)
 				type_args[i] = 9;
 			else
@@ -32,6 +43,78 @@ bool	error_quote(int *type_args, int nb_args, char **args)
 		i++;
 	}
 	return (false);
+}
+
+
+char *get_prev_arg(char **arg, int i)
+{
+    i--;
+    while (i >= 0 && arg[i][0] == ' ')
+        i--;
+    if (i < 0)
+        return (NULL);
+    return (arg[i]);
+}
+
+char *get_next_arg(char **arg, int i)
+{
+    i++;
+    while (arg[i] && arg[i][0] == ' ')
+        i++;
+    if (arg[i] == NULL)
+        return (NULL);
+    return (arg[i]);
+}
+
+bool prev_next_error(char **args, int i)
+{
+    char *get_first_prev_arg;
+    char *get_first_next_arg;
+
+    get_first_prev_arg = get_prev_arg(args, i);
+    get_first_next_arg = get_next_arg(args, i);
+
+//    printf("get_first_prev_arg = %s\n", get_first_prev_arg);
+//    printf("get_first_next_arg = %s\n", get_first_next_arg);
+    if (get_first_prev_arg != NULL && get_first_next_arg == NULL)
+    {
+        g_code_exit = ERROR_PIPE2;
+        return (true);
+    }
+    if (get_first_prev_arg == NULL || get_first_next_arg == NULL)
+    {
+        g_code_exit = ERROR_PIPE;
+        return (true);
+    }
+    if (get_first_prev_arg[0] == '<' || get_first_prev_arg[0] == '>')
+    {
+        g_code_exit = ERROR_PIPE;
+        return (true);
+    }
+    return (false);
+}
+
+bool prev_next_redi_error(char **args, int i)
+{
+    char *get_first_prev_arg;
+    char *get_first_next_arg;
+
+    get_first_prev_arg = get_prev_arg(args, i);
+    get_first_next_arg = get_next_arg(args, i);
+
+//    printf("get_first_prev_arg = %s\n", get_first_prev_arg);
+//    printf("get_first_next_arg = %s\n", get_first_next_arg);
+    if (get_first_prev_arg == NULL || get_first_next_arg == NULL)
+    {
+        g_code_exit = ERROR_REDIRECT;
+        return (true);
+    }
+    if (get_first_prev_arg[0] == '<' || get_first_prev_arg[0] == '>')
+    {
+        g_code_exit = ERROR_REDIRECT;
+        return (true);
+    }
+    return (false);
 }
 
 bool	error_size_or_spe_redi(int *type_args, int nb_args, char **args)
@@ -48,6 +131,8 @@ bool	error_size_or_spe_redi(int *type_args, int nb_args, char **args)
 				return (true);
 			if (error_no_only_type((args[i])))
 				return (true);
+            if (prev_next_redi_error(args, i))
+                return (true);
 			give_sp_args_redi(args[i], type_args, i);
 		}
 		i++;
@@ -61,14 +146,28 @@ bool	error_pipe(int *type_args, int nb_args, char **args)
 
 	i = 0;
 	printf("\n*********check parsing pipe ???***************\n");
+    while (i < nb_args)
+    {
+        printf("PIPE args[%d] = %s\n", i, args[i]);
+        i++;
+    }
+    i = 0;
 	while (i < nb_args)
 	{
 		if (type_args[i] == 4)
 		{
 			if (error_size(args[i], 1))
-				return (true);
+            {
+                g_code_exit = ERROR_PIPE;
+                return (true);
+            }
 			if (error_no_only_type((args[i])))
-				return (true);
+            {
+                g_code_exit = ERROR_PIPE;
+                return (true);
+            }
+            if (prev_next_error(args, i))
+                return (true);
 		}
 		i++;
 	}
@@ -77,14 +176,15 @@ bool	error_pipe(int *type_args, int nb_args, char **args)
 
 bool	search_error_args(int *type_args, int *nb_args, char **args)
 {
+    if (error_pipe(type_args, *nb_args, args))
+    {
+        printf("^^^^^^^^^^^     no error pipe    ^^^^^^^^^^^^^^^^^^\n");
+        return (1);
+    }
 	if (error_size_or_spe_redi(type_args, *nb_args, args))
 	{
 		printf("^^^^^^^^^^^ no error redirection ^^^^^^^^^^^^^^^^^^\n");
-		return (1);
-	}
-	if (error_pipe(type_args, *nb_args, args))
-	{
-		printf("^^^^^^^^^^^     no error pipe    ^^^^^^^^^^^^^^^^^^\n");
+        g_code_exit = ERROR_REDIRECT;
 		return (1);
 	}
 	if (error_quote(type_args, *nb_args, args))

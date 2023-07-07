@@ -87,4 +87,5 @@ void builtin_echo(char **args)
     }
     if (print_newline)
         printf("\n");
+    g_code_exit = SUCCESS;
 }

@@ -28,7 +28,7 @@ int nb_token_whis_index(t_token *tokens, int index)
 {
 	int i;
 	t_token *seach;
-
+    //test
 	i = 0;
 	seach = tokens;
 	while (seach)

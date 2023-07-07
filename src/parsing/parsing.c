@@ -138,7 +138,7 @@ char* remove_double_quotes(char* str) {
     return result;
 }
 
-char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, int *error, char ***env)
+char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
 {
 	char	**new_args;
 //	char	**no_quote_cmd;
@@ -148,6 +148,8 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, int *error, char ***e
 	type_args = ft_get_info_args((*g_pars)->args, nb_args);
 	if (search_error_args(type_args, nb_args, (*g_pars)->args))
 		return ((*g_pars)->args);
+    printf("\033[1;34m G_CODE_EXIT = %d \033[0m\n", g_code_exit);
+    g_code_exit = SUCCESS;
 	expande(&type_args, nb_args, g_pars, *env);
     printf("\033[1;31m APRES EXPAND \033[0m\n");
     printf("nb_args = %d\n", *nb_args);
@@ -159,7 +161,7 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, int *error, char ***e
     }
     if (*nb_args == 0)
     {
-        *error = 1;
+        g_code_exit = SUCCESS;
         return ((*g_pars)->args);
     }
 // 	if (ft_strcmp(no_quote_args[0], "export") == 0)
@@ -198,7 +200,7 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, int *error, char ***e
         printf("\033[0;35m ARGUMENT PARSING sans quotes: %s\033[0m\n", (*g_pars)->args[z]);
         z++;
     }
-	*error = 1;
+    g_code_exit = SUCCESS;
 	free(new_type_args);
 	return ((*g_pars)->args);
 }
