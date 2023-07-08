@@ -39,6 +39,8 @@ int ft_isdigit(char *str)
     int i;
 
     i = 0;
+    if (str[i] == '-' || str[i] == '+')
+        i++;
     while (str[i] != '\0')
     {
         if (str[i] < '0' || str[i] > '9')
@@ -48,31 +50,97 @@ int ft_isdigit(char *str)
     return (1);
 }
 
+int ft_is_digit_char(char c)
+{
+    if (c >= '0' && c <= '9')
+        return (1);
+    return (0);
+}
+
+long long int ft_atoll(char *str)
+{
+    long long int res = 0;
+    int negative = 1;
+
+    if (ft_strncmp(str, "9223372036854775807", 19) == 0)
+        return (LLONG_MAX);
+    if (ft_strncmp(str, "-9223372036854775808", 20) == 0)
+        return (LLONG_MIN);
+    while (*str && (*str == ' ' || *str == '\n' || *str == '\t' ||
+                    *str == '\v' || *str == '\f' || *str == '\r'))
+        ++str;
+    if (*str == '-')
+    {
+        negative = -1;
+        ++str;
+    }
+    else if (*str == '+')
+    {
+        ++str;
+    }
+    while (*str && *str >= '0' && *str <= '9')
+    {
+        // Vérifier si le dépassement de plage se produit
+        if (res > LLONG_MAX / 10 || (res == LLONG_MAX / 10 && (*str - '0') > LLONG_MAX % 10))
+        {
+            if (negative == 1)
+            {
+                g_code_exit = OVERFLOW;
+                return (LLONG_MAX);
+            }
+            else
+            {
+                g_code_exit = OVERFLOW;
+                return (LLONG_MIN);
+            }
+        }
+        res = res * 10 + (*str - '0');
+        ++str;
+    }
+
+    return res * negative;
+}
+
 void builtin_exit(char** args, t_global_parsing **g_pars)
 {
-    int exit_code;
     int nb_args;
     char **args_cpy;
+    long long int nb_check;
 
     nb_args = 0;
     args_cpy = args;
+    nb_check = ft_atoll(args[1]);
+    printf("exit\n");
     while (args_cpy[nb_args] != NULL)
         nb_args++;
-    if (args[1] != NULL && ft_isdigit(args[1]) == 0)
+//    printf("ft_atoll(args[1]): %lld\n", ft_atoll(args[1]));
+//    printf("nb_min: %lld\n", LLONG_MIN);
+//    printf("nb_max: %lld\n", LLONG_MAX);
+    if ((args[1] != NULL && ft_isdigit(args[1]) == 0) || ((nb_check >= LLONG_MAX || nb_check <= LLONG_MIN)&& g_code_exit == OVERFLOW))
     {
-        printf("exit: numeric argument required\n");
+        printf("exit: %s: numeric argument required\n", args[1]);
+        g_code_exit = MISUSE;
+        printf("\033[1;31m CODE EXIT DANS EXIT: %d \033[0m\n", g_code_exit); // A SUPPRIMER
+        exit(g_code_exit);
     }
     else if (nb_args > 2)
     {
         printf("exit: too many arguments\n");
+        g_code_exit = ERROR;
+        printf("\033[1;31m CODE EXIT DANS EXIT: %d \033[0m\n", g_code_exit); // A SUPPRIMER
+        exit(g_code_exit);
         return ;
     }
     if (args[1] != NULL)
     {
-        exit_code = ft_atoi(args[1]);
+        g_code_exit = ft_atoi(args[1]) % 256;
+        if (g_code_exit < 0)
+            g_code_exit = 256 + g_code_exit;
         ft_free_g_parsing(*g_pars);
+        printf("\033[1;31m CODE EXIT DANS EXIT: %d \033[0m\n", g_code_exit); // A SUPPRIMER
         // free env aussi
-        exit(exit_code);
+        exit(g_code_exit);
     }
+    printf("\033[1;31m CODE EXIT DANS EXIT2: %d \033[0m\n", g_code_exit); // A SUPPRIMER
     exit(0);
 }

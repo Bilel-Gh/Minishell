@@ -29,6 +29,7 @@ int ft_check_args(char **args)
         if (args[i][j] != 0)
         {
             printf("pwd: -%c: invalid option\n", args[i][j]);
+            g_code_exit = MISUSE;
             return (1);
         }
     }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/04 16:47:51 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/08 21:59:08 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -366,7 +366,7 @@ int ft_bultins_fork(char **cmd, char ***env , t_exec *info)
 
 	if ((ft_strcmp(cmd[0], "cd") == 0))
 	{
-		builtin_cd(cmd, env, (*g_exec)->export);
+		g_code_exit = builtin_cd(cmd, env, (*g_exec)->export);
 		free_db_array(*env);
 		is_bultin = 1;
 	}
@@ -408,7 +408,7 @@ int is_bultins_not_fork(char **cmd, char ***env, t_exec *info, int pos)
 	// ft_exec_bultins(cmd, env, &(info->g_parsing),  &(info->g_parsing->exec));
 	if ((ft_strcmp(cmd[0], "cd") == 0) && (pos == DERNIER))
 	{
-		builtin_cd(cmd, env, (*g_exec)->export);
+        g_code_exit = builtin_cd(cmd, env, (*g_exec)->export);
 		return(0);
 	}
 	else if (ft_strcmp(cmd[0], "unset") == 0)
@@ -442,13 +442,14 @@ int	exec_cmd(t_exec *info, char ***env, char **cmd)
 	if (exec_bultins != 0)
 	{
 		free(info->path_cmd);
-		return (exit(g_code_exit), -1);
+		return (exit(g_code_exit), -1); // a voir pour le code d'erreur
 	}
 	if (execve(info->path_cmd, cmd, 0) == -1)
 	{
 		free(info->path_cmd);
         printf("errno = %d\n", errno);
         ft_check_error_exec(cmd);
+        printf("\033[1;31m CODE ERREUR EXEC = %d \033[0m\n", g_code_exit);
         return (exit(g_code_exit), -1);
 	}
 	return (1);

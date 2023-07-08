@@ -110,38 +110,55 @@ int	ft_is_db_array(char *name, char **array)
 	return (0);
 }
 
-void	builtin_cd(char **args, char ***env, char **export)
+int	builtin_cd(char **args, char ***env, char **export)
 {
 	char	*home;
-	char	*in_env;
-	int		in_export;
+    (void)export;
+//	char	*in_env;
+//	int		in_export;
 	char	*prev_dir;
 	char	*current_dir;
 	char	*new_pwd;
-	char	*export_value;
+//	char	*export_value;
     char *target_dir;
 
     target_dir = args[1];
+    if (target_dir == NULL || target_dir[0] == '\0')
+    {
+        target_dir = ft_getenv("HOME", *env);
+        if (target_dir == NULL)
+        {
+            printf("bash: cd: HOME not set\n");
+            g_code_exit = ERROR;
+            return (ERROR);
+        }
+    }
 
 	if (ft_db_tablen(args) > 2)
 	{
-		printf("cd: Trop d'arguments\n");
-		return ;
+		printf("bash: cd: too many arguments\n");
+        g_code_exit = ERROR;
+        return (ERROR);
 	}
-	if (target_dir == NULL || ft_strcmp(target_dir, "~") == 0)
+	if (ft_strcmp(target_dir, "~") == 0)
 	{
 		home = ft_getenv("HOME", *env);
-		if (home != NULL)
-		{
-			if (chdir(home) != 0)
-			{
-				perror("chdir");
-			}
-		}
-		else
-		{
-			printf("cd: Impossible de trouver le répertoire home de l'utilisateur\n");
-		}
+        if (home != NULL && home[0] != '\0')
+        {
+            if (home != NULL)
+            {
+                if (chdir(home) != 0)
+                {
+                    perror("chdir");
+                    g_code_exit = ERROR;
+                }
+            }
+            else
+            {
+                printf("cd: Impossible de trouver le répertoire home de l'utilisateur\n");
+                g_code_exit = ERROR;
+            }
+        }
 	}
 	else if (ft_strcmp(target_dir, "-") == 0)
 	{
@@ -151,24 +168,22 @@ void	builtin_cd(char **args, char ***env, char **export)
 			if (chdir(prev_dir) != 0)
 			{
 				perror("chdir");
+                g_code_exit = ERROR;
 			}
 		}
 		else
 		{
 			printf("cd: Impossible de trouver le répertoire précédent\n");
+            g_code_exit = ERROR;
 		}
 	}
 	else
 	{
         if (chdir(target_dir) != 0)
         {
-            in_env = ft_getenv(target_dir, *env);
-            export_value = ft_strjoin(ft_strdup("export "), target_dir);
-            in_export = ft_is_db_array(export_value, export);
-            if (in_env == NULL && in_export == 1)
-                printf("cd: %s not set\n", target_dir);
-            else
-                perror("cd");
+            printf("\033[1;31m CD FINAL ERROR TARGET_DIR = '%s'\n\033[0m", target_dir);
+            perror("cd");
+            g_code_exit = ERROR;
         }
 	}
 	current_dir = ft_getenv("PWD", *env);
@@ -190,5 +205,7 @@ void	builtin_cd(char **args, char ***env, char **export)
         }
         else
 		    perror("getcwd");
+        g_code_exit = ERROR;
 	}
+    return g_code_exit;
 }

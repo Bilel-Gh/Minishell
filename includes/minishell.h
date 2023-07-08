@@ -27,6 +27,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <limits.h>
 
 // #include "../src/builtins/builtins.c"
 // #include "../src/builtins/b_export.c"
@@ -34,8 +35,6 @@
 // #include "../src/utils/split.c"
 //
 // #include "../src/utils/split.c"
-
-extern char					**environ;
 
 # define SIZE_PATH 4096
 # define FIRST 0
@@ -89,6 +88,7 @@ enum
     ERROR_QUOTE_S = 204,
     ERROR_QUOTE_D = 205,
     ERROR_BACKSLASH = 206,
+    OVERFLOW = 207,
 };
 
 // test de ce a quoi vont les structures
@@ -153,7 +153,7 @@ void						builtin_unset(char **args, char ***env,
 								t_global_exec **g_exec);
 void						builtin_env(char **args, char **env);
 void						builtin_pwd(char **args);
-void						builtin_cd(char **args, char ***env, char **export);
+int						builtin_cd(char **args, char ***env, char **export);
 void						builtin_exit(char **args,
 								t_global_parsing **g_pars);
 void						ft_exec_bultins(char **args, char ***env,
