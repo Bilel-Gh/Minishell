@@ -76,9 +76,9 @@ void builtin_echo(char **args)
     free(tmp);
     if (full_arg != NULL)
     {
-        // si full_arg commence par un $ et qu'il y a des charactères après on enleve le dollard
-        if (full_arg[j] == '$' && full_arg[j + 1] != '\0')
-            j++;
+//        // si full_arg commence par un $ et qu'il y a des charactères après on enleve le dollard
+//        if (full_arg[j] == '$' && full_arg[j + 1] != '\0')
+//            j++;
         char *tmp = full_arg;
         full_arg = ft_substr(full_arg, j, ft_strlen(full_arg));
         printf("%s", full_arg);

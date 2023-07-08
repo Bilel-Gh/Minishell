@@ -195,6 +195,11 @@ void ft_check_error_exec(char **cmd)
 }
 
 void gestion_pipe2(char ***env, t_global_parsing **g_parsing, int *nb_args) {
+    if (ft_strcmp((*g_parsing)->args[0], "echo") == 0)
+    {
+        g_code_exit = ERROR_PIPE;
+        return ;
+    }
     char *additional_input = readline(">");
     char *new_line = ft_strjoin((*g_parsing)->line, additional_input);
     (*g_parsing)->line = new_line;
@@ -235,8 +240,10 @@ int ft_custom_error(char **args)
     {
         if (ft_db_arr_len(args) == 1 && ft_strlen(args[0]) <= 2)
             printf("bash: syntax error near unexpected token 'newline'\n");
-        else
+        else if (args[0][0] == '>' || args[0][0] == '<')
             printf("bash: syntax error near unexpected token '%c%c'\n", args[0][0], args[0][1]);
+        else
+            printf("bash: syntax error near unexpected token '<'\n");
         return 1;
     }
     return 0;
@@ -274,7 +281,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		g_parsing->info_args = ft_get_info_args(g_parsing->args, &nb_args);
 		g_parsing->args = ft_parsing(&nb_args, &g_parsing, env);
         printf("\033[1;31m G_CODE_EXIT = %d \033[0m\n", g_code_exit);
-        while (g_code_exit == ERROR_PIPE2)
+        while ((g_code_exit == ERROR_PIPE2 || g_code_exit == ERROR_BACKSLASH))
             gestion_pipe2(env, &g_parsing, &nb_args );
         while (g_code_exit == ERROR_QUOTE_D || g_code_exit == ERROR_QUOTE_S)
             gestion_unclosed_quote(env, &g_parsing, &nb_args );
@@ -359,6 +366,36 @@ char **ft_db_array_dup(char **db_array)
 	return (db_array_cpy);
 }
 
+char *ft_add_quotes_export(char *str)
+{
+    int i = 0;
+    int j = 0;
+    int equal_found = 0;
+    int len;
+    char *new_str;
+
+    len = ft_strlen(str);
+    new_str = malloc(sizeof(char) * (len + 3));
+    if (new_str == NULL)
+        return NULL;
+    while (str[i] != '\0')
+    {
+        if (str[i] == '=' && !equal_found)
+        {
+            new_str[j++] = str[i++];
+            new_str[j++] = '"';
+            equal_found = 1;
+            continue;
+        }
+        new_str[j++] = str[i++];
+    }
+    if (equal_found)
+        new_str[j++] = '"';
+    new_str[j] = '\0';
+    free(str);
+    return new_str;
+}
+
 char **ft_get_export(char **env)
 {
 	int i;
@@ -379,6 +416,7 @@ char **ft_get_export(char **env)
 	while (j < i)
 	{
 		export[j] = ft_strjoin(suffix, env[j]);
+        export[j] = ft_add_quotes_export(export[j]); // TODO verifier avec valgrind
 		suffix = ft_strdup("export ");
 		if (!suffix)
 			return (NULL);

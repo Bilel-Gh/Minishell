@@ -101,8 +101,16 @@ void builtin_unset(char **args, char ***env, t_global_exec **g_exec)
         }
         if (!ft_check_name(name))
         {
-            printf("minishell: unset: `%s': not a valid identifier !\n", name);
-            g_code_exit = ERROR;
+            if (name[0] == '-' && name[1] != 0)
+            {
+                printf("unset: invalid option -%c\n", name[1]);
+                g_code_exit = MISUSE;
+            }
+            else
+            {
+                printf("minishell: unset: `%s': not a valid identifier !\n", name);
+                g_code_exit = ERROR;
+            }
             i++;
             continue;
         }

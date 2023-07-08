@@ -30,7 +30,7 @@ bool	error_quote(int *type_args, int nb_args, char **args)
                     g_code_exit = ERROR_QUOTE_S;
                 return (true);
             }
-            if (ft_strlen(args[i]) == 2)
+            if (ft_strlen(args[0]) == 2 && args[1] == NULL) // marche que pour "" et ''  sans rien apres
             {
                 g_code_exit = NOTFOUND;
                 return (true);
@@ -174,6 +174,57 @@ bool	error_pipe(int *type_args, int nb_args, char **args)
 	return (false);
 }
 
+int is_only_bs(char *str)
+{
+    int i;
+
+    i = 0;
+    while (str[i])
+    {
+        if (str[i] != '\\')
+            return (0);
+        i++;
+    }
+    return (1);
+}
+
+bool	error_back_slash(int nb_args, char **args)
+{
+    int	i;
+    int nb_bs;
+    int len_last_arg;
+
+    i = 0;
+    nb_bs = 0;
+    len_last_arg = ft_strlen(args[nb_args -1]);
+    printf("\n*********check parsing backslash ???***************\n");
+    printf("args[nb_args - 1][len_last_arg - 1] = %c\n", args[nb_args - 1][len_last_arg - 1]);
+    while (i < nb_args)
+    {
+        nb_bs = ft_strlen(args[i]);
+        if (is_only_bs(args[i]))
+        {
+            if (nb_bs == 1 || nb_bs % 2 == 0)
+            {
+                i++;
+                continue;
+            }
+            if (nb_bs % 2 != 0)
+            {
+                g_code_exit = ERROR_BACKSLASH;
+                return (true);
+            }
+        }
+        if (args[nb_args - 1][len_last_arg - 1] == '\\')
+        {
+            g_code_exit = ERROR_BACKSLASH;
+            return (true);
+        }
+        i++;
+    }
+    return (false);
+}
+
 bool	search_error_args(int *type_args, int *nb_args, char **args)
 {
     if (error_pipe(type_args, *nb_args, args))
@@ -192,5 +243,10 @@ bool	search_error_args(int *type_args, int *nb_args, char **args)
 		printf("\n*********    no error quote    ***************\n");
 		return (1);
 	}
+    if (error_back_slash(*nb_args, args))
+    {
+        printf("\n*********    no error back_slash    ***************\n");
+        return (1);
+    }
 	return (0);
 }

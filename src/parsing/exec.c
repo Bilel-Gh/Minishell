@@ -589,7 +589,7 @@ int	last(char **cmd, t_exec *info, char ***env)
 		close(info->fd_in_last_pipe);
 	while (waitpid(-1, &g_code_exit, 0) != -1)
 		;
-	g_code_exit = g_code_exit / 256;
+	//g_code_exit = g_code_exit / 256;
 	return (0);
 }
 
@@ -663,7 +663,7 @@ int	solo_exec(char **cmd, t_exec *info, char ***env)
 	}
 	while (waitpid(-1, &g_code_exit, 0) != -1)
 		;
-	g_code_exit = g_code_exit / 256;
+	//g_code_exit = g_code_exit / 256;
 	close_for_solo_and_free(info);
 	return (0);
 }

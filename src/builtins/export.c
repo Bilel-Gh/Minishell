@@ -225,59 +225,91 @@ void ft_add_to_export(t_global_exec **g_exec, char *new_env, char *name)
     (*g_exec)->export = ft_add_to_db_tab_export((*g_exec)->export, ft_strjoin(pre_export, env_to_add_to_export), name);
 }
 
-char *ft_clean_value(char *value)
+char *ft_clean_quote_str(char *value)
 {
-    int i;
-    char *new_value;
     int len;
-    int new_len;
-    char first_char;
-    char last_char;
+    char *new_value;
+    int i = 0;
+    int j = 0;
+    int quote_count = 0;
+    char current_quote = '\0';
+    char *cleaned_value;
 
     len = ft_strlen(value);
-    i = 0;
-    first_char = value[0];
-    last_char = value[len - 1];
-    if ((first_char == '"' && last_char == '"') || (first_char == '\'' && last_char == '\''))
+    new_value= malloc(sizeof(char) * (len + 1));
+    ft_bzero(new_value, len + 1);
+    if (new_value == NULL)
+        return NULL;
+    while (value[i] != '\0')
     {
-        new_len = len - 2;
-        new_value = malloc(sizeof(char) * (new_len + 1));
-        if (new_value == NULL)
-            return (NULL);
-        while (value[i + 1] != '\0')
+        if ((value[i] == '"' || value[i] == '\'') && (quote_count % 2 == 0))
         {
-            new_value[i] = value[i + 1];
-            i++;
+            current_quote = value[i];
+            quote_count++;
         }
-        new_value[i - 1] = '\0';
-        return (new_value);
+        else if (value[i] == current_quote)
+        {
+            quote_count++;
+            current_quote = '\0';
+        }
+        else
+        {
+            new_value[j] = value[i];
+            j++;
+        }
+        i++;
     }
-    return (value);
+    new_value[j] = '\0';
+    cleaned_value = ft_strdup(new_value);
+    free(new_value);
+    return cleaned_value;
+}
+
+
+char *get_value_for_export(char *value)
+{
+    int i;
+    int len;
+    char *new_value;
+
+    if (value == NULL)
+        return (NULL);
+    i = 0;
+    len = ft_strlen(value) + 2;
+    new_value = malloc(sizeof(char) * (len + 1));
+    // ajouter les guillemets au debut et a la fin de la value
+    new_value[0] = '"';
+    while (value[i] != '\0')
+    {
+        new_value[i + 1] = value[i];
+        i++;
+    }
+    new_value[i + 1] = '"';
+    new_value[i + 2] = '\0';
+    return (new_value);
 }
 
 void ft_add_env(char *name, char *value, char ***env, t_global_exec **g_exec)
 {
-//    int i;
-//    int j;
-//    char **new_env;
+    char *value_for_export;
     char *env_to_add;
     char *env_to_add_export;
+    char *value_cpy;
 
-//    i = 0;
-//    j = 0;
-//    new_env = NULL;
-//    while ((*env)[j] != NULL && ft_strcmp((*env)[j], name) != 0)
-//        j++;
-//    printf("\033[0;31m j EXIST : %d\n \033[0m", j);
-    env_to_add_export = ft_get_env_to_add(name, value);
+    value_cpy = NULL;
+    if (value != NULL)
+        value_cpy = ft_strdup(value);
+    value_for_export = get_value_for_export(value_cpy); // TODO verifier avec valgrind
+    env_to_add_export = ft_get_env_to_add(name, value_for_export);
+    free(value_cpy);
     if (value == NULL)
     {
         ft_add_to_export(g_exec, env_to_add_export, name);
         return ;
     }
-    value = ft_clean_value(value);
-    while (value != NULL && (value[0] == '"' || value[0] == '\''))
-        value = ft_clean_value(value);
+//    value = ft_clean_quote_str(value);
+//    while (value != NULL && ft_strchr(value, '"') != NULL && ft_strchr(value, '\'') != NULL)
+//        value = ft_clean_quote_str(value);
     env_to_add = ft_get_env_to_add(name, value);
     (*env) = ft_add_to_db_tab((*env), env_to_add, name);
     ft_add_to_export(g_exec, env_to_add_export, name);
@@ -354,6 +386,7 @@ int ft_check_equal_error(char **args, int nb_args)
             if (args[i][0] == '=')
             {
                 printf("minishell: export: `%s': not a valid identifier\n", args[i]);
+                g_code_exit = ERROR;
                 return (1);
             }
             i++;
@@ -401,7 +434,10 @@ int ft_check_solo_invalid_arg(char *args)
 
 int ft_check_export_err(char **args, t_global_exec **g_exec, int nb_args) {
     if (ft_check_equal_error(args, nb_args))
+    {
+        g_code_exit = ERROR;
         return 1;
+    }
     if (ft_check_no_args(args, g_exec))
         return 1;
     return 0;
@@ -412,29 +448,31 @@ void builtin_export(char **args, char ***env, t_global_exec **g_exec)
     char *name;
     char *value;
     int nb_args;
+    char *full_clean_str;
     int i;
 
     i = 1;
+    full_clean_str = NULL;
     nb_args = ft_db_tablen(args);
     value = NULL;
     if (ft_check_export_err(args, g_exec, nb_args))
         return ;
     while (args[i] != NULL)
     {
-        if (ft_check_solo_invalid_arg(args[i]))
+        full_clean_str = ft_clean_quote_str(args[i]);
+        printf("full_clean_str = %s\n", full_clean_str);
+        if (ft_check_solo_invalid_arg(full_clean_str))
             return ;
-        name = get_name(args[i]);
+        name = get_name(full_clean_str);
         printf("name = %s\n", name);
-        name = ft_clean_value(name);
-        printf("name2 = %s\n", name);
         if (!ft_check_name(name))
         {
             g_code_exit = ERROR;
-            printf("minishell: export: `%s': not a valid identifier\n", args[i]);
+            printf("minishell: export: `%s': not a valid identifier\n", full_clean_str);
             i++;
             continue;
         }
-        value = get_value(args[i]);
+        value = get_value(full_clean_str);
         ft_add_env(name, value, env, g_exec);
         ft_sort_env(env);
         ft_sort_env(&(*g_exec)->export);

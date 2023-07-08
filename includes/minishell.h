@@ -88,6 +88,7 @@ enum
     ERROR_PIPE2 = 203,
     ERROR_QUOTE_S = 204,
     ERROR_QUOTE_D = 205,
+    ERROR_BACKSLASH = 206,
 };
 
 // test de ce a quoi vont les structures
@@ -210,6 +211,7 @@ char *ft_substr(char *s, unsigned int start, size_t len);
 char *ft_strstr(char *str, char *to_find);
 int is_only_space(char *str);
 int ft_db_arr_len(char **arr);
+void	ft_bzero(void *s, size_t n);
 
 // Dossier LEXEUR
 t_token						*merge_characters(t_character *head);

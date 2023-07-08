@@ -138,6 +138,87 @@ char* remove_double_quotes(char* str) {
     return result;
 }
 
+char *remove_backslash(char *str)
+{
+    char *result;
+    int inquote;
+    int max;
+    int i;
+    int j;
+
+    inquote = 0;
+    i = 0;
+    j = 0;
+    max = 2 * ft_strlen(str) + 1;
+
+    result = malloc(sizeof(char) * max);
+    ft_bzero(result, max);
+    if (result == NULL)
+        return NULL;
+    while (str[i])
+    {
+        if (str[i] == '\'')
+            inquote = !inquote;
+        if (str[i] == '\\' && inquote)
+            i++;
+        else if (str[i] == '\\' && !inquote)
+        {
+            if (str[i + 1])
+            {
+                result[j++] = '\'';
+                result[j++] = str[i + 1];
+                result[j++] = '\'';
+                i += 2;
+            }
+            else
+                result[j++] = str[i++];
+            continue;
+        }
+        result[j++] = str[i++];
+    }
+    result[j] = '\0';
+    return result;
+}
+
+int is_backslash(char *str)
+{
+    int get_index_bs;
+
+    get_index_bs = 0;
+    if (ft_strchr(str, '\\'))
+    {
+        while (str[get_index_bs] != '\\')
+            get_index_bs++;
+        if (str[get_index_bs + 1] != '\'' && str[get_index_bs - 1] != '\'')
+            return (1);
+    }
+    return (0);
+}
+
+
+void ft_gestion_backslash(int **type_args, int *nb_args, t_global_parsing **g_pars)
+{
+    char *cleaned_arg;
+    int i;
+
+    i = 0;
+    while (i < *nb_args)
+    {
+        //si l'argument a un backslash
+        while (is_backslash((*g_pars)->args[i]) && (*g_pars)->args[i][1] != '\0')
+        {
+            cleaned_arg = remove_backslash((*g_pars)->args[i]);
+            printf("\033[1;34m ----------------- CLEAN_ARG = %s \033[0m\n", cleaned_arg);
+            free((*g_pars)->args[i]);
+            (*g_pars)->args[i] = cleaned_arg;
+        }
+
+        i++;
+    }
+    // TODO recree le type_args
+    (void )type_args;
+}
+
 char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
 {
 	char	**new_args;
@@ -150,6 +231,7 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
 		return ((*g_pars)->args);
     printf("\033[1;34m G_CODE_EXIT = %d \033[0m\n", g_code_exit);
     g_code_exit = SUCCESS;
+    ft_gestion_backslash(&type_args, nb_args, g_pars);
 	expande(&type_args, nb_args, g_pars, *env);
     printf("\033[1;31m APRES EXPAND \033[0m\n");
     printf("nb_args = %d\n", *nb_args);

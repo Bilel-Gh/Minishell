@@ -24,8 +24,9 @@ void builtin_env(char **args, char **env)
         i++;
     }
     if (args[i + 1] != NULL) {
+        printf("env: ʻ%s’: No such file or directory\n", args[i + 1]);
         printf("env: should not have arguments\n");
-        g_code_exit = MISUSE;
+        g_code_exit = NOTFOUND;
         return ;
     }
     while (env[i] != NULL) {
