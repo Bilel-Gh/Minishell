@@ -22,49 +22,6 @@
 
 int g_code_exit = 0;
 
-// Gestionnaire de signal SIGINT //
-void int_handler(int sig)
-{
-	if (sig == SIGINT)
-	{
-		printf("\n");
-		rl_replace_line("", 0);  // Efface la ligne de commande actuelle
-		rl_on_new_line();  // Place le curseur sur une nouvelle ligne
-		rl_redisplay();  // Affiche le prompt
-	}
-}
-
-void execute_command(char **splited_line)
-{
-	pid_t pid = fork(); // Création d'un nouveau processus
-
-	if (pid < 0) // Si la création du processus a échoué
-	{
-		// Gestion d'erreur si la création du processus a échoué
-		perror("fork");
-		return;
-	}
-	else if (pid == 0) // Si le processus créé est le processus fils
-	{
-		// Code exécuté par le processus fils
-		execvp(splited_line[0], splited_line); // !utiliser execve
-
-		// En cas d'erreur lors de l'exécution de la commande
-		perror("execvp");
-		exit(1);
-	}
-	else
-	{
-		// Code exécuté par le processus parent
-		int status;
-		waitpid(pid, &status, 0); // Attente de la fin du processus fils
-
-		// Vérification du statut de sortie de la commande exécutée
-		if (status != 0)
-			printf("Commande introuvable\n");
-	}
-}
-
 t_global_parsing* ft_init_global_parsing(void)
 {
 	struct s_global_parsing *g_parsing;
@@ -253,6 +210,7 @@ int ft_custom_error(char **args)
 void minishell_loop(char ***env, t_global_exec *g_exec)
 {
 	t_global_parsing *g_parsing;
+    using_history();
 
 	// char *line_cpy;
 	t_token* head;
@@ -274,13 +232,15 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
             g_code_exit = SUCCESS;
             continue;
         }
+        add_history(g_parsing->line);
 
-		//		args = ft_split_line_to_character(line);
+
+        //		args = ft_split_line_to_character(line);
 		int nb_args;
 		g_parsing->args = ft_lexeur(g_parsing->line);
 		g_parsing->info_args = ft_get_info_args(g_parsing->args, &nb_args);
 		g_parsing->args = ft_parsing(&nb_args, &g_parsing, env);
-        printf("\033[1;31m G_CODE_EXIT = %d \033[0m\n", g_code_exit);
+        printf("\033[1;31m G_CODE_EXIT LOOP APRES PARSING= %d \033[0m\n", g_code_exit);
         while (g_code_exit == ERROR_PIPE2)
             gestion_pipe2(env, &g_parsing, &nb_args );
         while (g_code_exit == ERROR_QUOTE_D || g_code_exit == ERROR_QUOTE_S)
@@ -310,7 +270,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		}
 		else
 			printf("############# validation ###############\n");
-        g_code_exit = SUCCESS;
+//        g_code_exit = SUCCESS;
 		if (!g_parsing->args)
             continue;
 		g_parsing->tokens = ft_get_tokens_with_infos(g_parsing->args, nb_args);
@@ -341,7 +301,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
         exec(g_parsing->tokens, g_parsing->commande, env, &g_parsing);
     //    if (g_parsing->commande->cmd)
 	// 	   ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing, &g_exec);
-		printf("\033[1;36mexit code = %d\n\033[0m", g_code_exit);
+		printf("\033[1;36mexit code FINAL = %d\n\033[0m", g_code_exit);
 		ft_free_g_parsing(g_parsing);
 	}
 }
@@ -426,6 +386,33 @@ char **ft_get_export(char **env)
 	return (export);
 }
 
+// Gestionnaire de signal SIGINT //
+void int_handler(int sig)
+{
+    if (sig == SIGINT)
+    {
+        printf("\n");  // Supprime l'historique de la ligne de commande
+        rl_on_new_line();
+        rl_replace_line("", 0);
+        rl_redisplay();
+        g_code_exit = CSIGINT;
+    }
+    else if (sig == SIGQUIT)
+    {
+        printf("Quit (core dumped)\n");
+        rl_on_new_line();
+        rl_replace_line("", 0);
+        rl_redisplay();
+        g_code_exit = 131;
+    }
+    else
+    {
+        rl_on_new_line();
+        rl_replace_line("", 0);
+        rl_redisplay();
+    }
+}
+
 int main(int argc, char **argv, char **env)
 {
 	(void)argc;
@@ -440,8 +427,12 @@ int main(int argc, char **argv, char **env)
 	unlink("/tmp/here_doc_minishell");
 
 	s_sigaction.sa_handler = int_handler; // Nom de la fonction de gestionnaire
-	sigaction(SIGINT, &s_sigaction, NULL);// Gestionnaire de signal
-	minishell_loop(&env_cpy, g_exec);
+	sigaction(SIGINT, &s_sigaction, NULL);
+    sigaction(SIGQUIT, &s_sigaction, NULL);// Gestionnaire de signal
+    sigaction(SIGTSTP, &s_sigaction, NULL); // pour eviter le segfault a voir si on a le droit
+
+    minishell_loop(&env_cpy, g_exec);
+    rl_clear_history();
 	if (env_cpy)
 		free_db_array(env_cpy);
 	return 0;

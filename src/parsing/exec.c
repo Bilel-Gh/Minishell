@@ -452,6 +452,8 @@ int	exec_cmd(t_exec *info, char ***env, char **cmd)
         printf("\033[1;31m CODE ERREUR EXEC = %d \033[0m\n", g_code_exit);
         return (exit(g_code_exit), -1);
 	}
+    g_code_exit = SUCCESS;
+    printf("\033[1;31m CODE ERREUR EXEC OK = %d \033[0m\n", g_code_exit);
 	return (1);
 }
 

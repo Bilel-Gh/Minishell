@@ -230,9 +230,9 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
 	if (search_error_args(type_args, nb_args, (*g_pars)->args))
 		return ((*g_pars)->args);
     printf("\033[1;34m G_CODE_EXIT = %d \033[0m\n", g_code_exit);
-    g_code_exit = SUCCESS;
     ft_gestion_backslash(&type_args, nb_args, g_pars);
 	expande(&type_args, nb_args, g_pars, *env);
+    g_code_exit = SUCCESS;
     printf("\033[1;31m APRES EXPAND \033[0m\n");
     printf("nb_args = %d\n", *nb_args);
     int w = 0;
@@ -282,7 +282,6 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
         printf("\033[0;35m ARGUMENT PARSING sans quotes: %s\033[0m\n", (*g_pars)->args[z]);
         z++;
     }
-    g_code_exit = SUCCESS;
 	free(new_type_args);
 	return ((*g_pars)->args);
 }
