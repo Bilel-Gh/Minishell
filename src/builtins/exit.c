@@ -109,7 +109,10 @@ void builtin_exit(char** args, t_global_parsing **g_pars)
 
     nb_args = 0;
     args_cpy = args;
-    nb_check = ft_atoll(args[1]);
+    if (args[1] != NULL)
+        nb_check = ft_atoll(args[1]);
+    else if (args[1] == NULL)
+        nb_check = 0;
     printf("exit\n");
     while (args_cpy[nb_args] != NULL)
         nb_args++;

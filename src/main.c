@@ -281,7 +281,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		g_parsing->info_args = ft_get_info_args(g_parsing->args, &nb_args);
 		g_parsing->args = ft_parsing(&nb_args, &g_parsing, env);
         printf("\033[1;31m G_CODE_EXIT = %d \033[0m\n", g_code_exit);
-        while ((g_code_exit == ERROR_PIPE2 || g_code_exit == ERROR_BACKSLASH))
+        while (g_code_exit == ERROR_PIPE2)
             gestion_pipe2(env, &g_parsing, &nb_args );
         while (g_code_exit == ERROR_QUOTE_D || g_code_exit == ERROR_QUOTE_S)
             gestion_unclosed_quote(env, &g_parsing, &nb_args );
@@ -300,7 +300,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		if (g_code_exit != SUCCESS)
 		{
 			printf("\n@@@@@@@@@@@@@ ERROR DETECT !!!! @@@@@@@@@@@@@@@\n");
-            printf("\033[1;34m G_CODE_EXIT = %d \033[0m\n", g_code_exit);
+            printf("\033[1;34m G_CODE_EXIT FINAL = %d \033[0m\n", g_code_exit);
             if (!ft_custom_error(g_parsing->args))
                 printf("bash: syntax error near unexpected token '%c%c'\n", g_parsing->args[0][0], g_parsing->args[0][1]);
             g_code_exit = MISUSE;
