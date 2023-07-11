@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 04:16:16 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/10 22:59:43 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/10 14:51:56 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,9 @@ char	*ft_strdup(char *src)
 	char	*str;
 
 	len = 0;
+	str = NULL;
+	if (src[0] == 0)
+		return (str);
 	while (src[len])
 		len++;
 	str = (char *)malloc(sizeof(*str) * (len + 1));
