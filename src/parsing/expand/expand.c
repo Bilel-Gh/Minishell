@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:10:02 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/11 17:57:42 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/11 23:14:59 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,8 +191,10 @@ int ft_nb_args_out_null(char **old_arg, int size_db_arr)
 	new_size = 0;
 	while (i < size_db_arr)
 	{
-		if (old_arg[i] == NULL)
+		if (old_arg[i] == 0)
 			i++;
+		else if ( old_arg[i][0] == ' ' && old_arg[i + 1] == NULL)
+			i = i + 2;
 		else
 		{
 			i++;
@@ -215,18 +217,24 @@ char **ft_clean_null_db_array(char **old_arg, int *size_db_arr)
 	new_args = malloc(sizeof(char *) * (nb_new_args + 1));
 	new_args[nb_new_args] = NULL;
 	printf("size old db_arr = %d\n", *size_db_arr);
+	printf("size out null db_ar = %d", nb_new_args);
 	while (i < *size_db_arr)
 	{
-		if (old_arg[i] != 0)
+		if (old_arg[i] == 0)
+			free(old_arg[i]);
+		else if ( old_arg[i][0] == ' ' && old_arg[i + 1] == NULL)
 		{
-			printf(" clean array null ======= %s*****\n", old_arg[i]);
+			free(old_arg[i]);
+			free(old_arg[i + 1]);
+			i++;
+		}
+		else if (old_arg[i] != 0)
+		{
+			printf(" clean array null ======= [%s]*****\n", old_arg[i]);
 			new_args[j] = ft_strdup(old_arg[i]);
 			free(old_arg[i]);
-			i++;
 			j++;
-			continue;
 		}
-		free(old_arg[i]);
 		i++;
 	}
 		free(old_arg[i]);

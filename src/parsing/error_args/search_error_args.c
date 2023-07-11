@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   search_error_args.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 20:08:15 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/16 17:37:47 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/11 22:28:34 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ bool	error_quote(int *type_args, int nb_args, char **args)
                     g_code_exit = ERROR_QUOTE_S;
                 return (true);
             }
-            if (ft_strlen(args[i]) == 2)
+            if (ft_strlen(args[0]) == 2)
             {
                 g_code_exit = NOTFOUND;
                 return (true);

@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/03 19:00:34 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/11 22:20:51 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,7 +280,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
             gestion_unclosed_quote(env, &g_parsing, &nb_args );
         if (g_code_exit == NOTFOUND)
         {
-            printf("bash: : command not found\n");
+            printf("bashkkk: : command not found\n");
             free_db_array(g_parsing->args);
             continue;
         }
