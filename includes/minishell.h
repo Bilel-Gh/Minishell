@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/03 16:40:00 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/12 11:48:10 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,6 +234,7 @@ bool						quote_is_open(char *args);
 // Dossier EXPAND
 void						expande(int **type_args, int *nb_args,
 								t_global_parsing **g_pars, char **env);
+bool						back_slach(char *args, int i);
 char						*join_and_rp_args(char *args_con, char *expande,
 								int size_extract);
 char						*give_env_expand(char *expande_search, int size,
