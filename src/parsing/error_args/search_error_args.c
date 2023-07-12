@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 20:08:15 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/12 11:49:50 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/12 12:25:38 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,21 +94,48 @@ bool prev_next_error(char **args, int i)
     return (false);
 }
 
-bool prev_next_redi_error(char **args, int i)
+bool ft_is_file(char *str)
+{
+
+		if (str[0] == 34)
+			return (true);
+		else if (str[0] == 39)
+			return (true);
+		else if (ft_isprint(str[0]))
+			return (true);
+	return (false);
+}
+
+bool prev_next_redi_error(char **args, int i, int *type_args, int nb_args)
 {
     char *get_first_prev_arg;
     char *get_first_next_arg;
+    (void)type_args;
+    (void)nb_args;
 
     get_first_prev_arg = get_prev_arg(args, i);
     get_first_next_arg = get_next_arg(args, i);
 
-//    printf("get_first_prev_arg = %s\n", get_first_prev_arg);
-//    printf("get_first_next_arg = %s\n", get_first_next_arg);
-    if (get_first_prev_arg == NULL || get_first_next_arg == NULL)
+   printf("get_first_prev_arg = %s\n", get_first_prev_arg);
+   printf("get_first_next_arg = %s\n", get_first_next_arg);
+    if (type_args[i] == REDIRECT)
     {
-        g_code_exit = ERROR_REDIRECT;
-        return (true);
+        if ((i + 1) > nb_args)
+        {
+            g_code_exit = ERROR_REDIRECT;
+            return (true);
+        }
+        if (!ft_is_file(get_first_next_arg))
+        {
+            g_code_exit = ERROR_REDIRECT;
+            return (true);
+        }
     }
+    // if (get_first_prev_arg == NULL || get_first_next_arg == NULL)
+    // {
+    //     g_code_exit = ERROR_REDIRECT;
+    //     return (true);
+    // }
     if (get_first_prev_arg[0] == '<' || get_first_prev_arg[0] == '>')
     {
         g_code_exit = ERROR_REDIRECT;
@@ -131,7 +158,7 @@ bool	error_size_or_spe_redi(int *type_args, int nb_args, char **args)
 				return (true);
 			if (error_no_only_type((args[i])))
 				return (true);
-            if (prev_next_redi_error(args, i))
+            if (prev_next_redi_error(args, i, type_args, nb_args))
                 return (true);
 			give_sp_args_redi(args[i], type_args, i);
 		}
