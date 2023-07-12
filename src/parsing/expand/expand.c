@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:10:02 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/11 23:14:59 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/12 10:39:04 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ char	*importe_expande(char *args, char **env)
 	while (args[i])
 	{
 		info = 0;
+		printf("in importe_expande args[%d] = %c \n", i ,args[i]);
 		if (args[i] == '$' && back_slach(args, i))
 		{
 		printf("args ________ %s\n", args);
@@ -110,6 +111,8 @@ char	*importe_expande(char *args, char **env)
 			new_args = replace_expande(tmp, i, env, &info);
 			printf(" replace_expande ______ %s\n", new_args);
 			free(args);
+			if (new_args == NULL)
+				return (new_args);
 			args = new_args;
 			if (info != 1)
 				i = 0;
@@ -119,7 +122,7 @@ char	*importe_expande(char *args, char **env)
 		else
 			i++;
 		if (new_args == NULL)
-			break;
+			new_args = args;
 	}
 	return (new_args);
 }
@@ -217,7 +220,7 @@ char **ft_clean_null_db_array(char **old_arg, int *size_db_arr)
 	new_args = malloc(sizeof(char *) * (nb_new_args + 1));
 	new_args[nb_new_args] = NULL;
 	printf("size old db_arr = %d\n", *size_db_arr);
-	printf("size out null db_ar = %d", nb_new_args);
+	printf("size out null db_ar = %d\n", nb_new_args);
 	while (i < *size_db_arr)
 	{
 		if (old_arg[i] == 0)
@@ -308,12 +311,12 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 					else
 					{
 						(*g_pars)->args[i] = importe_expande((*g_pars)->args[i], env);
-						printf("&&&&&&&& %s &&&&&&",(*g_pars)->args[i]);
 					}// on supprimer l'argument du tableau si l'expand n'est pas trouver
 					 //					i = delete_if_no_expand(nb_args, g_pars, i);
 				}
 			}
 		}
+						printf("&&&&&&&& %s &&&&&&\n",(*g_pars)->args[i]);
 		i++;
 	}
 	(*g_pars)->args = ft_clean_null_db_array((*g_pars)->args, nb_args);

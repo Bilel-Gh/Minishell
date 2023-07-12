@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/10 23:41:48 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/12 10:41:00 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,12 +204,12 @@ void						free_list_commande(t_commande *commande);
 int							ft_db_tablen(char **tab);
 void						ft_free_g_parsing(t_global_parsing *g_parsing);
 char						*ft_itoa(int num);
-char	*ft_strcat(char *s1, const char *s2);
-int ft_is_digit(char c);
-char *ft_substr(char *s, unsigned int start, size_t len);
-char *ft_strstr(char *str, char *to_find);
-int is_only_space(char *str);
-int ft_db_arr_len(char **arr);
+char						*ft_strcat(char *s1, const char *s2);
+int							ft_is_digit(char c);
+char						*ft_substr(char *s, unsigned int start, size_t len);
+char						*ft_strstr(char *str, char *to_find);
+int							is_only_space(char *str);
+int							ft_db_arr_len(char **arr);
 
 // Dossier LEXEUR
 t_token						*merge_characters(t_character *head);

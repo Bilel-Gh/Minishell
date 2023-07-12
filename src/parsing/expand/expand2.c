@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:13:01 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/11 17:47:52 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/12 10:38:59 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,19 +76,22 @@ char	*give_env_expand(char *expande_search, int size, char **env)
 {
 	int		i;
 	char	*sp_expand;
+	char	*for_search;
 
 	i = 0;
 	sp_expand = NULL;
 	sp_expand = is_sp_expand(expande_search);
-//	expande_search = ft_strjoin(expande_search, "=");
+	for_search = ft_strdup(expande_search);
+	for_search = ft_strjoin(for_search, "=");
 	if (sp_expand)
 		return (sp_expand);
 	while (env[i])
 	{
-		if (!strncmp(expande_search, env[i], size - 1)) // ! a changer
+		if (!strncmp(for_search, env[i], size + 1)) // ! a changer
 			break ;
 		i++;
 	}
+	free(for_search);
 	free(expande_search);
 	if (env[i] == NULL)
 		return (NULL);
