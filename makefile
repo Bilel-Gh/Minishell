@@ -90,7 +90,6 @@ $(NAME): $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS)
 	@echo $(GREEN) "[OK COMPILED]" $(EOC)
 	@echo $(GREEN) "[LAUNCH PROGRAMM]" $(EOC)
 	@mkdir -p obj
-	@mv $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS) obj/
 
 clean:
 	@echo $(PURPLE) "[🧹Cleaning...🧹]" $(EOC)

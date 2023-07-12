@@ -233,7 +233,7 @@ void	add_cmd_to_list_commande(t_commande *list_commande, char **cmd_join)
 	i = 0;
 	while (list_cmd)
 	{
-		list_cmd->cmd = ft_custom_split(cmd_join[i]);
+		list_cmd->cmd = ft_custom_split(cmd_join[i]); //! TODO CHECK : echo "'    SALUT   '""
         // list_cmd->cmd = ft_join_for_export(list_cmd->cmd);
         int z = 0;
         while (list_cmd->cmd[z])

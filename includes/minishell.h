@@ -89,6 +89,7 @@ enum
     ERROR_QUOTE_D = 205,
     ERROR_BACKSLASH = 206,
     OVERFLOW = 207,
+	ERROR_REDIRECT2 = 208,
 };
 
 // test de ce a quoi vont les structures
@@ -224,7 +225,7 @@ void						get_current_charptr(t_character **current_charPtr,
 
 // Dossier error_args
 bool						search_error_args(int *type_args, int *nb_args,
-								char **args);
+								char **args, char **env);
 bool						error_no_only_type(char *str);
 bool						error_size(char *args, int size_max);
 void						give_sp_args_redi(char *args, int *type_args,

@@ -219,7 +219,10 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 	{
 		g_parsing = ft_init_global_parsing();
 		if (!g_parsing)
+        {
+            printf("test\n");
 			return ;
+        }
         g_parsing->exec = g_exec;
 		g_parsing->line = readline("\033[1;32mminishell >\033[0m"); // TODO : BUG affichage quand on ecrit plein de caracteres
 		if (g_parsing->line == NULL)
@@ -241,6 +244,12 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 		g_parsing->info_args = ft_get_info_args(g_parsing->args, &nb_args);
 		g_parsing->args = ft_parsing(&nb_args, &g_parsing, env);
         printf("\033[1;31m G_CODE_EXIT LOOP APRES PARSING= %d \033[0m\n", g_code_exit);
+        if (g_code_exit == ERROR_REDIRECT2)
+        {
+            g_code_exit = ERROR;
+            ft_free_g_parsing(g_parsing);
+            continue;
+        }
         while (g_code_exit == ERROR_PIPE2)
             gestion_pipe2(env, &g_parsing, &nb_args );
         while (g_code_exit == ERROR_QUOTE_D || g_code_exit == ERROR_QUOTE_S)

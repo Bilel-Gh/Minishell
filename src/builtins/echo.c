@@ -60,6 +60,12 @@ void builtin_echo(char **args)
     i = 1;
     j = 0;
 	printf("42 echo\n");
+    int z = 0;
+    while (args[z])
+    {
+        printf("echo args[%d] = %s\n", z, args[z]);
+        z++;
+    }
     print_newline = 1; // Variable pour gérer l'option -n
     full_arg = NULL;
     // Vérifier si l'option -n est spécifiée

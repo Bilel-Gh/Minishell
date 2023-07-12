@@ -96,7 +96,9 @@ bool prev_next_error(char **args, int i)
 
 bool ft_is_file(char *str)
 {
-
+    
+        if (str == NULL)
+            return (false);
 		if (str[0] == 34)
 			return (true);
 		else if (str[0] == 39)
@@ -106,12 +108,17 @@ bool ft_is_file(char *str)
 	return (false);
 }
 
+bool ft_is_solo_expand(char *str)
+{
+    if (str != NULL && str[0] == '$')
+        return (true);
+    return (false);
+}
+
 bool prev_next_redi_error(char **args, int i, int *type_args, int nb_args)
 {
     char *get_first_prev_arg;
     char *get_first_next_arg;
-    (void)type_args;
-    (void)nb_args;
 
     get_first_prev_arg = get_prev_arg(args, i);
     get_first_next_arg = get_next_arg(args, i);
@@ -136,17 +143,39 @@ bool prev_next_redi_error(char **args, int i, int *type_args, int nb_args)
     //     g_code_exit = ERROR_REDIRECT;
     //     return (true);
     // }
-    if (get_first_prev_arg[0] == '<' || get_first_prev_arg[0] == '>')
+    // if (get_first_prev_arg[0] == '<' || get_first_prev_arg[0] == '>')
+    // {
+    //     g_code_exit = ERROR_REDIRECT;
+    //     return (true);
+    // }
+    return (false);
+}
+
+bool error_expand(int type, char *next, char **env)
+{
+    char *expand_value;
+    char *expand_to_search;
+    if (type == REDIRECT)
     {
-        g_code_exit = ERROR_REDIRECT;
-        return (true);
+        if (ft_is_solo_expand(next))
+        {
+            expand_to_search = ft_strdup(&next[1]);
+            expand_value = give_env_expand(expand_to_search, ft_strlen(expand_to_search), env);
+            printf(" error_expande == %s\n", expand_value);
+            if (expand_value == NULL)
+            {
+                g_code_exit = ERROR_REDIRECT2;
+                return (true);
+            }
+        }
     }
     return (false);
 }
 
-bool	error_size_or_spe_redi(int *type_args, int nb_args, char **args)
+bool	error_size_or_spe_redi(int *type_args, int nb_args, char **args, char **env)
 {
 	int	i;
+    char *get_first_next_arg;
 
 	i = 0;
 	printf("\n*********check parsing redirection ???***************\n");
@@ -154,12 +183,18 @@ bool	error_size_or_spe_redi(int *type_args, int nb_args, char **args)
 	{
 		if (type_args[i] == 1)
 		{
+            get_first_next_arg = get_next_arg(args, i);
 			if (error_size(args[i], 2))
 				return (true);
 			if (error_no_only_type((args[i])))
 				return (true);
             if (prev_next_redi_error(args, i, type_args, nb_args))
                 return (true);
+            if (error_expand(type_args[i], get_first_next_arg, env))
+            {
+                printf("bash: %s: ambiguous redirect\n", get_first_next_arg);
+                return (true);
+            }  
 			give_sp_args_redi(args[i], type_args, i);
 		}
 		i++;
@@ -252,17 +287,18 @@ bool	error_back_slash(int nb_args, char **args)
     return (false);
 }
 
-bool	search_error_args(int *type_args, int *nb_args, char **args)
+bool	search_error_args(int *type_args, int *nb_args, char **args, char **env)
 {
     if (error_pipe(type_args, *nb_args, args))
     {
         printf("^^^^^^^^^^^     no error pipe    ^^^^^^^^^^^^^^^^^^\n");
         return (1);
     }
-	if (error_size_or_spe_redi(type_args, *nb_args, args))
+	if (error_size_or_spe_redi(type_args, *nb_args, args, env))
 	{
 		printf("^^^^^^^^^^^ no error redirection ^^^^^^^^^^^^^^^^^^\n");
-        g_code_exit = ERROR_REDIRECT;
+        if (g_code_exit != ERROR_REDIRECT2)
+            g_code_exit = ERROR_REDIRECT;
 		return (1);
 	}
 	if (error_quote(type_args, *nb_args, args))

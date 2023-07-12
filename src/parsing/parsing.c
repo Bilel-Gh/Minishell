@@ -227,7 +227,7 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
 	int		*type_args;
 
 	type_args = ft_get_info_args((*g_pars)->args, nb_args);
-	if (search_error_args(type_args, nb_args, (*g_pars)->args))
+	if (search_error_args(type_args, nb_args, (*g_pars)->args, *env))
 		return ((*g_pars)->args);
     printf("\033[1;34m G_CODE_EXIT = %d \033[0m\n", g_code_exit);
     ft_gestion_backslash(&type_args, nb_args, g_pars);

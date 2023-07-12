@@ -226,11 +226,7 @@ char **ft_clean_null_db_array(char **old_arg, int *size_db_arr)
 		if (old_arg[i] == 0)
 			free(old_arg[i]);
 		else if ( old_arg[i][0] == ' ' && old_arg[i + 1] == NULL)
-		{
 			free(old_arg[i]);
-			free(old_arg[i + 1]);
-			i++;
-		}
 		else if (old_arg[i] != 0)
 		{
 			printf(" clean array null ======= [%s]*****\n", old_arg[i]);
@@ -240,6 +236,7 @@ char **ft_clean_null_db_array(char **old_arg, int *size_db_arr)
 		}
 		i++;
 	}
+		
 		free(old_arg[i]);
 		free(old_arg);
 		return (*size_db_arr = nb_new_args, new_args);
@@ -305,8 +302,8 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 				{	
 					if (solo_dolard((*g_pars)->args[i]))
 					{
-						free((*g_pars)->args[i]);
-						(*g_pars)->args[i] = NULL;
+						i++;
+						continue;
 					}
 					else
 					{
