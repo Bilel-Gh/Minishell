@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/12 20:00:15 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/12 20:48:28 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -531,11 +531,6 @@ int gestion_file_inter(t_exec *info, int *pipefd)
 	int error;
 
 	error = 1;
-	if (pipe(pipefd) == -1)
-	{
-		perror("error pipe");
-		error = -1;
-	}
 	if (info->fd_infile == -1 || info->fd_outfile == -1)
 		error = -1;
 	if ((!info->infile && !info->limiteur) || info->fd_infile == -1)
@@ -556,6 +551,7 @@ void close_inter(int *pipefd, t_exec *info)
 	if (info->fd_in_last_pipe)
 		close(info->fd_in_last_pipe);
 	info->fd_in_last_pipe = pipefd[0];
+	printf("***************** name infile ls = %s\n ---- fd_in = %d ---- fd_out = %d",info->infile, info->fd_infile, info->fd_outfile);
 
 }
 int	inter(char **cmd, t_exec *info, char ***env)
@@ -563,7 +559,10 @@ int	inter(char **cmd, t_exec *info, char ***env)
 	int		pipefd[2];
 	pid_t	pid;
 
-
+	if (pipe(pipefd) == -1)
+	{
+		perror("error pipe");
+	}
 	if (gestion_file_inter(info, pipefd) < 0)
 	{
 		write(1,"ff", 2);
@@ -591,6 +590,7 @@ int	inter(char **cmd, t_exec *info, char ***env)
 			}
 		}
 	}
+		close_inter(pipefd, info);
 	return (0);
 }
 
@@ -832,6 +832,7 @@ void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pa
 	init_exec(&exec);
 	exec.g_parsing = *g_pars;
 	exec.nb_cmd = nb_pipe(tokens) + 1;
+	printf("nb_exec = %d\n", exec.nb_cmd);
 	if (exec.nb_cmd == 1)
 	{
 		info_token = get_info_token(tokens, i);
@@ -846,7 +847,7 @@ void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pa
 		while (commande)
 		{
 			free_name_file(&exec);
-			printf("hh");
+		//	printf("hh");
 			info_token = get_info_token(tokens, i);
 			if (!info_token)
 				return ;
