@@ -1,0 +1,10 @@
+42 echo
+echo args[0] = echo
+echo args[1] = dd
+full_arg = 'dd'
+dd
+42 echo
+echo args[0] = echo
+echo args[1] = ddsssaaasas
+full_arg = 'ddsssaaasas'
+ddsssaaasas

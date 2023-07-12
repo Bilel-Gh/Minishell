@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/12 20:48:28 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/12 22:20:47 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -537,7 +537,6 @@ int gestion_file_inter(t_exec *info, int *pipefd)
 		info->fd_infile = info->fd_in_last_pipe;
 	if (!info->outfile || info->fd_outfile == -1)
 		info->fd_outfile = pipefd[1];
-	printf("***************** name infile inter = %s\n ---- fd_in = %d ---- fd_out = %d",info->infile, info->fd_infile, info->fd_outfile);
 	return (error);
 }
 
@@ -554,6 +553,7 @@ void close_inter(int *pipefd, t_exec *info)
 	printf("***************** name infile ls = %s\n ---- fd_in = %d ---- fd_out = %d",info->infile, info->fd_infile, info->fd_outfile);
 
 }
+
 int	inter(char **cmd, t_exec *info, char ***env)
 {
 	int		pipefd[2];
@@ -565,7 +565,6 @@ int	inter(char **cmd, t_exec *info, char ***env)
 	}
 	if (gestion_file_inter(info, pipefd) < 0)
 	{
-		write(1,"ff", 2);
 		close_inter(pipefd, info);
 		return (-1);
 	}
@@ -599,20 +598,24 @@ int	gestion_file_last(t_exec *info)
 	int error;
 
 	error = 1;
+	printf("***************** name infile last = %s\n ---- fd_in = %d ---- fd_out = %d\n",info->infile, info->fd_infile, info->fd_outfile);
 	if (info->fd_infile == -1 || info->fd_outfile == -1)
 		error = -1;
 	if ((!info->infile && !info->limiteur) || info->fd_infile == -1)
+	{
 		info->fd_infile = info->fd_in_last_pipe;
+	}
 	if (!info->outfile || info->fd_outfile == -1)
 		info->fd_outfile = 1;
 	return (error);
 }
+
 void close_last(t_exec *info)
 {
 	if ((info->infile || info->limiteur) && info->fd_infile != 0)
 		close(info->fd_infile);
-	if (info->outfile)
-		close(info->fd_outfile && info->fd_outfile != 1);
+	if (info->outfile && info->fd_outfile != 1)
+		close(info->fd_outfile);
 	if (info->fd_in_last_pipe)
 		close(info->fd_in_last_pipe);
 	
@@ -624,7 +627,6 @@ int	last(char **cmd, t_exec *info, char ***env)
 
 	if (gestion_file_last(info) < 0)
 	{
-
 		close_last(info);
 		return (-1);
 	}
@@ -650,6 +652,7 @@ int	last(char **cmd, t_exec *info, char ***env)
 	close_last(info);
 	while (waitpid(-1, &g_code_exit, 0) != -1)
 		;
+	printf("%d\n",g_code_exit);
 	if (g_code_exit > 255)
 		g_code_exit = g_code_exit / 256;
 	return (0);
@@ -741,6 +744,7 @@ int	solo_exec(char **cmd, t_exec *info, char ***env)
 	}
 	while (waitpid(-1, &g_code_exit, 0) != -1)
 		;
+	printf("%d\n",g_code_exit);
 	if (g_code_exit > 255)
 		g_code_exit = g_code_exit / 256;
 	close_for_solo_and_free(info);
