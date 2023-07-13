@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:13:01 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/12 10:38:59 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/13 12:54:25 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ char	*is_sp_expand(char *expand_search)
 {
 	char	*sp_expand;
 
+	if (!expand_search)
+		return (NULL);
 	if (expand_search[0] == '@')
 	{
 		sp_expand = &expand_search[1];
@@ -80,6 +82,8 @@ char	*give_env_expand(char *expande_search, int size, char **env)
 
 	i = 0;
 	sp_expand = NULL;
+//	if (!expande_search)
+//		return (NULL);
 	sp_expand = is_sp_expand(expande_search);
 	for_search = ft_strdup(expande_search);
 	for_search = ft_strjoin(for_search, "=");

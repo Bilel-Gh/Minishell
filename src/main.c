@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/12 11:48:31 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/13 15:08:25 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,8 @@ int only_misuse(char *str, char *invalid_char)
     int j;
 
     i = 0;
+	if (str == NULL)
+		return 1;
     while (str[i] != '\0')
     {
         j = 0;
@@ -130,6 +132,13 @@ void ft_check_error_exec(char **cmd)
         i++;
     }
     printf("full_cmd = %s\n", full_cmd);
+	if (full_cmd == NULL)
+	{
+        printf("bash: %s: command not found\n", cmd[0]);
+        g_code_exit = NOTFOUND;
+		free(full_cmd);
+        return ;
+	}
     if (ft_check_full_cmd(full_cmd))
     {
         printf("full_cmd = %s\n", full_cmd);
@@ -224,7 +233,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 			return ;
         }
         g_parsing->exec = g_exec;
-		g_parsing->line = readline("\033[1;32mminishell >\033[0m"); // TODO : BUG affichage quand on ecrit plein de caracteres
+		g_parsing->line = readline("minishell > "); // TODO : BUG affichage quand on ecrit plein de caracteres
 		if (g_parsing->line == NULL)
 			exit(0);
 		if (strlen(g_parsing->line) == 0
@@ -433,6 +442,8 @@ int main(int argc, char **argv, char **env)
     g_exec = malloc(sizeof(t_global_exec));
     g_exec->export = ft_get_export(env_cpy);
 	struct sigaction s_sigaction;
+
+    ft_bzero(&s_sigaction, sizeof(struct sigaction));
 	unlink("/tmp/here_doc_minishell");
 
 	s_sigaction.sa_handler = int_handler; // Nom de la fonction de gestionnaire

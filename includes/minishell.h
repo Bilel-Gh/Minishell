@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/12 11:48:10 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/13 12:57:09 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,6 +246,7 @@ char						*is_sp_expand(char *expand_search);
 char						*get_expende_detect(int size_of_expende,
 								char *expande);
 int							ft_size_of_expende(char *expande);
+bool						solo_dolard(char *str);
 
 // Dossier INFOS_TOKENS
 int							ft_is_command(t_token *token);

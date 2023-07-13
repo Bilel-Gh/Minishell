@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/12 22:20:47 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/13 12:52:54 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -359,7 +359,10 @@ int	creat_pipe_and_file(t_exec *info, int *pipefd)
 		error = -1;
 	}
 	if (info->fd_infile == -1 || info->fd_outfile == -1)
+	{
+		g_code_exit = 1;
 		error = -1;
+	}
 	if ((!info->infile && !info->limiteur) || info->fd_infile == -1)
 	{
 		info->fd_infile = 0;
@@ -460,7 +463,7 @@ int	exec_cmd(t_exec *info, char ***env, char **cmd)
 		free(info->path_cmd);
 		return (exit(g_code_exit), -1); // a voir pour le code d'erreur
 	}
-	if (execve(info->path_cmd, cmd, 0) == -1)
+	if (execve(info->path_cmd, cmd, *env) == -1)
 	{
 		free(info->path_cmd);
 		printf("errno = %d\n", errno);
@@ -486,7 +489,6 @@ void	close_for_first(int *pipefd, t_exec *info)
 		printf("close outfile first= %d\n", info->fd_outfile);
 		close(info->fd_outfile);
 	}
-
 	info->fd_in_last_pipe = pipefd[0];
 }
 
@@ -532,7 +534,10 @@ int gestion_file_inter(t_exec *info, int *pipefd)
 
 	error = 1;
 	if (info->fd_infile == -1 || info->fd_outfile == -1)
+	{
+		g_code_exit = 1;
 		error = -1;
+	}
 	if ((!info->infile && !info->limiteur) || info->fd_infile == -1)
 		info->fd_infile = info->fd_in_last_pipe;
 	if (!info->outfile || info->fd_outfile == -1)
@@ -600,7 +605,10 @@ int	gestion_file_last(t_exec *info)
 	error = 1;
 	printf("***************** name infile last = %s\n ---- fd_in = %d ---- fd_out = %d\n",info->infile, info->fd_infile, info->fd_outfile);
 	if (info->fd_infile == -1 || info->fd_outfile == -1)
+	{
+		g_code_exit = 1;
 		error = -1;
+	}
 	if ((!info->infile && !info->limiteur) || info->fd_infile == -1)
 	{
 		info->fd_infile = info->fd_in_last_pipe;
@@ -699,9 +707,9 @@ int	start_exec(char **cdm, t_exec *info, char ***env)
 //###################################################################
 void	close_for_solo_and_free(t_exec *info)
 {
-	if (info->infile || info->limiteur)
+	if ((info->infile || info->limiteur) && info->fd_infile > 0)
 		close(info->fd_infile);
-	if (info->outfile)
+	if (info->outfile && info->fd_outfile != 1)
 		close(info->fd_outfile);
 	if (info->path_cmd)
 		free(info->path_cmd);
@@ -709,11 +717,19 @@ void	close_for_solo_and_free(t_exec *info)
 
 int	file_solo(t_exec *info)
 {
-	if (!info->infile && !info->limiteur)
+	int error;
+
+	error = 1;
+	if (info->fd_infile == -1 || info->fd_outfile == -1)
+	{
+		g_code_exit = 1;
+		error = -1;
+	}
+	if ((!info->infile && !info->limiteur) || info->fd_infile == -1)
 		info->fd_infile = 0;
-	if (!info->outfile)
+	if (!info->outfile || info->fd_outfile == -1)
 		info->fd_outfile = 1;
-	return (1);
+	return (error);
 }
 
 
@@ -721,25 +737,25 @@ int	solo_exec(char **cmd, t_exec *info, char ***env)
 {
 	pid_t	pid;
 
-	if (file_solo(info) > 0)
+	if (file_solo(info) < 0)
 	{
-		find_path(info->path, cmd[0], info);
+		close_for_solo_and_free(info);
+		return (-1);
+	}
+	find_path(info->path, cmd[0], info);
+	if (is_bultins_not_fork(cmd, env, info, DERNIER))
+	{
+		pid = fork();
+		if (pid == -1)
+			return (perror("error fork"), -1);
+		if (pid == 0)
 		{
-			if (is_bultins_not_fork(cmd, env, info, DERNIER))
-			{
-				pid = fork();
-				if (pid == -1)
-					return (perror("error fork"), -1);
-				if (pid == 0)
-				{
-					if (dup2(info->fd_outfile, 1) == -1)
-						return (perror("error dup first"), -1);
-					if (info->outfile)
-						close(info->fd_outfile);
-					if (exec_cmd(info, env, cmd) == 1)
-						return (1);
-				}
-			}
+			if (dup2(info->fd_outfile, 1) == -1)
+				return (perror("error dup first"), -1);
+			if (info->outfile)
+				close(info->fd_outfile);
+			if (exec_cmd(info, env, cmd) == 1)
+				return (1);
 		}
 	}
 	while (waitpid(-1, &g_code_exit, 0) != -1)
@@ -754,13 +770,10 @@ int	solo_exec(char **cmd, t_exec *info, char ***env)
 void	set_exec_and_start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char ***env)
 {
 	gestion_infile(tokens, exec);
-	if (exec->fd_infile == -1)
-		return;
-	(void)cmd;
-
 	gestion_outfile(tokens, exec);
 	if (cmd[0] == NULL)
 	{
+		file_solo(exec);
 		close_for_solo_and_free(exec);
 		return ;
 	}
@@ -822,6 +835,7 @@ void free_name_file(t_exec *exec)
 		exec->limiteur = NULL;
 	}
 }
+
 void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pars)
 {
 	t_token *info_token;

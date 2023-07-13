@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 20:08:15 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/12 12:25:38 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/13 13:01:52 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,8 @@ bool error_expand(int type, char *next, char **env)
     {
         if (ft_is_solo_expand(next))
         {
+			if (solo_dolard(next))
+				return (false);
             expand_to_search = ft_strdup(&next[1]);
             expand_value = give_env_expand(expand_to_search, ft_strlen(expand_to_search), env);
             printf(" error_expande == %s\n", expand_value);
