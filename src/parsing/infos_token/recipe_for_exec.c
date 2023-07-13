@@ -161,6 +161,7 @@ void	ft_free_db_by_len(char **array, int len)
 char** ft_custom_split(char* str) {
     int count;
     char** result;
+    char **clean_result;
     int space_count;
     int i;
     int len;
@@ -192,11 +193,23 @@ char** ft_custom_split(char* str) {
 
     // Parcourir la chaîne de caractères et effectuer le découpage
     int in_quotes = 0;
+    char type_inquote = '\0';
     int start = 0;
     i = 0;
     while (i < len) {
         if (str[i] == '"' || str[i] == '\'')
-            in_quotes = !in_quotes;
+        {
+            if (in_quotes && str[i] == type_inquote)
+            {
+                in_quotes = 0;
+                type_inquote = '\0';
+            }
+            else if (!in_quotes)
+            {
+                in_quotes = 1;
+                type_inquote = str[i];
+            }
+        }
 
         if (str[i] == ' ' && !in_quotes) {
             int len_str_to_add = i - start;
@@ -216,11 +229,11 @@ char** ft_custom_split(char* str) {
         result[count] = (char*)malloc((len_str_to_add + 1) * sizeof(char));
         ft_strncpy(result[count], str + start, len_str_to_add);
         result[count][len_str_to_add] = '\0';
-        (count)++;
     }
 
-    i = 0;
-    return result;
+    clean_result = ft_db_array_dup(result);
+    ft_free_db_by_len(result, space_count + 1);
+    return clean_result;
 }
 
 

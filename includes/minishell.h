@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/12 11:48:10 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/13 19:49:32 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ void						builtin_unset(char **args, char ***env,
 								t_global_exec **g_exec);
 void						builtin_env(char **args, char **env);
 void						builtin_pwd(char **args);
-int						builtin_cd(char **args, char ***env, char **export);
+int						builtin_cd(char **args, char ***env);
 void						builtin_exit(char **args,
 								t_global_parsing **g_pars);
 void						ft_exec_bultins(char **args, char ***env,

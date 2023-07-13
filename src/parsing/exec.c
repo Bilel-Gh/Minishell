@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/08 21:59:08 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/13 19:49:52 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -383,7 +383,7 @@ int ft_bultins_fork(char **cmd, char ***env , t_exec *info)
 
 	if ((ft_strcmp(cmd[0], "cd") == 0))
 	{
-		g_code_exit = builtin_cd(cmd, env, (*g_exec)->export);
+		g_code_exit = builtin_cd(cmd, env);
 		free_db_array(*env);
 		is_bultin = 1;
 	}
@@ -425,7 +425,7 @@ int is_bultins_not_fork(char **cmd, char ***env, t_exec *info, int pos)
 	// ft_exec_bultins(cmd, env, &(info->g_parsing),  &(info->g_parsing->exec));
 	if ((ft_strcmp(cmd[0], "cd") == 0) && (pos == DERNIER))
 	{
-        g_code_exit = builtin_cd(cmd, env, (*g_exec)->export);
+        g_code_exit = builtin_cd(cmd, env);
 		return(0);
 	}
 	else if (ft_strcmp(cmd[0], "unset") == 0)
@@ -482,7 +482,7 @@ void	close_for_first(int *pipefd, t_exec *info)
 		printf("close infile first= %d\n", info->fd_infile);
 		close(info->fd_infile);
 	}
-	if (info->outfile && info->fd_outfile != 1) 
+	if (info->outfile && info->fd_outfile != 1)
 	{
 		printf("close outfile first= %d\n", info->fd_outfile);
 		close(info->fd_outfile);
@@ -557,14 +557,14 @@ void close_inter(int *pipefd, t_exec *info)
 	if (info->fd_in_last_pipe)
 		close(info->fd_in_last_pipe);
 	info->fd_in_last_pipe = pipefd[0];
-	
+
 }
 int	inter(char **cmd, t_exec *info, char ***env)
 {
 	int		pipefd[2];
 	pid_t	pid;
 
-	
+
 	if (gestion_file_inter(info, pipefd) < 0)
 	{
 		write(1,"ff", 2);
@@ -626,7 +626,7 @@ int	last(char **cmd, t_exec *info, char ***env)
 
 	if (gestion_file_last(info) < 0)
 	{
-		
+
 		close_last(info);
 		return (-1);
 	}
