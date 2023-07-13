@@ -6,13 +6,13 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 15:59:33 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/13 21:15:13 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/13 22:02:57 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	ft_print_echo_arg(char **args, int i, int print_newline);
+int	ft_print_echo_arg(char **args, int i, int print_newline);
 
 int	ft_is_option_echo(char *str)
 {
@@ -65,17 +65,18 @@ void	builtin_echo(char **args)
 		while (args[i] != NULL && ft_is_option_echo(args[i]))
 			i++;
 	}
-	ft_print_echo_arg(args, i, print_newline);
-	g_code_exit = SUCCESS;
+	g_code_exit = ft_print_echo_arg(args, i, print_newline);
 }
 
-void	ft_print_echo_arg(char **args, int i, int print_newline)
+int	ft_print_echo_arg(char **args, int i, int print_newline)
 {
 	int		j;
 	char	*full_arg;
 	char	*tmp;
+	int		error;
 
 	j = 0;
+	error = SUCCESS;
 	full_arg = NULL;
 	tmp = full_arg;
 	ft_get_full_arg(args, &full_arg, i);
@@ -84,13 +85,21 @@ void	ft_print_echo_arg(char **args, int i, int print_newline)
 	{
 		tmp = full_arg;
 		full_arg = ft_substr(full_arg, j, ft_strlen(full_arg));
-		if (printf("%s", full_arg) < 0)
+		j = 0;
+		while (full_arg[j])
 		{
-			g_code_exit = ERROR;
+			if (write(1, &full_arg[j] ,1) == -1)
+			{
+				perror("echo: write error");
+				error = ERROR;
+				break ;
+			}
+			j++;
 		}
 		free(full_arg);
 		free(tmp);
 	}
 	if (print_newline)
-		printf("\n");
+		write(1,"\n",1);
+	return (error);
 }
