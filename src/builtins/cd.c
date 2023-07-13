@@ -6,11 +6,22 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 17:58:56 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/04 16:34:17 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/13 20:03:39 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+void	ft_cd_tild(char **const *env, char *home);
+
+void	ft_cd_tiret(char **const *env, char *prev_dir);
+
+void	ft_change_env_after_cd(char ***env, char *target_dir);
+
+void	ft_move_to_directory(char ***env, char *home, char *prev_dir,
+			char *target_dir);
+
+void	ft_init_cd_var(char **const *env, char **home, char **prev_dir);
 
 char	*ft_getenv(char *name, char **env)
 {
@@ -52,18 +63,14 @@ char	*ft_replace_env(char *name, char *value)
 	}
 	new_env[i] = '=';
 	i++;
-	j = 0;
 	if (value == NULL)
 	{
-			new_env[i] = '\0';
-			return (new_env);
+		new_env[i] = '\0';
+		return (new_env);
 	}
+	j = 0;
 	while (value[j] != '\0')
-	{
-		new_env[i] = value[j];
-		i++;
-		j++;
-	}
+		new_env[i++] = value[j++];
 	new_env[i] = '\0';
 	return (new_env);
 }
@@ -110,82 +117,69 @@ int	ft_is_db_array(char *name, char **array)
 	return (0);
 }
 
-int	builtin_cd(char **args, char ***env, char **export)
+int	builtin_cd(char **args, char ***env)
 {
 	char	*home;
-    (void)export;
-//	char	*in_env;
-//	int		in_export;
 	char	*prev_dir;
-	char	*current_dir;
-	char	*new_pwd;
-//	char	*export_value;
-    char *target_dir;
+	char	*target_dir;
 
-    target_dir = args[1];
-    if (target_dir == NULL || target_dir[0] == '\0')
-    {
-        target_dir = ft_getenv("HOME", *env);
-        if (target_dir == NULL)
-        {
-            printf("bash: cd: HOME not set\n");
-            g_code_exit = ERROR;
-            return (ERROR);
-        }
-    }
-
+	target_dir = args[1];
+	ft_init_cd_var(env, &home, &prev_dir);
+	if (target_dir == NULL || target_dir[0] == '\0')
+	{
+		target_dir = ft_getenv("HOME", *env);
+		if (target_dir == NULL)
+		{
+			printf("bash: cd: HOME not set\n");
+			g_code_exit = ERROR;
+			return (ERROR);
+		}
+	}
 	if (ft_db_tablen(args) > 2)
 	{
 		printf("bash: cd: too many arguments\n");
-        g_code_exit = ERROR;
-        return (ERROR);
+		g_code_exit = ERROR;
+		return (ERROR);
 	}
+	ft_move_to_directory(env, home, prev_dir, target_dir);
+	ft_change_env_after_cd(env, target_dir);
+	return (g_code_exit);
+}
+
+void	ft_init_cd_var(char **const *env, char **home, char **prev_dir)
+{
+	(*home) = ft_getenv("HOME", *env);
+	(*prev_dir) = ft_getenv("OLDPWD", *env);
+}
+
+void	ft_move_to_directory(char ***env, char *home, char *prev_dir,
+		char *target_dir)
+{
 	if (ft_strcmp(target_dir, "~") == 0)
 	{
-		home = ft_getenv("HOME", *env);
-        if (home != NULL && home[0] != '\0')
-        {
-            if (home != NULL)
-            {
-                if (chdir(home) != 0)
-                {
-                    perror("chdir");
-                    g_code_exit = ERROR;
-                }
-            }
-            else
-            {
-                printf("cd: Impossible de trouver le répertoire home de l'utilisateur\n");
-                g_code_exit = ERROR;
-            }
-        }
+		ft_cd_tild(env, home);
 	}
 	else if (ft_strcmp(target_dir, "-") == 0)
 	{
-		prev_dir = ft_getenv("OLDPWD", *env);
-		if (prev_dir != NULL)
-		{
-			if (chdir(prev_dir) != 0)
-			{
-				perror("chdir");
-                g_code_exit = ERROR;
-			}
-		}
-		else
-		{
-			printf("cd: Impossible de trouver le répertoire précédent\n");
-            g_code_exit = ERROR;
-		}
+		ft_cd_tiret(env, prev_dir);
 	}
 	else
 	{
-        if (chdir(target_dir) != 0)
-        {
-            printf("\033[1;31m CD FINAL ERROR TARGET_DIR = '%s'\n\033[0m", target_dir);
-            perror("cd");
-            g_code_exit = ERROR;
-        }
+		if (chdir(target_dir) != 0)
+		{
+			printf("\033[1;31m CD FINAL ERROR TARGET_DIR = '%s'\n\033[0m",
+				target_dir);
+			perror("cd");
+			g_code_exit = ERROR;
+		}
 	}
+}
+
+void	ft_change_env_after_cd(char ***env, char *target_dir)
+{
+	char	*current_dir;
+	char	*new_pwd;
+
 	current_dir = ft_getenv("PWD", *env);
 	new_pwd = getcwd(NULL, 0);
 	if (new_pwd != NULL)
@@ -197,15 +191,53 @@ int	builtin_cd(char **args, char ***env, char **export)
 	}
 	else
 	{
-        free(current_dir);
-        if (ft_strncmp(target_dir, "..", 2) == 0)
-        {
-            printf("chdir: error retrieving current directory");
-            printf("getcwd: cannot access parent directories\n");
-        }
-        else
-		    perror("getcwd");
-        g_code_exit = ERROR;
+		free(current_dir);
+		if (ft_strncmp(target_dir, "..", 2) == 0)
+		{
+			printf("chdir: error retrieving current directory");
+			printf("getcwd: cannot access parent directories\n");
+		}
+		else
+			perror("getcwd");
+		g_code_exit = ERROR;
 	}
-    return g_code_exit;
+}
+
+void	ft_cd_tiret(char **const *env, char *prev_dir)
+{
+	prev_dir = ft_getenv("OLDPWD", *env);
+	if (prev_dir != NULL)
+	{
+		if (chdir(prev_dir) != 0)
+		{
+			perror("chdir");
+			g_code_exit = ERROR;
+		}
+	}
+	else
+	{
+		printf("cd: prev dir not found\n");
+		g_code_exit = ERROR;
+	}
+}
+
+void	ft_cd_tild(char **const *env, char *home)
+{
+	home = ft_getenv("HOME", *env);
+	if (home != NULL && home[0] != '\0')
+	{
+		if (home != NULL)
+		{
+			if (chdir(home) != 0)
+			{
+				perror("chdir");
+				g_code_exit = ERROR;
+			}
+		}
+		else
+		{
+			printf("cd: home not found\n");
+			g_code_exit = ERROR;
+		}
+	}
 }
