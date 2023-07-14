@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:10:02 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/13 21:03:24 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/14 13:24:48 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,10 +78,11 @@ char	*replace_expande(char *args, int i, char **env, int *info)
 	int		size_of_expende;
 	char	*new_args;
 
+	*info = 0;
 	new_args = NULL;
 	size_of_expende = ft_size_of_expende(&args[i]);
-	if (size_of_expende < 2)
-		return (*info = 1, args);
+//	if (size_of_expende < 2)
+//		return (*info = 1, args);
 	printf("size = %d\n \n ", size_of_expende);
 	expend_recherche = get_expende_detect(size_of_expende , &args[i]);
 	printf("expend_recherche == %s\n \n", expend_recherche);

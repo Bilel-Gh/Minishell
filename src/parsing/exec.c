@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/13 23:45:33 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/14 14:21:15 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -345,6 +345,12 @@ int	find_path(char **path, char *cmd, t_exec *info)
 	return (1);
 }
 
+int	add_one(int *is_bultin)
+{
+	*is_bultin = 1;
+	return (1);
+}
+
 int	ft_bultins_fork(char **cmd, char ***env, t_exec *info)
 {
 	int				is_bultin;
@@ -352,64 +358,51 @@ int	ft_bultins_fork(char **cmd, char ***env, t_exec *info)
 
 	is_bultin = 0;
 	g_exec = &(info->g_parsing->exec);
-	if ((ft_strcmp(cmd[0], "cd") == 0))
+	if ((ft_strcmp(cmd[0], "cd") == 0) && add_one(&is_bultin))
 	{
 		g_code_exit = builtin_cd(cmd, env);
 		free_db_array(*env);
-		is_bultin = 1;
 	}
-	if (ft_strcmp(cmd[0], "echo") == 0)
-	{
+	if (ft_strcmp(cmd[0], "echo") == 0 && add_one(&is_bultin))
 		builtin_echo(cmd);
-		is_bultin = 1;
-	}
-	else if (ft_strcmp(cmd[0], "pwd") == 0)
+	else if (ft_strcmp(cmd[0], "pwd") == 0 && add_one(&is_bultin))
 	{
 		builtin_pwd(cmd);
 		free_db_array(*env);
-		is_bultin = 1;
 	}
-	else if (ft_strcmp(cmd[0], "env") == 0)
-	{
+	else if (ft_strcmp(cmd[0], "env") == 0 && add_one(&is_bultin))
 		builtin_env(cmd, *env);
-		is_bultin = 1;
-	}
-	else if (ft_strcmp(cmd[0], "export") == 0)
-	{
+	else if (ft_strcmp(cmd[0], "export") == 0 && add_one(&is_bultin))
 		builtin_export(cmd, env, g_exec);
-		is_bultin = 1;
-	}
 	return (is_bultin);
+}
+
+int	add_zero(int *info_return)
+{
+	*info_return = 0;
+	return (1);
 }
 
 int	is_bultins_not_fork(char **cmd, char ***env, t_exec *info, int pos)
 {
 	t_global_parsing	**info_parsing;
 	t_global_exec		**g_exec;
+	int					info_return;
 
+	info_return = 1;
 	info_parsing = &(info->g_parsing);
 	g_exec = &(info->g_parsing->exec);
-	if ((ft_strcmp(cmd[0], "cd") == 0) && (pos == DERNIER))
-	{
+	if ((ft_strcmp(cmd[0], "cd") == 0) && (pos == DERNIER)
+		&& add_zero(&info_return))
 		g_code_exit = builtin_cd(cmd, env);
-		return (0);
-	}
-	else if (ft_strcmp(cmd[0], "unset") == 0)
-	{
+	else if (ft_strcmp(cmd[0], "unset") == 0 && add_zero(&info_return))
 		builtin_unset(cmd, env, g_exec);
-		return (0);
-	}
-	else if (ft_strcmp(cmd[0], "exit") == 0)
-	{
+	else if (ft_strcmp(cmd[0], "exit") == 0 && add_zero(&info_return))
 		builtin_exit(cmd, info_parsing);
-		return (0);
-	}
-	else if ((ft_strcmp(cmd[0], "export") == 0) && (cmd[1] != NULL))
-	{
+	else if ((ft_strcmp(cmd[0], "export") == 0) && (cmd[1] != NULL)
+		&& add_zero(&info_return))
 		builtin_export(cmd, env, g_exec);
-		return (0);
-	}
-	return (1);
+	return (info_return);
 }
 
 int	exec_cmd(t_exec *info, char ***env, char **cmd)
