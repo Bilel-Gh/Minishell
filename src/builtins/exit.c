@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 05:17:04 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 03:11:37 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/14 16:51:26 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,14 +154,14 @@ void	ft_gestion_exit_error(char *const *args, int nb_args,
 	if ((args[1] != NULL && ft_isdigit(args[1]) == 0) || ((nb_check >= LLONG_MAX
 				|| nb_check <= LLONG_MIN) && g_code_exit == OVERFLOW))
 	{
-		printf("exit: %s: numeric argument required\n", args[1]);
+		ft_fprintf(2, "exit: %s: numeric argument required\n", args[1]);
 		g_code_exit = MISUSE;
 		ft_free_g_parsing(*g_pars);
 		exit(g_code_exit);
 	}
 	else if (nb_args > 2)
 	{
-		printf("exit: too many arguments\n");
+		ft_fprintf(2, "exit: too many arguments\n");
 		g_code_exit = ERROR;
 		ft_free_g_parsing(*g_pars);
 		exit(g_code_exit);

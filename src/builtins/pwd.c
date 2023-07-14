@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 22:51:14 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 04:57:54 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/14 16:52:02 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	ft_check_args(char **args)
 			j++;
 		if (args[i][j] != 0)
 		{
-			printf("pwd: -%c: invalid option\n", args[i][j]);
+			ft_fprintf(2, "pwd: -%c: invalid option\n", args[i][j]);
 			g_code_exit = MISUSE;
 			return (1);
 		}
@@ -45,7 +45,7 @@ void	builtin_pwd(char **args)
 		printf("%s\n", cwd);
 	else
 	{
-		printf("pwd: error retrieving current directory");
-		printf("getcwd: cannot access parent directories\n");
+		ft_fprintf(2, "pwd: error retrieving current directory");
+		ft_fprintf(2, "getcwd: cannot access parent directories\n");
 	}
 }

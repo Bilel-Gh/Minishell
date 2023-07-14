@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 15:59:33 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 02:23:01 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/14 15:39:58 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,12 +94,12 @@ int	ft_print_fullarg(int j, char *full_arg, char *tmp)
 	int	error;
 
 	error = SUCCESS;
-	full_arg = NULL;
 	if (full_arg != NULL)
 	{
 		tmp = full_arg;
 		full_arg = ft_substr(full_arg, j, ft_strlen(full_arg));
 		j = 0;
+		printf("full_arg = %s\n", full_arg);
 		while (full_arg[j])
 		{
 			if (write(1, &full_arg[j], 1) == -1)

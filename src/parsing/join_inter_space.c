@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:49:46 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/09 15:17:05 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/14 16:53:05 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,9 +92,9 @@ char	**join_inter_space(char **args, int *type_args, int *nb_args)
 	}
 	i = 0;
 	if (!new_args)
-		return (printf("error"), NULL);
+		return (ft_fprintf(2, "error"), NULL);
 	if (!malloc_new_args(new_args, args, type_args, *nb_args))
-		return (printf("error malloc_new_args"), NULL);
+		return (ft_fprintf(2, "error malloc_new_args"), NULL);
 	*nb_args = nb_new_args;
 	return (new_args);
 }

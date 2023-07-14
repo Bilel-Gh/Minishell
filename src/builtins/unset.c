@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 23:39:03 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 05:28:07 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/14 16:52:19 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ void	builtin_unset(char **args, char ***env, t_global_exec **g_exec)
 		name = args[i];
 		if (name == NULL)
 		{
-			printf("unset: nom de variable manquant\n");
+			ft_fprintf(2, "unset: nom de variable manquant\n");
 			i++;
 			continue ;
 		}
@@ -120,12 +120,12 @@ void	ft_is_error_unset(const char *name)
 {
 	if (name[0] == '-' && name[1] != 0)
 	{
-		printf("unset: invalid option -%c\n", name[1]);
+		ft_fprintf(2, "unset: invalid option -%c\n", name[1]);
 		g_code_exit = MISUSE;
 	}
 	else
 	{
-		printf("minishell: unset: `%s': not a valid identifier !\n",
+		ft_fprintf(2, "minishell: unset: `%s': not a valid identifier !\n",
 			name);
 		g_code_exit = ERROR;
 	}

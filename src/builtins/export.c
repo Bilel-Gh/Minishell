@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 02:56:40 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 05:30:58 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/14 16:51:51 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -421,7 +421,7 @@ int	ft_check_equal_error(char **args, int nb_args)
 		{
 			if (args[i][0] == '=')
 			{
-				printf("minishell: export: `%s': not a valid identifier\n",
+				ft_fprintf(2, "minishell: export: `%s': not a valid identifier\n",
 					args[i]);
 				g_code_exit = ERROR;
 				return (1);
@@ -461,11 +461,11 @@ int	ft_check_solo_invalid_arg(char *args)
 		if (args[0] == '-' && args[1] != '\0')
 		{
 			g_code_exit = MISUSE;
-			printf("minishell: export: `%c%c': invalid option\n", args[0],
+			ft_fprintf(2, "minishell: export: `%c%c': invalid option\n", args[0],
 				args[1]);
 			return (1);
 		}
-		printf("minishell: `%s': not a valid identifier\n", args);
+		ft_fprintf(2, "minishell: `%s': not a valid identifier\n", args);
 		g_code_exit = ERROR;
 		return (1);
 	}
@@ -524,7 +524,7 @@ int	ft_get_name(char *full_clean_str, int *i, char **name)
 	if (!ft_check_name((*name)))
 	{
 		g_code_exit = ERROR;
-		printf("minishell: export: `%s': not a valid identifier\n",
+		ft_fprintf(2, "minishell: export: `%s': not a valid identifier\n",
 			full_clean_str);
 		(*i)++;
 		return (0);

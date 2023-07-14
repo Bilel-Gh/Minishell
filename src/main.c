@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/14 14:33:08 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/14 19:55:42 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ int ft_check_full_cmd(char *cmd)
     invalid_char = ";(){}<>|&.";
     if(only_misuse(cmd, invalid_char))
     {
-        printf("syntax error near unexpected token `%c%c'\n", cmd[0], cmd[1]);
+        ft_fprintf(2, "syntax error near unexpected token `%c%c'\n", cmd[0], cmd[1]);
         g_code_exit = MISUSE;
         return 1;
     }
@@ -142,30 +142,29 @@ void ft_check_error_exec(char **cmd)
         full_cmd = ft_strjoin(full_cmd, cmd[i]);
         i++;
     }
-    printf("full_cmd = %s\n", full_cmd);
 	if (full_cmd == NULL)
 	{
-        printf("bash: %s: command not found\n", cmd[0]);
+        ft_fprintf(2, "bash: %s: command not found\n", cmd[0]);
         g_code_exit = NOTFOUND;
 		free(full_cmd);
         return ;
 	}
     if (ft_check_full_cmd(full_cmd))
     {
-        printf("full_cmd = %s\n", full_cmd);
+        ft_fprintf(2, "full_cmd = %s\n", full_cmd);
         free(full_cmd);
         return ;
     }
     if (lstat(cmd[0], &path_stat) == 0) {
         if (path_stat.st_mode & S_IFDIR) {
-            printf("bash: %s: is a directory: \n", cmd[0]);
+            ft_fprintf(2, "bash: %s: is a directory: \n", cmd[0]);
             g_code_exit = CANTEXEC;
         } else {
-            printf("bash: %s: Permission denied\n", cmd[0]);
+            ft_fprintf(2, "bash: %s: Permission denied\n", cmd[0]);
             g_code_exit = CANTEXEC;
         }
     } else {
-        printf("bash: %s: command not found\n", cmd[0]);
+        ft_fprintf(2, "bash: %s: command not found\n", cmd[0]);
         g_code_exit = NOTFOUND;
     }
     free(full_cmd);
@@ -210,27 +209,27 @@ int ft_custom_error(char **args)
 {
     if (g_code_exit == ERROR_PIPE)
     {
-        printf("bash: syntax error near unexpected token '%c'\n", '|');
+        ft_fprintf(2, "bash: syntax error near unexpected token '%c'\n", '|');
         return 1;
     }
     if (g_code_exit == ERROR_REDIRECT)
     {
         if (ft_db_arr_len(args) == 1 && ft_strlen(args[0]) <= 2)
-            printf("bash: syntax error near unexpected token 'newline'\n");
+            ft_fprintf(2, "bash: syntax error near unexpected token 'newline'\n");
         else if (args[0][0] == '>' || args[0][0] == '<')
-            printf("bash: syntax error near unexpected token '%c%c'\n", args[0][0], args[0][1]);
+            ft_fprintf(2, "bash: syntax error near unexpected token '%c%c'\n", args[0][0], args[0][1]);
         else
-            printf("bash: syntax error near unexpected token '<'\n");
+            ft_fprintf(2, "bash: syntax error near unexpected token '<'\n");
         return 1;
     }
     if (g_code_exit == ERROR_QUOTE_D)
     {
-        printf("bash: unclosed quote : '\"'\n");
+        ft_fprintf(2, "bash: unclosed quote : '\"'\n");
         return 1;
     }
     if (g_code_exit == ERROR_QUOTE_S)
     {
-        printf("bash: unclosed quote : '\''\n");
+        ft_fprintf(2, "bash: unclosed quote : '\''\n");
         return 1;
     }
     return 0;
@@ -240,7 +239,7 @@ int ft_custom_error(char **args)
 void minishell_loop(char ***env, t_global_exec *g_exec)
 {
 	t_global_parsing *g_parsing;
-    using_history();
+    pid_t	pid;
 
 	// char *line_cpy;
 	t_token* head;
@@ -284,7 +283,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
         //     gestion_unclosed_quote(env, &g_parsing, &nb_args );
         if (g_code_exit == NOTFOUND)
         {
-            printf("bashkkk: : command not found\n");
+            ft_fprintf(2, "bashkkk: : command not found\n");
             free_db_array(g_parsing->args);
             continue;
         }
@@ -299,7 +298,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 			printf("\n@@@@@@@@@@@@@ ERROR DETECT !!!! @@@@@@@@@@@@@@@\n");
             printf("\033[1;34m G_CODE_EXIT FINAL = %d \033[0m\n", g_code_exit);
             if (!ft_custom_error(g_parsing->args))
-                printf("bash: syntax error near unexpected token '%c%c'\n", g_parsing->args[0][0], g_parsing->args[0][1]);
+                ft_fprintf(2, "bash: syntax error near unexpected token '%c%c'\n", g_parsing->args[0][0], g_parsing->args[0][1]);
             g_code_exit = MISUSE;
 			printf("\033[1;36mexit code2 = %d\n\033[0m", g_code_exit);
 			free_db_array(g_parsing->args);
@@ -335,7 +334,18 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 //            continue;
 //        }
 		ft_set_index_for_exec(&g_parsing->tokens);
-        exec(g_parsing->tokens, g_parsing->commande, env, &g_parsing);
+        pid = fork();
+    	if (pid == -1)
+			perror("error fork");
+        if (pid == 0)
+            exec(g_parsing->tokens, g_parsing->commande, env, &g_parsing);
+        waitpid(pid, &g_code_exit, 0);
+        if (g_code_exit > 255)
+		    g_code_exit = g_code_exit / 256;
+        if (g_code_exit == 130)
+        {
+            rl_replace_line("", 0);
+        }
     //    if (g_parsing->commande->cmd)
 	// 	   ft_exec_bultins(g_parsing->commande->cmd, env, &g_parsing, &g_exec);
 		printf("\033[1;36mexit code FINAL = %d\n\033[0m", g_code_exit);
@@ -426,7 +436,12 @@ char **ft_get_export(char **env)
 // Gestionnaire de signal SIGINT //
 void int_handler(int sig)
 {
-    if (sig == SIGINT)
+    if (g_code_exit == 999)
+    {
+        exit(130);
+        g_code_exit = CSIGINT;
+    }
+    else if (sig == SIGINT)
     {
         printf("\n");  // Supprime l'historique de la ligne de commande
         rl_on_new_line();
@@ -443,7 +458,7 @@ void quit_handler(int sig)
        // Gestion du signal SIGQUIT (Ctrl+\)
         if (rl_line_buffer && ft_strlen(rl_line_buffer) > 0)
         {
-            printf("Quit \n");
+            ft_fprintf(2, "Quit \n");
             exit(131);
         }
         else
@@ -473,11 +488,13 @@ int main(int argc, char **argv, char **env)
 
 	s_sigaction.sa_handler = int_handler;
 	sigaction(SIGINT, &s_sigaction, NULL);
+    sigaction(EOF, &s_sigaction, NULL);
 
     s_sigaction.sa_handler = quit_handler;
     sigaction(SIGQUIT, &s_sigaction, NULL);
 
     minishell_loop(&env_cpy, g_exec);
+    printf("jjjj");
     rl_clear_history();
 	if (env_cpy)
 		free_db_array(env_cpy);

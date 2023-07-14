@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 02:41:39 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/14 17:35:26 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <limits.h>
-
-// #include "../src/builtins/builtins.c"
-// #include "../src/builtins/b_export.c"
-// #include "../src/parsing/lexeur.c"
-// #include "../src/utils/split.c"
-//
-// #include "../src/utils/split.c"
+# include <stdarg.h>
 
 # define SIZE_PATH 4096
 # define FIRST 0
@@ -138,6 +132,9 @@ typedef struct s_global_parsing
 	t_global_exec			*exec;
 	char					***env_cpy_ptr;
 }							t_global_parsing;
+
+
+int	ft_fprintf(int fd, const char *format, ...);
 
 //debug
 void						verifyString(const char *str);

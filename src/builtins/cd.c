@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 17:58:56 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/13 20:03:39 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/14 16:45:38 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,14 +130,14 @@ int	builtin_cd(char **args, char ***env)
 		target_dir = ft_getenv("HOME", *env);
 		if (target_dir == NULL)
 		{
-			printf("bash: cd: HOME not set\n");
+			ft_fprintf(2, "bash: cd: HOME not set\n");
 			g_code_exit = ERROR;
 			return (ERROR);
 		}
 	}
 	if (ft_db_tablen(args) > 2)
 	{
-		printf("bash: cd: too many arguments\n");
+		ft_fprintf(2, "bash: cd: too many arguments\n");
 		g_code_exit = ERROR;
 		return (ERROR);
 	}
@@ -194,8 +194,8 @@ void	ft_change_env_after_cd(char ***env, char *target_dir)
 		free(current_dir);
 		if (ft_strncmp(target_dir, "..", 2) == 0)
 		{
-			printf("chdir: error retrieving current directory");
-			printf("getcwd: cannot access parent directories\n");
+			ft_fprintf(2, "chdir: error retrieving current directory");
+			ft_fprintf(2, "getcwd: cannot access parent directories\n");
 		}
 		else
 			perror("getcwd");
@@ -216,7 +216,7 @@ void	ft_cd_tiret(char **const *env, char *prev_dir)
 	}
 	else
 	{
-		printf("cd: prev dir not found\n");
+		ft_fprintf(2, "cd: prev dir not found\n");
 		g_code_exit = ERROR;
 	}
 }
@@ -236,7 +236,7 @@ void	ft_cd_tild(char **const *env, char *home)
 		}
 		else
 		{
-			printf("cd: home not found\n");
+			ft_fprintf(2, "cd: home not found\n");
 			g_code_exit = ERROR;
 		}
 	}

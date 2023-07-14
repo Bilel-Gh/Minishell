@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/14 14:21:15 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/14 19:52:12 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void	copy_cont_token(t_token *dest, t_token *src)
 	dest->info = (t_token_info *)malloc(sizeof(t_token_info));
 	dest->info->type = src->info->type;
 	dest->prev = NULL;
-	// TODO gestion d errerur a faire et 
+	// TODO gestion d errerur a faire et
 	// il faudrait meme reflechir  aune autre facon de faire
 }
 
@@ -181,9 +181,20 @@ void	start_heredoc(t_exec *exec)
 	}
 	while (1)
 	{
+		g_code_exit = 999;
+		printf(" g_exit_code = %d \n", g_code_exit);
 		line = readline("> ");
-		if (!ft_strcmp(line, exec->limiteur))
+		if (!line || g_code_exit == CSIGINT)
+		{
+			ft_fprintf(2, "bash: warning: here-document at line 12 delimited by end-of-file (wanted `%s')", exec->limiteur);
+			g_code_exit = SUCCESS;
 			break ;
+		}
+		if (!ft_strcmp(line, exec->limiteur))
+		{
+			g_code_exit = SUCCESS;
+			break ;
+		}
 		write(exec->fd_infile, line, ft_strlen(line));
 		write(exec->fd_infile, "\n", 1);
 		free(line);
@@ -818,4 +829,7 @@ void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pa
 		}
 	}
 	free_db_array(exec.path);
+	ft_free_g_parsing(*g_pars);
+	exit(g_code_exit);
+
 }

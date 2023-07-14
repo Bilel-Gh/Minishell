@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 21:38:03 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 02:11:05 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/14 16:46:05 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void	builtin_env(char **args, char **env)
 	}
 	if (args[i + 1] != NULL)
 	{
-		printf("env: ʻ%s’: No such file or directory\n", args[i + 1]);
-		printf("env: should not have arguments\n");
+		ft_fprintf(2, "env: ʻ%s’: No such file or directory\n", args[i + 1]);
+		ft_fprintf(2, "env: should not have arguments\n");
 		g_code_exit = NOTFOUND;
 		return ;
 	}

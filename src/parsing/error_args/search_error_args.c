@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 20:08:15 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 01:06:43 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/14 19:18:17 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ bool	error_size_or_spe_redi(int *type_args, int nb_args, char **args, char **env
                 return (true);
             if (error_expand(type_args[i], get_first_next_arg, env))
             {
-                printf("bash: %s: ambiguous redirect\n", get_first_next_arg);
+                ft_fprintf(2, "bash: %s: ambiguous redirect\n", get_first_next_arg);
                 return (true);
             }
 			give_sp_args_redi(args[i], type_args, i);
