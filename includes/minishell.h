@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/13 21:08:16 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/14 02:41:39 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,7 @@ typedef struct s_global_parsing
 	t_commande				*commande;
 	char					*line;
 	t_global_exec			*exec;
+	char					***env_cpy_ptr;
 }							t_global_parsing;
 
 //debug

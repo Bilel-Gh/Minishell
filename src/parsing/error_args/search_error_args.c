@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 20:08:15 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/13 13:01:52 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/14 01:06:43 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ bool	error_quote(int *type_args, int nb_args, char **args)
                     g_code_exit = ERROR_QUOTE_S;
                 return (true);
             }
-            if (ft_strlen(args[0]) == 2)
+            if (ft_strlen(args[0]) == 2 && args[0][0] == 34 && args[0][1] == 34)
             {
                 g_code_exit = NOTFOUND;
                 return (true);
@@ -96,7 +96,7 @@ bool prev_next_error(char **args, int i)
 
 bool ft_is_file(char *str)
 {
-    
+
         if (str == NULL)
             return (false);
 		if (str[0] == 34)
@@ -196,7 +196,7 @@ bool	error_size_or_spe_redi(int *type_args, int nb_args, char **args, char **env
             {
                 printf("bash: %s: ambiguous redirect\n", get_first_next_arg);
                 return (true);
-            }  
+            }
 			give_sp_args_redi(args[i], type_args, i);
 		}
 		i++;

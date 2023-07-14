@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/13 15:08:25 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/14 03:00:46 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 
 int g_code_exit = 0;
 
-t_global_parsing* ft_init_global_parsing(void)
+t_global_parsing* ft_init_global_parsing(char ***env)
 {
 	struct s_global_parsing *g_parsing;
 	g_parsing = malloc(sizeof(struct s_global_parsing));
@@ -32,11 +32,14 @@ t_global_parsing* ft_init_global_parsing(void)
 	g_parsing->info_args = NULL;
 	g_parsing->tokens = NULL;
 	g_parsing->commande = NULL;
+    (void)env;
+//    g_parsing->env_cpy_ptr = env;
 	return (g_parsing);
 }
 
 void ft_free_g_parsing(t_global_parsing *g_parsing)
 {
+//    rl_clear_history();
 	if (g_parsing->line)
 		free(g_parsing->line);
 	if (g_parsing->args)
@@ -47,6 +50,14 @@ void ft_free_g_parsing(t_global_parsing *g_parsing)
 		free_list_tokens(g_parsing->tokens);
 	if (g_parsing->commande)
 		free_list_commande(g_parsing->commande);
+//    if (g_parsing->env_cpy_ptr && *(g_parsing->env_cpy_ptr))
+//        free_db_array(*(g_parsing->env_cpy_ptr));
+//    if (g_parsing->exec)
+//    {
+//        if (g_parsing->exec->export)
+//            free_db_array(g_parsing->exec->export);
+//        free(g_parsing->exec);
+//    }
 	free(g_parsing);
 }
 
@@ -212,6 +223,16 @@ int ft_custom_error(char **args)
             printf("bash: syntax error near unexpected token '<'\n");
         return 1;
     }
+    if (g_code_exit == ERROR_QUOTE_D)
+    {
+        printf("bash: unclosed quote : '\"'\n");
+        return 1;
+    }
+    if (g_code_exit == ERROR_QUOTE_S)
+    {
+        printf("bash: unclosed quote : '\''\n");
+        return 1;
+    }
     return 0;
 
 }
@@ -226,11 +247,11 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
 //    t_commande *head_cmd;
 	while (1)
 	{
-		g_parsing = ft_init_global_parsing();
+		g_parsing = ft_init_global_parsing(env);
 		if (!g_parsing)
         {
             printf("test\n");
-			return ;
+			break ;
         }
         g_parsing->exec = g_exec;
 		g_parsing->line = readline("minishell > "); // TODO : BUG affichage quand on ecrit plein de caracteres
@@ -242,7 +263,7 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
          || is_only_space(g_parsing->line) == 1)
         {
             g_code_exit = SUCCESS;
-            continue;
+            break;
         }
         add_history(g_parsing->line);
 
@@ -259,10 +280,8 @@ void minishell_loop(char ***env, t_global_exec *g_exec)
             ft_free_g_parsing(g_parsing);
             continue;
         }
-        while (g_code_exit == ERROR_PIPE2)
-            gestion_pipe2(env, &g_parsing, &nb_args );
-        while (g_code_exit == ERROR_QUOTE_D || g_code_exit == ERROR_QUOTE_S)
-            gestion_unclosed_quote(env, &g_parsing, &nb_args );
+        // while (g_code_exit == ERROR_QUOTE_D || g_code_exit == ERROR_QUOTE_S)
+        //     gestion_unclosed_quote(env, &g_parsing, &nb_args );
         if (g_code_exit == NOTFOUND)
         {
             printf("bashkkk: : command not found\n");
@@ -415,19 +434,25 @@ void int_handler(int sig)
         rl_redisplay();
         g_code_exit = CSIGINT;
     }
-    else if (sig == SIGQUIT)
-    {
-        printf("Quit (core dumped)\n");
-        rl_on_new_line();
-        rl_replace_line("", 0);
-        rl_redisplay();
-        g_code_exit = 131;
-    }
-    else
-    {
-        rl_on_new_line();
-        rl_replace_line("", 0);
-        rl_redisplay();
+}
+
+void quit_handler(int sig)
+{
+    if (sig == SIGQUIT)
+    {  // Supprime l'historique de la ligne de commande
+       // Gestion du signal SIGQUIT (Ctrl+\)
+        if (rl_line_buffer && ft_strlen(rl_line_buffer) > 0)
+        {
+            printf("Quit \n");
+            exit(131);
+        }
+        else
+        {
+            rl_on_new_line();
+            rl_replace_line("", 0);
+            rl_redisplay();
+            g_code_exit = 131;
+        } // Code de sortie personnalisé pour indiquer l'arrêt du programme
     }
 }
 
@@ -446,10 +471,11 @@ int main(int argc, char **argv, char **env)
     ft_bzero(&s_sigaction, sizeof(struct sigaction));
 	unlink("/tmp/here_doc_minishell");
 
-	s_sigaction.sa_handler = int_handler; // Nom de la fonction de gestionnaire
+	s_sigaction.sa_handler = int_handler;
 	sigaction(SIGINT, &s_sigaction, NULL);
-    sigaction(SIGQUIT, &s_sigaction, NULL);// Gestionnaire de signal
-    sigaction(SIGTSTP, &s_sigaction, NULL); // pour eviter le segfault a voir si on a le droit
+
+    s_sigaction.sa_handler = quit_handler;
+    sigaction(SIGQUIT, &s_sigaction, NULL);
 
     minishell_loop(&env_cpy, g_exec);
     rl_clear_history();

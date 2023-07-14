@@ -6,13 +6,15 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 15:59:33 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/13 22:02:57 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/14 02:23:01 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	ft_print_echo_arg(char **args, int i, int print_newline);
+int		ft_print_echo_arg(char **args, int i, int print_newline);
+
+int		ft_print_fullarg(int j, char *full_arg, char *tmp);
 
 int	ft_is_option_echo(char *str)
 {
@@ -81,6 +83,18 @@ int	ft_print_echo_arg(char **args, int i, int print_newline)
 	tmp = full_arg;
 	ft_get_full_arg(args, &full_arg, i);
 	free(tmp);
+	error = ft_print_fullarg(j, full_arg, tmp);
+	if (print_newline)
+		write(1, "\n", 1);
+	return (error);
+}
+
+int	ft_print_fullarg(int j, char *full_arg, char *tmp)
+{
+	int	error;
+
+	error = SUCCESS;
+	full_arg = NULL;
 	if (full_arg != NULL)
 	{
 		tmp = full_arg;
@@ -88,7 +102,7 @@ int	ft_print_echo_arg(char **args, int i, int print_newline)
 		j = 0;
 		while (full_arg[j])
 		{
-			if (write(1, &full_arg[j] ,1) == -1)
+			if (write(1, &full_arg[j], 1) == -1)
 			{
 				perror("echo: write error");
 				error = ERROR;
@@ -99,7 +113,5 @@ int	ft_print_echo_arg(char **args, int i, int print_newline)
 		free(full_arg);
 		free(tmp);
 	}
-	if (print_newline)
-		write(1,"\n",1);
 	return (error);
 }
