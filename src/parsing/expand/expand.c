@@ -6,18 +6,18 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:10:02 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 13:24:48 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/14 21:04:10 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/minishell.h"
 
-char *expand_exit_code(char *expande)
+char	*expand_exit_code(char *expande)
 {
-	char *nb_exit_code;
-	char *expand;
-	int i;
-	int j;
+	char	*nb_exit_code;
+	char	*expand;
+	int		i;
+	int		j;
 
 	i = 0;
 	j = 0;
@@ -30,7 +30,7 @@ char *expand_exit_code(char *expande)
 		i++;
 	}
 	i = 1;
-	while(expande[i])
+	while (expande[i])
 	{
 		expand[j] = expande[i];
 		j++;
@@ -58,18 +58,14 @@ char	*traslate_expand(char *arg_ct, char *ext_exp, int size_ext, char **env)
 		get_expande = give_env_expand(ext_exp, size_ext, env);
 	if (get_expande)
 	{
-		printf("\n my extratc yes\n");
 		new_args = join_and_rp_args(arg_ct, get_expande, size_ext);
 		return (new_args);
 	}
 	else
 	{
-		printf("\n my extratc no\n");
 		new_args = join_and_rp_args(arg_ct, NULL, size_ext);
-		printf ("nil ? = %s", new_args);
 		return (new_args);
 	}
-
 }
 
 char	*replace_expande(char *args, int i, char **env, int *info)
@@ -81,36 +77,27 @@ char	*replace_expande(char *args, int i, char **env, int *info)
 	*info = 0;
 	new_args = NULL;
 	size_of_expende = ft_size_of_expende(&args[i]);
-//	if (size_of_expende < 2)
-//		return (*info = 1, args);
-	printf("size = %d\n \n ", size_of_expende);
-	expend_recherche = get_expende_detect(size_of_expende , &args[i]);
-	printf("expend_recherche == %s\n \n", expend_recherche);
+	expend_recherche = get_expende_detect(size_of_expende, &args[i]);
 	new_args = traslate_expand(args, expend_recherche, size_of_expende, env);
 	return (new_args);
 }
 
 char	*importe_expande(char *args, char **env)
 {
-	int	i;
-	char *tmp;
-	char *new_args;
-	int info;
+	int		i;
+	char	*tmp;
+	char	*new_args;
+	int		info;
 
 	i = 0;
-	info = 0;
-	tmp = NULL;
 	new_args = NULL;
 	while (args[i])
 	{
 		info = 0;
-		printf("in importe_expande args[%d] = %c \n", i ,args[i]);
 		if (args[i] == '$' && back_slach(args, i))
 		{
-			printf("args ________ %s\n", args);
 			tmp = ft_strdup(args);
 			new_args = replace_expande(tmp, i, env, &info);
-			printf(" replace_expande ______ %s\n", new_args);
 			free(args);
 			if (new_args == NULL)
 				return (new_args);
@@ -142,54 +129,10 @@ bool	have_expande(char *args)
 	return (false);
 }
 
-void remove_db_tab(char **str, int index_to_remove) {
-	int i;
-	int size;
-
-	size = 0;
-	// Afficher le tableau résultant
-	i = 0;
-	//    while (str[i] != NULL) {
-	//        printf("\033[0;32m str_BEFORE[%d] = %s\n\033[0m", i, str[i]);
-	//        i++;
-	//    }
-	//    printf("\n");
-	while (str[size] != NULL) {
-		size++;
-	}
-	if (index_to_remove < 0 || index_to_remove >= size) {
-		printf("Index à supprimer invalide.\n");
-		return;
-	}
-	free(str[index_to_remove]);
-	i = index_to_remove;
-	while (i < size - 1) {
-		str[i] = str[i + 1];
-		i++;
-	}
-	str[size - 1] = NULL;
-
-	//    // Afficher le tableau résultant
-	//    i = 0;
-	//    while (str[i] != NULL) {
-	//        printf("\033[0;32m str_AFTER[%d] = %s\n\033[0m", i, str[i]);
-	//        i++;
-	//    }
-	//    printf("\n");
-}
-
-/*int delete_if_no_expand(int *nb_args, t_global_parsing **g_pars, int i) {
-  if (ft_strncmp((*g_pars)->args[i], "NO EXPAND", 9) == 0)
-  {
-  remove_db_tab((*g_pars)->args, i);
-  (*nb_args)--;
-  if (i > 0);
-  }
-  */
-int ft_nb_args_out_null(char **old_arg, int size_db_arr)
+int	ft_nb_args_out_null(char **old_arg, int size_db_arr)
 {
-	int i;
-	int new_size;
+	int	i;
+	int	new_size;
 
 	i = 0;
 	new_size = 0;
@@ -197,7 +140,8 @@ int ft_nb_args_out_null(char **old_arg, int size_db_arr)
 	{
 		if (old_arg[i] == 0)
 			i++;
-		else if ( old_arg[i][0] == ' ' && old_arg[i + 1] == NULL && (i + 2 < size_db_arr) && old_arg[i + 2][0] == ' ')
+		else if (old_arg[i][0] == ' ' && old_arg[i + 1] == NULL
+			&& (i + 2 < size_db_arr) && old_arg[i + 2][0] == ' ')
 			i = i + 2;
 		else
 		{
@@ -208,12 +152,12 @@ int ft_nb_args_out_null(char **old_arg, int size_db_arr)
 	return (new_size);
 }
 
-char **ft_clean_null_db_array(char **old_arg, int *size_db_arr)
+char	**ft_clean_null_db_array(char **old_arg, int *size_db_arr)
 {
-	int nb_new_args;
-	char **new_args;
-	int i;
-	int	j;
+	int		nb_new_args;
+	char	**new_args;
+	int		i;
+	int		j;
 
 	i = 0;
 	j = 0;
@@ -226,7 +170,8 @@ char **ft_clean_null_db_array(char **old_arg, int *size_db_arr)
 	{
 		if (old_arg[i] == 0)
 			free(old_arg[i]);
-		else if ( old_arg[i][0] == ' ' && old_arg[i + 1] == NULL && (i + 2 < *size_db_arr) && old_arg[i + 2][0] == ' ')
+		else if (old_arg[i][0] == ' ' && old_arg[i + 1] == NULL
+			&& (i + 2 < *size_db_arr) && old_arg[i + 2][0] == ' ')
 			free(old_arg[i]);
 		else if (old_arg[i] != 0)
 		{
@@ -243,7 +188,7 @@ char **ft_clean_null_db_array(char **old_arg, int *size_db_arr)
 	return (*size_db_arr = nb_new_args, new_args);
 }
 
-bool solo_dolard(char *str)
+bool	solo_dolard(char *str)
 {
 	if (!str)
 		return (false);
@@ -254,12 +199,10 @@ bool solo_dolard(char *str)
 
 void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **env)
 {
-	int	i;
-	char *suite;
-	char *exit_code;
-	char *new_args;
-	int *new_type_args;
-	//int len_expande;
+	int		i;
+	char	*suite;
+	char	*new_args;
+	int		*new_type_args;
 
 	i = 0;
 	suite = NULL;
@@ -281,46 +224,20 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 				}
 				else if (solo_dolard((*g_pars)->args[i]))
 				{
-					if (i + 1 < *nb_args && ((*type_args)[i + 1] == ALPHANUM 
-					|| (*type_args)[i + 1] == QUOTE_S
-					|| (*type_args)[i + 1] == QUOTE_D))
+					if (i + 1 < *nb_args && ((*type_args)[i + 1] == ALPHANUM
+						|| (*type_args)[i + 1] == QUOTE_S
+						|| (*type_args)[i + 1] == QUOTE_D))
 					{
 						free((*g_pars)->args[i]);
 						(*g_pars)->args[i] = NULL;
 					}
 					i++;
-					continue;
-				}
-				else if (ft_strncmp((*g_pars)->args[i], "$?", 2) == 0)
-				{
-					exit_code = ft_itoa(g_code_exit);
-					if (ft_strlen((*g_pars)->args[i]) > 2)
-					{
-						suite = ft_strdup((*g_pars)->args[i] + 2);
-						if (!suite)
-							return ;
-						new_args = ft_strcat(exit_code, suite);
-						free((*g_pars)->args[i]);
-						(*g_pars)->args[i] = ft_strdup(new_args);
-						free(suite);
-					}
-					else
-					{
-						free((*g_pars)->args[i]);
-						(*g_pars)->args[i] = ft_strdup(exit_code);
-					}
-					free(exit_code);
+					continue ;
 				}
 				else
-				{	
-
 					(*g_pars)->args[i] = importe_expande((*g_pars)->args[i], env);
-					// on supprimer l'argument du tableau si l'expand n'est pas trouver
-					//					i = delete_if_no_expand(nb_args, g_pars, i);
-				}
 			}
 		}
-		printf("&&&&&&&& %s &&&&&&\n",(*g_pars)->args[i]);
 		i++;
 	}
 	(*g_pars)->args = ft_clean_null_db_array((*g_pars)->args, nb_args);
@@ -328,4 +245,3 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 	free(*type_args);
 	*type_args = new_type_args;
 }
-

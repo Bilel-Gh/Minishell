@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/14 19:52:12 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/14 21:34:08 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,27 +171,17 @@ void	start_heredoc(t_exec *exec)
 {
 	char	*line;
 
-	line = NULL;
 	exec->fd_infile = open("/tmp/here_doc_minishell",
 			O_RDWR | O_CREAT | O_TRUNC, 0644);
 	if (exec->fd_infile == -1)
-	{
-		perror("open");
-		return ;
-	}
+		return (perror("open"));
 	while (1)
 	{
 		g_code_exit = 999;
-		printf(" g_exit_code = %d \n", g_code_exit);
 		line = readline("> ");
 		if (!line || g_code_exit == CSIGINT)
 		{
 			ft_fprintf(2, "bash: warning: here-document at line 12 delimited by end-of-file (wanted `%s')", exec->limiteur);
-			g_code_exit = SUCCESS;
-			break ;
-		}
-		if (!ft_strcmp(line, exec->limiteur))
-		{
 			g_code_exit = SUCCESS;
 			break ;
 		}
@@ -831,5 +821,4 @@ void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pa
 	free_db_array(exec.path);
 	ft_free_g_parsing(*g_pars);
 	exit(g_code_exit);
-
 }
