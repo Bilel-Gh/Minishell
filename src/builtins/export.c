@@ -15,7 +15,7 @@
 void	ft_add_and_sort(char ***env, t_global_exec **g_exec, char *name,
 			char *value);
 
-void	ft_free_export_var(char *name, char *value);
+void	ft_free_export_var(char *name, char *value, char *full_clean_str);
 
 void	ft_do_export(char *const *args, char ***env, t_global_exec **g_exec);
 
@@ -158,11 +158,14 @@ char	**ft_add_to_db_tab_export(char **tab, char *str, char *name)
 	}
 	db_tablen = ft_db_tablen(tab);
 	len_name = ft_strlen(name);
-	while (tab[i] != NULL && ft_strncmp(ft_strdup(tab[i] + 7), name,
+	while (tab[i] != NULL && ft_strncmp(&tab[i][7], name,
 			len_name) != 0)
 		i++;
 	if (tab[i] != NULL && ft_strchr(str, '=') == NULL)
+	{
+		free(str);
 		return (tab);
+	}
 	return (ft_get_new_tab(tab, str, i, db_tablen));
 }
 
@@ -210,7 +213,7 @@ char	**ft_add_to_db_tab(char **tab, char *str, char *name)
 	}
 	db_tablen = ft_db_tablen(tab);
 	len_name = ft_strlen(name);
-	while (tab[i] != NULL && ft_strncmp(ft_strdup(tab[i]), name, len_name) != 0)
+	while (tab[i] != NULL && ft_strncmp(tab[i], name, len_name) != 0)
 		i++;
 	return (ft_get_new_tab(tab, str, i, db_tablen));
 }
@@ -223,6 +226,7 @@ char	**ft_get_new_tab(char **tab, char *str, int i, int db_tablen)
 	{
 		free(tab[i]);
 		tab[i] = ft_strdup(str);
+		free(str);
 		return (tab);
 	}
 	else
@@ -236,6 +240,7 @@ char	**ft_get_new_tab(char **tab, char *str, int i, int db_tablen)
 			i++;
 		}
 		new_tab[i] = ft_strdup(str);
+		free(str);
 		new_tab[i + 1] = NULL;
 		free(tab);
 		return (new_tab);
@@ -251,6 +256,8 @@ void	ft_add_to_export(t_global_exec **g_exec, char *new_env, char *name)
 	pre_export = ft_strdup("export ");
 	(*g_exec)->export = ft_add_to_db_tab_export((*g_exec)->export,
 			ft_strjoin(pre_export, env_to_add_to_export), name);
+	if(env_to_add_to_export)
+		free(env_to_add_to_export);
 }
 
 char	*ft_clean_quote_str(char *value)
@@ -268,7 +275,7 @@ char	*ft_clean_quote_str(char *value)
 	ft_bzero(new_value, len + 1);
 	if (new_value == NULL)
 		return (NULL);
-	ft_remove_qt_value(value, new_value, i, j);
+	ft_remove_qt_value(value, new_value, i, j); // a voir si remplacer par kick quotes
 	cleaned_value = ft_strdup(new_value);
 	free(new_value);
 	return (cleaned_value);
@@ -341,11 +348,19 @@ void	ft_add_env(char *name, char *value, char ***env, t_global_exec **g_exec)
 	if (value == NULL)
 	{
 		ft_add_to_export(g_exec, env_to_add_export, name);
+		if (env_to_add_export)
+			free(env_to_add_export);
+		if (value_for_export)
+			free(value_for_export);
 		return ;
 	}
 	env_to_add = ft_get_env_to_add(name, value);
 	(*env) = ft_add_to_db_tab((*env), env_to_add, name);
 	ft_add_to_export(g_exec, env_to_add_export, name);
+	if (env_to_add_export)
+		free(env_to_add_export);
+	if (value_for_export)
+		free(value_for_export);
 }
 
 void	ft_sort_env(char ***env)
@@ -503,19 +518,24 @@ void	ft_do_export(char *const *args, char ***env, t_global_exec **g_exec)
 
 	i = 1;
 	value = NULL;
+	name = NULL;
 	full_clean_str = NULL;
 	while (args[i] != NULL)
 	{
+		ft_free_export_var(name, value, full_clean_str);
 		full_clean_str = ft_clean_quote_str(args[i]);
 		if (ft_check_solo_invalid_arg(full_clean_str))
+		{
+			ft_free_export_var(name, value, full_clean_str);
 			return ;
+		}
 		if (!ft_get_name(full_clean_str, &i, &name))
 			continue ;
 		value = get_value(full_clean_str);
 		ft_add_and_sort(env, g_exec, name, value);
 		i++;
 	}
-	ft_free_export_var(name, value);
+	ft_free_export_var(name, value, full_clean_str);
 }
 
 int	ft_get_name(char *full_clean_str, int *i, char **name)
@@ -532,12 +552,14 @@ int	ft_get_name(char *full_clean_str, int *i, char **name)
 	return (1);
 }
 
-void	ft_free_export_var(char *name, char *value)
+void	ft_free_export_var(char *name, char *value, char *full_clean_str)
 {
 	if (name != NULL)
 		free(name);
 	if (value != NULL)
 		free(value);
+	if (full_clean_str != NULL)
+		free(full_clean_str);
 }
 
 void	ft_add_and_sort(char ***env, t_global_exec **g_exec, char *name,

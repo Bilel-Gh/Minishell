@@ -268,14 +268,18 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
         printf("\033[0;35m ARGUMENT PARSING : %s\033[0m\n", (*g_pars)->args[z]);
         z++;
     }
-    char *first_arg = remove_double_quotes((*g_pars)->args[0]);
-    if (ft_strcmp(first_arg, (*g_pars)->args[0]) != 0)
-    {
-        free((*g_pars)->args[0]);
-        (*g_pars)->args[0] = first_arg;
-    }
-    else
-        free(first_arg);
+    char *first_arg;
+    first_arg = NULL;
+   // if ((*g_pars)->args[0][0] == 39 || (*g_pars)->args[0][0] == 34)
+	 //   first_arg = copy_sans_quote((*g_pars)->args[0]);
+    //char *first_arg = remove_double_quotes((*g_pars)->args[0]);
+    // if (ft_strcmp(first_arg, (*g_pars)->args[0]) != 0)
+    // {
+    //     free((*g_pars)->args[0]);
+    //     (*g_pars)->args[0] = first_arg;
+    // }
+    // else
+    //     free(first_arg);
     z = 0;
     while ((*g_pars)->args[z])
     {

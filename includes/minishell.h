@@ -130,7 +130,7 @@ typedef struct s_global_parsing
 	t_commande				*commande;
 	char					*line;
 	t_global_exec			*exec;
-	char					***env_cpy_ptr;
+	char 					***env;
 }							t_global_parsing;
 
 
@@ -266,7 +266,8 @@ void						ft_free_paths2(char **path_splited, char *pathCopy,
 int							nb_pipe(t_token *info);
 
 // Dossier exec
+void	ft_free_g_parsing_total(t_global_parsing *g_parsing);
 void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pars);
-void ft_check_error_exec(char **cmd);
+void 	ft_check_error_exec(char **cmd);
 
 #endif

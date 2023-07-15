@@ -143,7 +143,7 @@ void	ft_do_exit(char *const *args, t_global_parsing *const *g_pars)
 		g_code_exit = ft_atoi(args[1]) % 256;
 		if (g_code_exit < 0)
 			g_code_exit = 256 + g_code_exit;
-		ft_free_g_parsing(*g_pars);
+		ft_free_g_parsing_total(*g_pars);
 		exit(g_code_exit);
 	}
 }
@@ -156,14 +156,14 @@ void	ft_gestion_exit_error(char *const *args, int nb_args,
 	{
 		ft_fprintf(2, "exit: %s: numeric argument required\n", args[1]);
 		g_code_exit = MISUSE;
-		ft_free_g_parsing(*g_pars);
+		ft_free_g_parsing_total(*g_pars);
 		exit(g_code_exit);
 	}
 	else if (nb_args > 2)
 	{
 		ft_fprintf(2, "exit: too many arguments\n");
 		g_code_exit = ERROR;
-		ft_free_g_parsing(*g_pars);
+		ft_free_g_parsing_total(*g_pars);
 		exit(g_code_exit);
 	}
 }

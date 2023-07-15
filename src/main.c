@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/15 01:25:15 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/15 12:50:58 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,30 +28,24 @@ int	ft_is_error_parsing(t_global_parsing *g_parsing,
 
 int					ft_is_error_par_part2(t_global_parsing *g_parsing);
 
-void				ft_do_parsing(char ***env, t_global_parsing **g_parsing,
+void				ft_do_parsing(char ***env, t_global_parsing *g_parsing,
 						int *nb_args);
 
-t_global_parsing	*ft_do_exec(char ***env, t_global_parsing **g_parsing,
-						pid_t pid, int nb_args);
+void ft_do_exec(char ***env, t_global_parsing *g_parsing, int nb_args);
 
 int					ft_general_error(t_global_parsing *g_parsing);
 
 void				ft_print_error_redirect(char **args);
 
-t_global_parsing	*ft_init_global_parsing(char ***env)
+void	ft_init_global_parsing(t_global_parsing *g_parsing)
 {
-	struct s_global_parsing	*g_parsing;
 
-	g_parsing = malloc(sizeof(struct s_global_parsing));
 	if (!g_parsing)
 		g_parsing = NULL;
 	g_parsing->args = NULL;
 	g_parsing->info_args = NULL;
 	g_parsing->tokens = NULL;
 	g_parsing->commande = NULL;
-	(void)env;
-	//    g_parsing->env_cpy_ptr = env;
-	return (g_parsing);
 }
 
 void	ft_free_g_parsing(t_global_parsing *g_parsing)
@@ -75,7 +69,6 @@ void	ft_free_g_parsing(t_global_parsing *g_parsing)
 	//            free_db_array(g_parsing->exec->export);
 	//        free(g_parsing->exec);
 	//    }
-	free(g_parsing);
 }
 
 void	ft_set_index_for_exec(t_token **tokens)
@@ -147,6 +140,26 @@ int	ft_check_full_cmd(char *cmd)
 	return (0);
 }
 
+void ft_check_not_found(char **cmd)
+{
+	struct stat path_stat;
+	if (lstat(cmd[0], &path_stat) == 0) 
+	{
+        if (path_stat.st_mode & S_IFDIR) {
+            ft_fprintf(2, "bash: %s: is a directory: \n", cmd[0]);
+            g_code_exit = CANTEXEC;
+        } else {
+            ft_fprintf(2, "bash: %s: Permission denied\n", cmd[0]);
+            g_code_exit = CANTEXEC;
+        }
+    }
+	else 
+	{
+        ft_fprintf(2, "bash: %s: command not found\n", cmd[0]);
+        g_code_exit = NOTFOUND;
+    }
+}
+
 void	ft_check_error_exec(char **cmd)
 {
 	char	*full_cmd;
@@ -172,6 +185,7 @@ void	ft_check_error_exec(char **cmd)
 		free(full_cmd);
 		return ;
 	}
+	ft_check_not_found(cmd);
 	free(full_cmd);
 }
 
@@ -257,29 +271,28 @@ void	ft_print_error_redirect(char **args)
 
 void	minishell_loop(char ***env, t_global_exec *g_exec)
 {
-	t_global_parsing	*g_parsing;
-	pid_t				pid;
+	t_global_parsing	g_parsing;
 	int					nb_args;
-
-	pid = 0;
+	
+	ft_init_global_parsing(&g_parsing);
+	g_parsing.env = env;
 	while (1)
 	{
-		g_parsing = ft_init_global_parsing(env);
-		if (!g_parsing)
-			break ;
-		g_parsing->exec = g_exec;
-		g_parsing->line = readline("minishell > ");
-		if (g_parsing->line == NULL)
+		g_parsing.exec = g_exec;
+		g_parsing.line = readline("minishell > ");
+		if (g_parsing.line == NULL)
 			exit(0);
-		if (ft_general_error(g_parsing))
-			break ;
-		add_history(g_parsing->line);
-		ft_do_parsing(env, &g_parsing, &nb_args);
-		if (ft_is_error_parsing(g_parsing, nb_args))
+		rl_replace_line("", 0);
+		if (ft_general_error(&g_parsing))
 			continue ;
-		g_parsing = ft_do_exec(env, &g_parsing, pid, nb_args);
+		add_history(g_parsing.line);
+		ft_do_parsing(env, &g_parsing, &nb_args);
+		if (ft_is_error_parsing(&g_parsing, nb_args))
+			continue ;
+		ft_do_exec(g_parsing.env, &g_parsing, nb_args);
 		printf("\033[1;36mexit code FINAL = %d\n\033[0m", g_code_exit);
-		ft_free_g_parsing(g_parsing);
+		ft_free_g_parsing(&g_parsing);
+		ft_init_global_parsing(&g_parsing);
 	}
 }
 
@@ -295,31 +308,20 @@ int	ft_general_error(t_global_parsing *g_parsing)
 	return (0);
 }
 
-t_global_parsing	*ft_do_exec(char ***env, t_global_parsing **g_parsing,
-		pid_t pid, int nb_args)
+void	ft_do_exec(char ***env, t_global_parsing *g_parsing, int nb_args)
 {
-	(*g_parsing)->tokens = ft_get_tokens_with_infos((*g_parsing)->args,
-			nb_args);
-	(*g_parsing)->commande = cmd_complete((*g_parsing)->tokens);
-	ft_set_index_for_exec(&(*g_parsing)->tokens);
-	pid = fork();
-	if (pid == -1)
-		perror("error fork");
-	if (pid == 0)
-		exec((*g_parsing)->tokens, (*g_parsing)->commande, env, g_parsing);
-	waitpid(pid, &g_code_exit, 0);
-	if (g_code_exit > 255)
-		g_code_exit = g_code_exit / 256;
-	if (g_code_exit == 130)
-		rl_replace_line("", 0);
-	return (*g_parsing);
+	g_parsing->tokens = ft_get_tokens_with_infos(g_parsing->args, nb_args);
+	g_parsing->commande = cmd_complete(g_parsing->tokens);
+	ft_set_index_for_exec(&g_parsing->tokens);
+	exec(g_parsing->tokens, g_parsing->commande, env, &g_parsing);
+	rl_replace_line("", 0);
 }
 
-void	ft_do_parsing(char ***env, t_global_parsing **g_parsing, int *nb_args)
+void	ft_do_parsing(char ***env, t_global_parsing *g_parsing, int *nb_args)
 {
-	(*g_parsing)->args = ft_lexeur((*g_parsing)->line);
-	(*g_parsing)->info_args = ft_get_info_args((*g_parsing)->args, nb_args);
-	(*g_parsing)->args = ft_parsing(nb_args, g_parsing, env);
+	g_parsing->args = ft_lexeur(g_parsing->line);
+	g_parsing->info_args = ft_get_info_args(g_parsing->args, nb_args);
+	g_parsing->args = ft_parsing(nb_args, &g_parsing, env);
 }
 
 int	ft_is_error_parsing(t_global_parsing *g_parsing, int nb_args)
@@ -458,7 +460,8 @@ void	int_handler(int sig)
 {
 	if (g_code_exit == 999)
 	{
-		exit(130);
+		printf("hello\n");
+		exit(0);
 		g_code_exit = CSIGINT;
 	}
 	else if (sig == SIGINT)
@@ -473,11 +476,14 @@ void	int_handler(int sig)
 
 void	quit_handler(int sig)
 {
-	if (sig == SIGQUIT)
+
+	printf(" error nb = %d\n", g_code_exit);
+	if (sig == SIGQUIT && g_code_exit != 999 && g_code_exit != 355)
 	{
 		if (rl_line_buffer && ft_strlen(rl_line_buffer) > 0)
 		{
-			ft_fprintf(2, "Quit \n");
+			ft_fprintf(2, "Quit (core dumped)\n");
+			ft_fprintf(2, "ft_strlen(rl_line_buffer) = %d", ft_strlen(rl_line_buffer));
 			exit(131);
 		}
 		else
@@ -485,9 +491,15 @@ void	quit_handler(int sig)
 			rl_on_new_line();
 			rl_replace_line("", 0);
 			rl_redisplay();
-			g_code_exit = 131;
-		}
+		 }
 	}
+	if (sig == SIGQUIT && g_code_exit == 999)
+	{	
+			rl_on_new_line();
+			rl_replace_line("", 0);
+			rl_redisplay();
+	}
+	
 }
 
 int	main(int argc, char **argv, char **env)

@@ -63,12 +63,15 @@ char	**kick_quote(int *type_args, int nb_args, char **args)
 	i = 0;
 	no_quote = malloc(sizeof(char *) * (nb_args + 1));
 	no_quote[nb_args] = 0;
+
 	while (i < nb_args)
 	{
 		if (type_args[i] == QUOTE_D || type_args[i] == QUOTE_S)
 			no_quote[i] = copy_sans_quote(args[i]);
 		else
 			no_quote[i] = copy_cont(args[i]);
+		printf("no quote = %s \n", no_quote[i]);
+		printf("args = %s \n", args[i]);
 		i++;
 	}
 	no_quote[i] = 0;
