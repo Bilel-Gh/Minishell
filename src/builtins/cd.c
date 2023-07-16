@@ -132,6 +132,10 @@ int	builtin_cd(char **args, char ***env)
 		{
 			ft_fprintf(2, "bash: cd: HOME not set\n");
 			g_code_exit = ERROR;
+			if (home)
+				free(home);
+			if (prev_dir)
+				free(prev_dir);
 			return (ERROR);
 		}
 	}
@@ -139,10 +143,18 @@ int	builtin_cd(char **args, char ***env)
 	{
 		ft_fprintf(2, "bash: cd: too many arguments\n");
 		g_code_exit = ERROR;
+		if (home)
+			free(home);
+		if (prev_dir)
+			free(prev_dir);
 		return (ERROR);
 	}
 	ft_move_to_directory(env, home, prev_dir, target_dir);
 	ft_change_env_after_cd(env, target_dir);
+	if (home)
+		free(home);
+	if (prev_dir)
+		free(prev_dir);
 	return (g_code_exit);
 }
 
@@ -205,31 +217,36 @@ void	ft_change_env_after_cd(char ***env, char *target_dir)
 
 void	ft_cd_tiret(char **const *env, char *prev_dir)
 {
-	prev_dir = ft_getenv("OLDPWD", *env);
+	(void)env;
+	printf("PREV DIR = %s\n", prev_dir);
 	if (prev_dir != NULL)
 	{
 		if (chdir(prev_dir) != 0)
 		{
+			free(prev_dir);
 			perror("chdir");
 			g_code_exit = ERROR;
 		}
 	}
 	else
 	{
+		free(prev_dir);
 		ft_fprintf(2, "cd: prev dir not found\n");
 		g_code_exit = ERROR;
 	}
+	printf("%s\n", prev_dir);
 }
 
 void	ft_cd_tild(char **const *env, char *home)
 {
-	home = ft_getenv("HOME", *env);
+	(void)env;
 	if (home != NULL && home[0] != '\0')
 	{
 		if (home != NULL)
 		{
 			if (chdir(home) != 0)
 			{
+				free(home);
 				perror("chdir");
 				g_code_exit = ERROR;
 			}

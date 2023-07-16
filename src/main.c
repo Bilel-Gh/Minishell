@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/15 12:50:58 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/17 12:51:18 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void	ft_free_g_parsing(t_global_parsing *g_parsing)
 		free_list_tokens(g_parsing->tokens);
 	if (g_parsing->commande)
 		free_list_commande(g_parsing->commande);
+	//ft_bzero(g_parsing, sizeof(t_global_parsing));
 	//    if (g_parsing->env_cpy_ptr && *(g_parsing->env_cpy_ptr))
 	//        free_db_array(*(g_parsing->env_cpy_ptr));
 	//    if (g_parsing->exec)
@@ -269,30 +270,29 @@ void	ft_print_error_redirect(char **args)
 		ft_fprintf(2, "bash: syntax error near unexpected token '<'\n");
 }
 
-void	minishell_loop(char ***env, t_global_exec *g_exec)
+void	minishell_loop(char ***env, t_global_exec *g_exec, t_global_parsing	*g_parsing)
 {
-	t_global_parsing	g_parsing;
 	int					nb_args;
 	
-	ft_init_global_parsing(&g_parsing);
-	g_parsing.env = env;
+	ft_init_global_parsing(g_parsing);
+	g_parsing->env = env;
 	while (1)
 	{
-		g_parsing.exec = g_exec;
-		g_parsing.line = readline("minishell > ");
-		if (g_parsing.line == NULL)
+		g_parsing->exec = g_exec;
+		g_parsing->line = readline("minishell > ");
+		if (g_parsing->line == NULL)
 			exit(0);
 		rl_replace_line("", 0);
-		if (ft_general_error(&g_parsing))
+		if (ft_general_error(g_parsing))
 			continue ;
-		add_history(g_parsing.line);
-		ft_do_parsing(env, &g_parsing, &nb_args);
-		if (ft_is_error_parsing(&g_parsing, nb_args))
+		add_history(g_parsing->line);
+		ft_do_parsing(env, g_parsing, &nb_args);
+		if (ft_is_error_parsing(g_parsing, nb_args))
 			continue ;
-		ft_do_exec(g_parsing.env, &g_parsing, nb_args);
+		ft_do_exec(g_parsing->env, g_parsing, nb_args);
 		printf("\033[1;36mexit code FINAL = %d\n\033[0m", g_code_exit);
-		ft_free_g_parsing(&g_parsing);
-		ft_init_global_parsing(&g_parsing);
+		ft_free_g_parsing(g_parsing);
+		ft_init_global_parsing(g_parsing);
 	}
 }
 
@@ -330,12 +330,13 @@ int	ft_is_error_parsing(t_global_parsing *g_parsing, int nb_args)
 	{
 		g_code_exit = ERROR;
 		ft_free_g_parsing(g_parsing);
+		ft_init_global_parsing(g_parsing);
 		return (1);
 	}
-	if (g_code_exit == NOTFOUND)
+	else if (g_code_exit == NOTFOUND)
 	{
 		ft_fprintf(2, "bash: : command not found\n");
-		free_db_array(g_parsing->args);
+		// ft_free_g_parsing(g_parsing);
 		return (1);
 	}
 	if (nb_args == 0)
@@ -458,13 +459,18 @@ char	**ft_get_export(char **env)
 // Gestionnaire de signal SIGINT //
 void	int_handler(int sig)
 {
-	if (g_code_exit == 999)
+	int infile;
+	
+	infile = 0;
+	if (g_code_exit >= 1000)
 	{
-		printf("hello\n");
+		infile = g_code_exit - 1000;
+		close(infile);
 		exit(0);
-		g_code_exit = CSIGINT;
+		printf("hello\n");
+		g_code_exit = 998;
 	}
-	else if (sig == SIGINT)
+	else if (sig == SIGINT && g_code_exit != 355)
 	{
 		printf("\n");
 		rl_on_new_line();
@@ -477,8 +483,7 @@ void	int_handler(int sig)
 void	quit_handler(int sig)
 {
 
-	printf(" error nb = %d\n", g_code_exit);
-	if (sig == SIGQUIT && g_code_exit != 999 && g_code_exit != 355)
+	if (sig == SIGQUIT && g_code_exit >= 1000 && g_code_exit != 355)
 	{
 		if (rl_line_buffer && ft_strlen(rl_line_buffer) > 0)
 		{
@@ -493,7 +498,7 @@ void	quit_handler(int sig)
 			rl_redisplay();
 		 }
 	}
-	if (sig == SIGQUIT && g_code_exit == 999)
+	if (sig == SIGQUIT && g_code_exit >= 999)
 	{	
 			rl_on_new_line();
 			rl_replace_line("", 0);
@@ -506,6 +511,7 @@ int	main(int argc, char **argv, char **env)
 {
 	char				**env_cpy;
 	t_global_exec		*g_exec;
+	t_global_parsing	g_parsing;
 	struct sigaction	s_sigaction;
 
 	(void)argc;
@@ -521,7 +527,7 @@ int	main(int argc, char **argv, char **env)
 	sigaction(EOF, &s_sigaction, NULL);
 	s_sigaction.sa_handler = quit_handler;
 	sigaction(SIGQUIT, &s_sigaction, NULL);
-	minishell_loop(&env_cpy, g_exec);
+	minishell_loop(&env_cpy, g_exec, &g_parsing);
 	printf("jjjj");
 	rl_clear_history();
 	if (env_cpy)

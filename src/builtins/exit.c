@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 05:17:04 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 16:51:26 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/16 19:44:36 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ void	builtin_exit(char **args, t_global_parsing **g_pars)
 		nb_args++;
 	ft_gestion_exit_error(args, nb_args, nb_check, g_pars);
 	ft_do_exit(args, g_pars);
-	exit(0);
+	exit(g_code_exit);
 }
 
 void	ft_do_exit(char *const *args, t_global_parsing *const *g_pars)

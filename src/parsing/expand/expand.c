@@ -267,6 +267,12 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 	new_type_args = NULL;
 	while (i < *nb_args)
 	{
+		printf("^^^^^^^^^^^^^^^%d\n",(*type_args)[i]);
+		i++;
+	}
+	i = 0;
+	while (i < *nb_args)
+	{
 		if ((*type_args)[i] == ALPHANUM || (*type_args)[i] == QUOTE_D)
 		{
 			if (have_expande((*g_pars)->args[i]))

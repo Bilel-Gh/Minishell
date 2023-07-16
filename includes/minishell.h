@@ -34,6 +34,8 @@
 # define FIRST 0
 # define DERNIER 1
 # define INTER 2
+# define FORK 355
+# define CHILD 1000
 
 extern int g_code_exit;
 

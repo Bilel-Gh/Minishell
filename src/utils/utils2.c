@@ -22,7 +22,7 @@ void	free_db_array(char **array)
 	while (array[i])
 	{
         if (array[i][0] != '\0')
-		    free(array[i]);
+			free(array[i]);
 		i++;
 	}
 	free(array);

@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/15 12:50:04 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/16 21:23:29 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,17 +171,20 @@ void	start_heredoc(t_exec *exec)
 {
 	char	*line;
 
+	g_code_exit = CHILD;
 	line = NULL;
 	exec->fd_infile = open("/tmp/here_doc_minishell",
 			O_RDWR | O_CREAT | O_TRUNC, 0644);
 	if (exec->fd_infile == -1)
 	{
+		printf(" error heredoc\n");
 		perror("open");
 		return ;
 	}
+	g_code_exit = g_code_exit + exec->fd_infile;
 	while (1)
 	{
-		g_code_exit = 999;
+		
 		printf(" g_exit_code = %d \n", g_code_exit);
 		line = readline("> ");
 		if (!line || g_code_exit == CSIGINT)
@@ -201,6 +204,9 @@ void	start_heredoc(t_exec *exec)
 	}
 	free(line);
 	close(exec->fd_infile);
+	ft_fprintf(2, " limiteur = %s \n",exec->limiteur);
+	free(exec->limiteur);
+	free_db_array(exec->path);
 	exit (exec->fd_infile);
 }
 
@@ -209,7 +215,8 @@ int	new_heredoc(t_exec *exec, t_token *token)
 	int info;
 	int tmp_error;
 	pid_t	pid;
-	
+
+	info = 0;
 	tmp_error = g_code_exit;
 	if (exec->infile)
 	{
@@ -229,18 +236,22 @@ int	new_heredoc(t_exec *exec, t_token *token)
 		return (-1);
 	else
 	{
-		g_code_exit = 355;
+		g_code_exit = FORK;
 		pid = fork();
 		if (pid == -1)	
 			return (perror("error fork"), -1);
 		if (pid == 0)
 			start_heredoc(exec);
-		waitpid(pid, &info, 0);
+		printf("pid fils = %d\n", pid);
+		while (waitpid(pid, &info, 0) == -1 && info != 32718)
+			;
+		printf(" le fils a terminer\n");
 		g_code_exit = tmp_error;
 		if (info > 255)
 			info = info / 256;
+		printf("%d\n", info);
 		if (info == 0)
-			return (-1);
+			return (g_code_exit = 130, -1);
 	exec->fd_infile = open("/tmp/here_doc_minishell", O_RDONLY);
 	if (exec->fd_infile == -1)
 		perror("error open heredoc");
@@ -395,8 +406,12 @@ int	add_one(int *is_bultin)
 
 int	ft_bultins_fork(char **cmd, char ***env, t_exec *info)
 {
-	int				is_bultin;
-	t_global_exec	**g_exec;
+	int					is_bultin;
+	t_global_parsing	**info_parsing;
+	t_global_exec		**g_exec;
+
+	info_parsing = &(info->g_parsing);
+	g_exec = &(info->g_parsing->exec);
 
 	is_bultin = 0;
 	g_exec = &(info->g_parsing->exec);
@@ -406,6 +421,8 @@ int	ft_bultins_fork(char **cmd, char ***env, t_exec *info)
 		builtin_echo(cmd);
 	else if (ft_strcmp(cmd[0], "pwd") == 0 && add_one(&is_bultin))
 		builtin_pwd(cmd);
+	else if (ft_strcmp(cmd[0], "exit") == 0 && add_one(&is_bultin))
+		builtin_exit(cmd, info_parsing);
 	else if (ft_strcmp(cmd[0], "env") == 0 && add_one(&is_bultin))
 		builtin_env(cmd, *env);
 	else if (ft_strcmp(cmd[0], "export") == 0 && add_one(&is_bultin))
@@ -433,10 +450,11 @@ int	is_bultins_not_fork(char **cmd, char ***env, t_exec *info, int pos)
 		g_code_exit = builtin_cd(cmd, env);
 	else if (ft_strcmp(cmd[0], "unset") == 0 && add_zero(&info_return))
 		builtin_unset(cmd, env, g_exec);
-	else if (ft_strcmp(cmd[0], "exit") == 0 && add_zero(&info_return))
+	else if (ft_strcmp(cmd[0], "exit") == 0 
+		&& add_zero(&info_return) && (pos == DERNIER))
 		builtin_exit(cmd, info_parsing);
 	else if ((ft_strcmp(cmd[0], "export") == 0) && (cmd[1] != NULL)
-		&& add_zero(&info_return))
+		&& add_zero(&info_return) && (pos == DERNIER))
 		builtin_export(cmd, env, g_exec);
 	return (info_return);
 }
@@ -534,6 +552,7 @@ int	first(char **cmd, t_exec *info, char ***env)
 		find_path(info->path, cmd[0], info);
 		if (is_bultins_not_fork(cmd, env, info, FIRST))
 		{
+			g_code_exit = FORK;
 			pid = fork();
 			if (pid == -1)
 				return (perror("error fork"), -1);
@@ -597,6 +616,7 @@ int	inter(char **cmd, t_exec *info, char ***env)
 		find_path(info->path, cmd[0], info);
 		if (is_bultins_not_fork(cmd, env, info, INTER))
 		{
+			g_code_exit = FORK;
 			pid = fork();
 			if (pid == -1)
 				return (perror("error fork"), -1);
@@ -658,6 +678,7 @@ int	last(char **cmd, t_exec *info, char ***env)
 		find_path(info->path, cmd[0], info);
 		if (is_bultins_not_fork(cmd, env, info, INTER))
 		{
+			g_code_exit = FORK;
 			pid = fork();
 			if (pid == -1)
 				return (perror("error fork"), -1);
@@ -691,8 +712,9 @@ int	start_exec(char **cdm, t_exec *info, char ***env)
 
 void	close_for_solo_and_free(t_exec *info)
 {
-	while (waitpid(-1, &g_code_exit, 0) != -1)
+	while (waitpid(-1, &g_code_exit, 0) != -1 || g_code_exit == 355)
 		;
+	printf(" g_code_exit sortie de wait = %d", g_code_exit);
 	if (g_code_exit > 255)
 		g_code_exit = g_code_exit / 256;
 	if ((info->infile || info->limiteur) && info->fd_infile > 0)
@@ -723,17 +745,7 @@ int	file_solo(t_exec *info)
 int	solo_exec(char **cmd, t_exec *info, char ***env)
 {
 	pid_t	pid;
-	char **test;
-	int i;
-
-	i = 0;
-
-	test = cmd;
-	while (test[i])
-	{
-		printf("test = %s",test[i]);
-		i++;
-	}
+	
 	if (file_solo(info) < 0)
 	{
 		close_for_solo_and_free(info);
@@ -742,6 +754,7 @@ int	solo_exec(char **cmd, t_exec *info, char ***env)
 	find_path(info->path, cmd[0], info);
 	if (is_bultins_not_fork(cmd, env, info, DERNIER))
 	{
+		g_code_exit = FORK;
 		pid = fork();
 		if (pid == -1)
 			return (perror("error fork"), -1);
@@ -885,12 +898,12 @@ void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pa
 		}
 		commande = commande->next;
 		free_list_tokens(info_token);
+		free_name_file(&exec);
 	}
 	else
 	{
 		while (commande)
-		{
-			free_name_file(&exec);
+		{	
 			info_token = get_info_token(tokens, i);
 			if (!info_token)
 				return ;
@@ -907,6 +920,7 @@ void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pa
 				free(exec.path_cmd);
 				exec.path_cmd = NULL;
 			}
+			free_name_file(&exec);
 		}
 	}
 	free_db_array(exec.path);

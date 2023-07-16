@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 21:08:43 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/02 23:09:58 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/16 19:29:22 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,18 @@
 
 enum e_token_type	get_value_type(t_token *token, int *is_commande_in_pipe)
 {
+	(void)is_commande_in_pipe;
 	if (ft_is_infile(token))
 		return (INFILE);
 	else if (ft_is_outfile(token))
 		return (OUTFILE);
 	else if (token->prev && token->prev->info->type == REDIRECT_D_OUT)
 		return (LIMITEUR);
-	else if (ft_is_command(token) && *is_commande_in_pipe == 0)
-	{
-		*is_commande_in_pipe = 1;
-		return (COMMANDE);
-	}
+//	else if (ft_is_command(token) && *is_commande_in_pipe == 0)
+//	{
+//		*is_commande_in_pipe = 1;
+//		return (COMMANDE);
+//	}
 	else
 		return (ARG);
 }
