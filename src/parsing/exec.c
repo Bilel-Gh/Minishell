@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/16 21:23:29 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/17 18:26:16 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,7 @@ void	start_heredoc(t_exec *exec)
 	g_code_exit = g_code_exit + exec->fd_infile;
 	while (1)
 	{
-		
+
 		printf(" g_exit_code = %d \n", g_code_exit);
 		line = readline("> ");
 		if (!line || g_code_exit == CSIGINT)
@@ -238,7 +238,7 @@ int	new_heredoc(t_exec *exec, t_token *token)
 	{
 		g_code_exit = FORK;
 		pid = fork();
-		if (pid == -1)	
+		if (pid == -1)
 			return (perror("error fork"), -1);
 		if (pid == 0)
 			start_heredoc(exec);
@@ -262,7 +262,7 @@ int	new_heredoc(t_exec *exec, t_token *token)
 int	set_new_infile(t_exec *exec, t_token *tokens)
 {
 	t_token	*token;
-	
+
 
 	token = tokens;
 	if (token->info->type == REDIRECT_IN)
@@ -450,7 +450,7 @@ int	is_bultins_not_fork(char **cmd, char ***env, t_exec *info, int pos)
 		g_code_exit = builtin_cd(cmd, env);
 	else if (ft_strcmp(cmd[0], "unset") == 0 && add_zero(&info_return))
 		builtin_unset(cmd, env, g_exec);
-	else if (ft_strcmp(cmd[0], "exit") == 0 
+	else if (ft_strcmp(cmd[0], "exit") == 0
 		&& add_zero(&info_return) && (pos == DERNIER))
 		builtin_exit(cmd, info_parsing);
 	else if ((ft_strcmp(cmd[0], "export") == 0) && (cmd[1] != NULL)
@@ -745,7 +745,7 @@ int	file_solo(t_exec *info)
 int	solo_exec(char **cmd, t_exec *info, char ***env)
 {
 	pid_t	pid;
-	
+
 	if (file_solo(info) < 0)
 	{
 		close_for_solo_and_free(info);
@@ -762,7 +762,7 @@ int	solo_exec(char **cmd, t_exec *info, char ***env)
 		{
 			if (dup2(info->fd_outfile, 1) == -1)
 				return (perror("error dup first"), -1);
-			if (info->outfile) 
+			if (info->outfile)
 				close(info->fd_outfile);
 			if (exec_cmd(info, env, cmd) == 1)
 				return (1);
@@ -894,6 +894,8 @@ void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pa
 		if (start_exec_one(info_token, commande->cmd, &exec, env) == -1)
 		{
 			free_list_tokens(info_token);
+			free_name_file(&exec);
+			free_db_array(exec.path);
 			return;
 		}
 		commande = commande->next;
@@ -903,7 +905,7 @@ void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pa
 	else
 	{
 		while (commande)
-		{	
+		{
 			info_token = get_info_token(tokens, i);
 			if (!info_token)
 				return ;
