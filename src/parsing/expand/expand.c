@@ -252,6 +252,15 @@ bool solo_dolard(char *str)
 	return (false);
 }
 
+bool is_limiteur(int *type_args, int i)
+{
+	if ((i - 1) >= 0 && type_args[i - 1] == RED_D_IN)
+		return (true);
+	if ((i - 2) >= 0 && type_args[i - 2] == RED_D_IN)
+		return (true);
+	return (false);
+}
+
 void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **env)
 {
 	int	i;
@@ -317,10 +326,14 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 					}
 					free(exit_code);
 				}
+
 				else
 				{	
-
-					(*g_pars)->args[i] = importe_expande((*g_pars)->args[i], env);
+					if (!is_limiteur(*type_args, i))
+					{
+						printf("type precedent = %d\n", (*type_args)[i - 1]);
+						(*g_pars)->args[i] = importe_expande((*g_pars)->args[i], env);
+					}
 					// on supprimer l'argument du tableau si l'expand n'est pas trouver
 					//					i = delete_if_no_expand(nb_args, g_pars, i);
 				}
