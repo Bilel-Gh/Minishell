@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 21:38:03 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 16:46:05 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/17 18:46:44 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,4 +35,5 @@ void	builtin_env(char **args, char **env)
 		printf("%s\n", env[i]);
 		i++;
 	}
+	g_code_exit = SUCCESS;
 }

@@ -3,8 +3,8 @@
 
 # /* ~~~~~~~ COMPILING INFO ~~~~~~~ */
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g3
-# CFLAGS = -Wall -Werror -Wextra -fsanitize=address
+# CFLAGS = -Wall -Werror -Wextra -g3
+CFLAGS = -Wall -Werror -Wextra -fsanitize=address
 
 IFLAGS:= -I ./includes
 

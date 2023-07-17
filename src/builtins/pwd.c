@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 22:51:14 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 16:52:02 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/17 18:45:14 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,5 @@ void	builtin_pwd(char **args)
 		ft_fprintf(2, "pwd: error retrieving current directory");
 		ft_fprintf(2, "getcwd: cannot access parent directories\n");
 	}
+	g_code_exit = SUCCESS;
 }

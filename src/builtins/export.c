@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 02:56:40 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 16:51:51 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/17 18:52:14 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -461,6 +461,7 @@ int	ft_check_no_args(char **args, t_global_exec **g_exec)
 			printf("%s\n", (*g_exec)->export[i]);
 			i++;
 		}
+		g_code_exit = SUCCESS;
 		return (1);
 	}
 	return (0);
@@ -507,6 +508,7 @@ void	builtin_export(char **args, char ***env, t_global_exec **g_exec)
 	if (ft_check_export_err(args, g_exec, nb_args))
 		return ;
 	ft_do_export(args, env, g_exec);
+	g_code_exit = SUCCESS;
 }
 
 void	ft_do_export(char *const *args, char ***env, t_global_exec **g_exec)
@@ -536,6 +538,7 @@ void	ft_do_export(char *const *args, char ***env, t_global_exec **g_exec)
 		i++;
 	}
 	ft_free_export_var(name, value, full_clean_str);
+	g_code_exit = SUCCESS;
 }
 
 int	ft_get_name(char *full_clean_str, int *i, char **name)

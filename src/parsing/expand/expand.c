@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:10:02 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 13:24:48 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/17 18:56:58 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -296,7 +296,7 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 				}
 				else if (solo_dolard((*g_pars)->args[i]))
 				{
-					if (i + 1 < *nb_args && ((*type_args)[i + 1] == ALPHANUM 
+					if (i + 1 < *nb_args && ((*type_args)[i + 1] == ALPHANUM
 					|| (*type_args)[i + 1] == QUOTE_S
 					|| (*type_args)[i + 1] == QUOTE_D))
 					{
@@ -328,10 +328,9 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 				}
 
 				else
-				{	
+				{
 					if (!is_limiteur(*type_args, i))
 					{
-						printf("type precedent = %d\n", (*type_args)[i - 1]);
 						(*g_pars)->args[i] = importe_expande((*g_pars)->args[i], env);
 					}
 					// on supprimer l'argument du tableau si l'expand n'est pas trouver

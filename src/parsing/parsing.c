@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 16:18:20 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/08 21:59:08 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/17 18:30:37 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,8 +268,8 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
         printf("\033[0;35m ARGUMENT PARSING : %s\033[0m\n", (*g_pars)->args[z]);
         z++;
     }
-    char *first_arg;
-    first_arg = NULL;
+    // char *first_arg;
+    // first_arg = NULL;
    // if ((*g_pars)->args[0][0] == 39 || (*g_pars)->args[0][0] == 34)
 	 //   first_arg = copy_sans_quote((*g_pars)->args[0]);
     //char *first_arg = remove_double_quotes((*g_pars)->args[0]);

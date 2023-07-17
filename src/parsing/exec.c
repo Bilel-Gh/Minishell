@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/17 18:26:16 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/17 18:43:19 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -473,6 +473,7 @@ int	exec_cmd(t_exec *info, char ***env, char **cmd)
 	{
 		free(info->path_cmd);
 		ft_free_g_parsing_total(info->g_parsing);
+		printf("errno = %d\n", errno);
 		return (exit(g_code_exit), -1);
 	}
 	if (execve(info->path_cmd, cmd, *env) == -1)
