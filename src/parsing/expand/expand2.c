@@ -32,7 +32,7 @@ int	ft_size_of_expende(char *expande)
 			|| (expande[size] == '$' && size > 1)
 			|| (expande[size] == 92 && size > 1)
 			|| (expande[size] == ' ' && size > 1)
-			|| (expande[size] == 0 && size > 1)
+			|| (expande[size] == 0)
 			|| (expande[size] == 39)
 			|| (expande[size] == 34))
 		{
@@ -161,7 +161,7 @@ char	*join_and_rp_args(char *args_con, char *expande, int s_extract)
 	printf("s_extract = %d\n", s_extract);
 	printf("size args_con  = %ld \n", strlen(args_con));
 	if (!expande)
-		new_args = malloc(strlen(args_con) - s_extract);
+		new_args = malloc((strlen(args_con) - s_extract) + 1);
 	else
 		new_args = malloc(strlen(args_con) + (strlen(expande) - s_extract) + 1);
 	if (!new_args)
@@ -178,13 +178,14 @@ char	*join_and_rp_args(char *args_con, char *expande, int s_extract)
 				i++;
 			expande_in = true;
 		}
-		printf("args_con[i] == %c , i = %d\n", args_con[i], i);
+		printf("args_con2[i] == %c , i = %d\n", args_con[i], i);
 		new_args[j] = args_con[i];
 		if (args_con[i] == 0)
 			break;
 		i++;
 		j++;
 	}
+	printf("j = %d",j);
 	new_args[j] = 0;
 	free(args_con);
 	return (new_args);

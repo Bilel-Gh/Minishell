@@ -26,7 +26,7 @@ int is_only_space(char *str)
     return (1);
 }
 
-int	ft_get_type(char *const *line_split, int i, int *type)
+int	ft_get_type(char **line_split, int i, int *type)
 {
 	while (line_split[i])
 	{
@@ -67,14 +67,6 @@ int	*ft_get_info_args(char **line_split, int *give_nb_args)
 		nb_args++;
 	type = malloc(sizeof(int) * nb_args);
 	i = ft_get_type(line_split, i, type);
-    // int z = 0;
-    // while (line_split[z])
-    // {
-    //     printf("line_split[%d] = %s\n", z, line_split[z]);
-    //     printf("type[%d] = %d\n", z, type[z]);
-    //     z++;
-    // }
-    // printf("\033[0;35m SEGFAULT HERE \033[0m\n");
 	*give_nb_args = i;
 	i = 0;
 	return (type);

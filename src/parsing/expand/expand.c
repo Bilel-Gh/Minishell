@@ -81,8 +81,8 @@ char	*replace_expande(char *args, int i, char **env, int *info)
 	*info = 0;
 	new_args = NULL;
 	size_of_expende = ft_size_of_expende(&args[i]);
-//	if (size_of_expende < 2)
-//		return (*info = 1, args);
+	if (size_of_expende < 2)
+		return (*info = 1, args);
 	printf("size = %d\n \n ", size_of_expende);
 	expend_recherche = get_expende_detect(size_of_expende , &args[i]);
 	printf("expend_recherche == %s\n \n", expend_recherche);
@@ -113,7 +113,7 @@ char	*importe_expande(char *args, char **env)
 			printf(" replace_expande ______ %s\n", new_args);
 			free(args);
 			if (new_args == NULL)
-				return (new_args);
+				return (free(tmp), new_args);
 			args = new_args;
 			if (info != 1)
 				i = 0;
@@ -282,8 +282,10 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 	i = 0;
 	while (i < *nb_args)
 	{
+		printf("######### (*g_pars)->args[i] = %s \n", (*g_pars)->args[i]);
 		if ((*type_args)[i] == ALPHANUM || (*type_args)[i] == QUOTE_D)
 		{
+			
 			if (have_expande((*g_pars)->args[i]))
 			{
 				printf("\n \n PRESANCE EXPANDE\n");
