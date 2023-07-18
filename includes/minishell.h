@@ -233,6 +233,7 @@ void						give_sp_args_redi(char *args, int *type_args,
 bool						quote_is_open(char *args);
 
 // Dossier EXPAND
+char	*importe_expande(char *args, char **env);
 void						expande(int **type_args, int *nb_args,
 								t_global_parsing **g_pars, char **env);
 bool						back_slach(char *args, int i);

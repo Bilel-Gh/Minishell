@@ -170,6 +170,9 @@ void	new_infile(t_exec *exec, t_token *token)
 void	start_heredoc(t_exec *exec)
 {
 	char	*line;
+	char ***env;
+
+	env = exec->g_parsing->env;
 
 	g_code_exit = CHILD;
 	line = NULL;
@@ -196,7 +199,7 @@ void	start_heredoc(t_exec *exec)
 			g_code_exit = SUCCESS;
 			break ;
 		}
-//		line = expand_heredoc(line);
+		line = importe_expande(line, *env);
 		write(exec->fd_infile, line, ft_strlen(line));
 		write(exec->fd_infile, "\n", 1);
 		free(line);
