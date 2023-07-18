@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:10:02 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/17 18:56:58 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/18 22:32:10 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,13 +289,11 @@ char  *exit_code_expande(char *args, int exit)
 void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **env)
 {
 	int	i;
-	char *suite;
 	char *new_args;
 	int *new_type_args;
 	//int len_expande;
 
 	i = 0;
-	suite = NULL;
 	new_args = NULL;
 	new_type_args = NULL;
 	while (i < *nb_args)
@@ -309,7 +307,7 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 		printf("######### (*g_pars)->args[i] = %s \n", (*g_pars)->args[i]);
 		if ((*type_args)[i] == ALPHANUM || (*type_args)[i] == QUOTE_D)
 		{
-			
+
 			if (have_expande((*g_pars)->args[i]))
 			{
 				printf("\n \n PRESANCE EXPANDE\n");
