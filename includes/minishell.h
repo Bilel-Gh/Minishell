@@ -233,7 +233,8 @@ void						give_sp_args_redi(char *args, int *type_args,
 bool						quote_is_open(char *args);
 
 // Dossier EXPAND
-char	*importe_expande(char *args, char **env);
+char						*exit_code_expande(char *args, int exit);
+char						*importe_expande(char *args, char **env);
 void						expande(int **type_args, int *nb_args,
 								t_global_parsing **g_pars, char **env);
 bool						back_slach(char *args, int i);
@@ -248,6 +249,7 @@ char						*get_expende_detect(int size_of_expende,
 								char *expande);
 int							ft_size_of_expende(char *expande);
 bool						solo_dolard(char *str);
+char 						**ft_clean_null_db_array(char **old_arg, int *size_db_arr);
 
 // Dossier INFOS_TOKENS
 int							ft_is_command(t_token *token);

@@ -75,5 +75,6 @@ char	**kick_quote(int *type_args, int nb_args, char **args)
 		i++;
 	}
 	no_quote[i] = 0;
+	no_quote = ft_clean_null_db_array(no_quote, &nb_args);
 	return (no_quote);
 }

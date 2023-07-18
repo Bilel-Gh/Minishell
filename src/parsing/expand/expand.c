@@ -260,12 +260,36 @@ bool is_limiteur(int *type_args, int i)
 		return (true);
 	return (false);
 }
+char  *exit_code_expande(char *args, int exit)
+{
+	char *exit_code;
+	char *new_args;
+	char *suite;
+
+	exit_code = ft_itoa(exit);
+	if (ft_strlen(args) > 2)
+	{
+		suite = ft_strdup(args + 2);
+		if (!suite)
+			return (NULL);
+		new_args = ft_strcat(exit_code, suite);
+		free(args);
+		args = ft_strdup(new_args);
+		free(suite);
+	}
+	else
+	{
+		free(args);
+		args = ft_strdup(exit_code);
+	}
+	free(exit_code);
+	return (args);
+}
 
 void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **env)
 {
 	int	i;
 	char *suite;
-	char *exit_code;
 	char *new_args;
 	int *new_type_args;
 	//int len_expande;
@@ -309,26 +333,7 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 					continue;
 				}
 				else if (ft_strncmp((*g_pars)->args[i], "$?", 2) == 0)
-				{
-					exit_code = ft_itoa(g_code_exit);
-					if (ft_strlen((*g_pars)->args[i]) > 2)
-					{
-						suite = ft_strdup((*g_pars)->args[i] + 2);
-						if (!suite)
-							return ;
-						new_args = ft_strcat(exit_code, suite);
-						free((*g_pars)->args[i]);
-						(*g_pars)->args[i] = ft_strdup(new_args);
-						free(suite);
-					}
-					else
-					{
-						free((*g_pars)->args[i]);
-						(*g_pars)->args[i] = ft_strdup(exit_code);
-					}
-					free(exit_code);
-				}
-
+					(*g_pars)->args[i] = exit_code_expande((*g_pars)->args[i], g_code_exit);
 				else
 				{
 					if (!is_limiteur(*type_args, i))

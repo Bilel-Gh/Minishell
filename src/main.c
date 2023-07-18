@@ -148,10 +148,15 @@ void	ft_check_not_found(char **cmd)
 			ft_fprintf(2, "bash: %s: is a directory: \n", cmd[0]);
 			g_code_exit = CANTEXEC;
 		}
-		else
+		else if(errno == 8)
 		{
 			ft_fprintf(2, "bash: %s: Permission denied\n", cmd[0]);
 			g_code_exit = CANTEXEC;
+		}
+		else
+		{
+			ft_fprintf(2, "bash: %s: command not found\n", cmd[0]);
+			g_code_exit = NOTFOUND;
 		}
 	}
 	else
