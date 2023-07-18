@@ -345,6 +345,7 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 	}
 	(*g_pars)->args = ft_clean_null_db_array((*g_pars)->args, nb_args);
 	new_type_args = ft_get_info_args((*g_pars)->args, nb_args);
+	printf("++++++++++++ nb_args = %d", *nb_args);
 	free(*type_args);
 	*type_args = new_type_args;
 }

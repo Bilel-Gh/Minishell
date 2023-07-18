@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/17 22:50:16 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/18 13:40:42 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,6 +314,34 @@ void	ft_do_exec(char ***env, t_global_parsing *g_parsing, int nb_args)
 	g_parsing->tokens = ft_get_tokens_with_infos(g_parsing->args, nb_args);
 	g_parsing->commande = cmd_complete(g_parsing->tokens);
 	ft_set_index_for_exec(&g_parsing->tokens);
+
+
+	// DEBUG
+	int z = 0;
+	while (g_parsing->commande->cmd[z] != NULL)
+	{
+		printf("\033[1;36mcmd[%d] = %s\n\033[0m", z,
+				g_parsing->commande->cmd[z]);
+		z++;
+	}
+	t_token	*head = g_parsing->tokens;
+	while (g_parsing->tokens)
+	{
+		printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
+		printf("\033[1;33mtoken type = %d\n\033[0m",
+				g_parsing->tokens->info->type);
+		printf("\033[1;34mtoken index = %d\n\033[0m",
+				g_parsing->tokens->token_index);
+		if (g_parsing->tokens->prev)
+			printf("\033[1;35mtoken prev value = %s\n\033[0m",
+					g_parsing->tokens->prev->value);
+		printf("\n\n");
+		g_parsing->tokens = g_parsing->tokens->next;
+	}
+	g_parsing->tokens = head;
+	// DEBUG
+
+
 	exec(g_parsing->tokens, g_parsing->commande, env, &g_parsing);
 	rl_replace_line("", 0);
 }
@@ -358,7 +386,7 @@ int	ft_is_error_par_part2(t_global_parsing *g_parsing)
 			ft_fprintf(2, "bash: syntax error near unexpected token '%c%c'\n",
 				g_parsing->args[0][0], g_parsing->args[0][1]);
 		g_code_exit = MISUSE;
-		free_db_array(g_parsing->args);
+		ft_free_g_parsing(g_parsing);
 		return (1);
 	}
 	if (!g_parsing->args)

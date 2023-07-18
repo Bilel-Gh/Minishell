@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/17 18:43:19 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/18 16:43:15 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,12 +184,10 @@ void	start_heredoc(t_exec *exec)
 	g_code_exit = g_code_exit + exec->fd_infile;
 	while (1)
 	{
-
-		printf(" g_exit_code = %d \n", g_code_exit);
 		line = readline("> ");
 		if (!line || g_code_exit == CSIGINT)
 		{
-			ft_fprintf(2, "bash: warning: here-document at line 12 delimited by end-of-file (wanted `%s')", exec->limiteur);
+			ft_fprintf(2, "bash: warning: here-document delimited by end-of-file (wanted `%s')", exec->limiteur);
 			g_code_exit = SUCCESS;
 			break ;
 		}
@@ -198,13 +196,14 @@ void	start_heredoc(t_exec *exec)
 			g_code_exit = SUCCESS;
 			break ;
 		}
+//		line = expand_heredoc(line);
 		write(exec->fd_infile, line, ft_strlen(line));
 		write(exec->fd_infile, "\n", 1);
 		free(line);
 	}
 	free(line);
 	close(exec->fd_infile);
-	ft_fprintf(2, " limiteur = %s \n",exec->limiteur);
+	ft_fprintf(2, " limiteur = %s \n", exec->limiteur);
 	free(exec->limiteur);
 	free_db_array(exec->path);
 	exit (exec->fd_infile);
@@ -212,8 +211,8 @@ void	start_heredoc(t_exec *exec)
 
 int	new_heredoc(t_exec *exec, t_token *token)
 {
-	int info;
-	int tmp_error;
+	int		info;
+	int		tmp_error;
 	pid_t	pid;
 
 	info = 0;
@@ -252,9 +251,9 @@ int	new_heredoc(t_exec *exec, t_token *token)
 		printf("%d\n", info);
 		if (info == 0)
 			return (g_code_exit = 130, -1);
-	exec->fd_infile = open("/tmp/here_doc_minishell", O_RDONLY);
-	if (exec->fd_infile == -1)
-		perror("error open heredoc");
+		exec->fd_infile = open("/tmp/here_doc_minishell", O_RDONLY);
+		if (exec->fd_infile == -1)
+			perror("error open heredoc");
 	}
 	return (0);
 }
@@ -262,7 +261,6 @@ int	new_heredoc(t_exec *exec, t_token *token)
 int	set_new_infile(t_exec *exec, t_token *tokens)
 {
 	t_token	*token;
-
 
 	token = tokens;
 	if (token->info->type == REDIRECT_IN)
@@ -278,7 +276,7 @@ int	set_new_infile(t_exec *exec, t_token *tokens)
 int	gestion_infile(t_token *tokens, t_exec *exec)
 {
 	t_token	*seach_tok_in;
-	int info;
+	int		info;
 
 	info = 0;
 	seach_tok_in = tokens;
@@ -412,7 +410,6 @@ int	ft_bultins_fork(char **cmd, char ***env, t_exec *info)
 
 	info_parsing = &(info->g_parsing);
 	g_exec = &(info->g_parsing->exec);
-
 	is_bultin = 0;
 	g_exec = &(info->g_parsing->exec);
 	if ((ft_strcmp(cmd[0], "cd") == 0) && add_one(&is_bultin))
@@ -775,7 +772,7 @@ int	solo_exec(char **cmd, t_exec *info, char ***env)
 
 int	start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char ***env)
 {
-	int info;
+	int	info;
 
 	info = 0;
 	info = gestion_infile(tokens, exec);
@@ -795,7 +792,7 @@ int	start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char ***env)
 
 int	start_exec_mult(t_token *tokens, char **cmd, t_exec *exec, char ***env)
 {
-	int info;
+	int	info;
 
 	info = 0;
 	info = gestion_infile(tokens, exec);
@@ -815,7 +812,7 @@ int	get_path(t_exec *exec, char **envp)
 	i = 0;
 	if (envp == NULL)
 	{
-		exit(0); // debug
+		exec->path = 0; // debug
 	}
 	while (envp[i])
 	{

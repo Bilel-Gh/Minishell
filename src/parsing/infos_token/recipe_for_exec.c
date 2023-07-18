@@ -269,6 +269,7 @@ char	**ft_custom_split(char *str)
 	t_split	*s;
 	char **final_result;
 
+	printf("str custom split = %s\n", str);
 	s = malloc(sizeof(t_split));
 	if (!ft_init_result(str, s))
 	{
@@ -307,6 +308,7 @@ void	add_cmd_to_list_commande(t_commande *list_commande, char **cmd_join)
 	while (list_cmd)
 	{
 		list_cmd->cmd = ft_custom_split(cmd_join[i]);
+		printf("custom split %d = %s", i, list_cmd->cmd[i]);
 		i++;
 		if (list_cmd->next == 0)
 			break ;

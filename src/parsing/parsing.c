@@ -243,8 +243,9 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
     }
     if (*nb_args == 0)
     {
+         printf("\033[1;31m STOP \033[0m\n");
         g_code_exit = SUCCESS;
-        return ((*g_pars)->args);
+        return (free(type_args),(*g_pars)->args);
     }
 // 	if (ft_strcmp(no_quote_args[0], "export") == 0)
 //     {
