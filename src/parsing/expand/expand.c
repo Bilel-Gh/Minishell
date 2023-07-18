@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:10:02 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/17 18:56:58 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/18 03:48:44 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,15 +58,12 @@ char	*traslate_expand(char *arg_ct, char *ext_exp, int size_ext, char **env)
 		get_expande = give_env_expand(ext_exp, size_ext, env);
 	if (get_expande)
 	{
-		printf("\n my extratc yes\n");
 		new_args = join_and_rp_args(arg_ct, get_expande, size_ext);
 		return (new_args);
 	}
 	else
 	{
-		printf("\n my extratc no\n");
 		new_args = join_and_rp_args(arg_ct, NULL, size_ext);
-		printf ("nil ? = %s", new_args);
 		return (new_args);
 	}
 
@@ -83,9 +80,7 @@ char	*replace_expande(char *args, int i, char **env, int *info)
 	size_of_expende = ft_size_of_expende(&args[i]);
 	if (size_of_expende < 2)
 		return (*info = 1, args);
-	printf("size = %d\n \n ", size_of_expende);
 	expend_recherche = get_expende_detect(size_of_expende , &args[i]);
-	printf("expend_recherche == %s\n \n", expend_recherche);
 	new_args = traslate_expand(args, expend_recherche, size_of_expende, env);
 	return (new_args);
 }
@@ -104,13 +99,10 @@ char	*importe_expande(char *args, char **env)
 	while (args[i])
 	{
 		info = 0;
-		printf("in importe_expande args[%d] = %c \n", i ,args[i]);
 		if (args[i] == '$' && back_slach(args, i))
 		{
-			printf("args ________ %s\n", args);
 			tmp = ft_strdup(args);
 			new_args = replace_expande(tmp, i, env, &info);
-			printf(" replace_expande ______ %s\n", new_args);
 			free(args);
 			if (new_args == NULL)
 				return (free(tmp), new_args);
@@ -142,50 +134,6 @@ bool	have_expande(char *args)
 	return (false);
 }
 
-void remove_db_tab(char **str, int index_to_remove) {
-	int i;
-	int size;
-
-	size = 0;
-	// Afficher le tableau résultant
-	i = 0;
-	//    while (str[i] != NULL) {
-	//        printf("\033[0;32m str_BEFORE[%d] = %s\n\033[0m", i, str[i]);
-	//        i++;
-	//    }
-	//    printf("\n");
-	while (str[size] != NULL) {
-		size++;
-	}
-	if (index_to_remove < 0 || index_to_remove >= size) {
-		printf("Index à supprimer invalide.\n");
-		return;
-	}
-	free(str[index_to_remove]);
-	i = index_to_remove;
-	while (i < size - 1) {
-		str[i] = str[i + 1];
-		i++;
-	}
-	str[size - 1] = NULL;
-
-	//    // Afficher le tableau résultant
-	//    i = 0;
-	//    while (str[i] != NULL) {
-	//        printf("\033[0;32m str_AFTER[%d] = %s\n\033[0m", i, str[i]);
-	//        i++;
-	//    }
-	//    printf("\n");
-}
-
-/*int delete_if_no_expand(int *nb_args, t_global_parsing **g_pars, int i) {
-  if (ft_strncmp((*g_pars)->args[i], "NO EXPAND", 9) == 0)
-  {
-  remove_db_tab((*g_pars)->args, i);
-  (*nb_args)--;
-  if (i > 0);
-  }
-  */
 int ft_nb_args_out_null(char **old_arg, int size_db_arr)
 {
 	int i;
@@ -220,8 +168,6 @@ char **ft_clean_null_db_array(char **old_arg, int *size_db_arr)
 	nb_new_args = ft_nb_args_out_null(old_arg, *size_db_arr);
 	new_args = malloc(sizeof(char *) * (nb_new_args + 1));
 	new_args[nb_new_args] = NULL;
-	printf("size old db_arr = %d\n", *size_db_arr);
-	printf("size out null db_ar = %d\n", nb_new_args);
 	while (i < *size_db_arr)
 	{
 		if (old_arg[i] == 0)
@@ -230,7 +176,6 @@ char **ft_clean_null_db_array(char **old_arg, int *size_db_arr)
 			free(old_arg[i]);
 		else if (old_arg[i] != 0)
 		{
-			printf(" clean array null ======= [%s]*****\n", old_arg[i]);
 			new_args[j] = ft_strdup(old_arg[i]);
 			free(old_arg[i]);
 			j++;
@@ -275,20 +220,15 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 	new_args = NULL;
 	new_type_args = NULL;
 	while (i < *nb_args)
-	{
-		printf("^^^^^^^^^^^^^^^%d\n",(*type_args)[i]);
 		i++;
-	}
 	i = 0;
 	while (i < *nb_args)
 	{
-		printf("######### (*g_pars)->args[i] = %s \n", (*g_pars)->args[i]);
 		if ((*type_args)[i] == ALPHANUM || (*type_args)[i] == QUOTE_D)
 		{
-			
+
 			if (have_expande((*g_pars)->args[i]))
 			{
-				printf("\n \n PRESANCE EXPANDE\n");
 				if (ft_is_digit((*g_pars)->args[i][1]))
 				{
 					new_args = ft_strdup((*g_pars)->args[i] + 2);
@@ -340,7 +280,6 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 				}
 			}
 		}
-		printf("&&&&&&&& %s &&&&&&\n",(*g_pars)->args[i]);
 		i++;
 	}
 	(*g_pars)->args = ft_clean_null_db_array((*g_pars)->args, nb_args);

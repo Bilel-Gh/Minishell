@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/17 22:50:16 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/18 03:13:53 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,50 +188,6 @@ void	ft_check_error_exec(char **cmd)
 	}
 	ft_check_not_found(cmd);
 	free(full_cmd);
-}
-
-void	gestion_pipe2(char ***env, t_global_parsing **g_parsing, int *nb_args)
-{
-	char	*additional_input;
-	char	*new_line;
-
-	if (ft_strcmp((*g_parsing)->args[0], "echo") == 0)
-	{
-		g_code_exit = ERROR_PIPE;
-		return ;
-	}
-	additional_input = readline(">");
-	new_line = ft_strjoin((*g_parsing)->line, additional_input);
-	(*g_parsing)->line = new_line;
-	(*g_parsing)->args = ft_lexeur((*g_parsing)->line);
-	(*g_parsing)->info_args = ft_get_info_args((*g_parsing)->args, nb_args);
-	(*g_parsing)->args = ft_parsing(nb_args, g_parsing, env);
-	free(additional_input);
-}
-
-void	gestion_unclosed_quote(char ***env, t_global_parsing **g_parsing,
-		int *nb_args)
-{
-	char	*additional_input;
-	char	*new_line;
-
-	additional_input = readline(">");
-	new_line = ft_strjoin((*g_parsing)->line, additional_input);
-	if (g_code_exit == ERROR_QUOTE_D)
-	{
-		if (ft_strchr(additional_input, '"') != NULL)
-			g_code_exit = SUCCESS;
-	}
-	else if (g_code_exit == ERROR_QUOTE_S)
-	{
-		if (ft_strchr(additional_input, '\'') != NULL)
-			g_code_exit = SUCCESS;
-	}
-	(*g_parsing)->line = new_line;
-	(*g_parsing)->args = ft_lexeur((*g_parsing)->line);
-	(*g_parsing)->info_args = ft_get_info_args((*g_parsing)->args, nb_args);
-	(*g_parsing)->args = ft_parsing(nb_args, g_parsing, env);
-	free(additional_input);
 }
 
 int	ft_custom_error(char **args)
@@ -467,7 +423,6 @@ void	int_handler(int sig)
 		infile = g_code_exit - 1000;
 		close(infile);
 		exit(0);
-		printf("hello\n");
 		g_code_exit = 998;
 	}
 	else if (sig == SIGINT && g_code_exit != 355)
@@ -527,7 +482,6 @@ int	main(int argc, char **argv, char **env)
 	s_sigaction.sa_handler = quit_handler;
 	sigaction(SIGQUIT, &s_sigaction, NULL);
 	minishell_loop(&env_cpy, g_exec, &g_parsing);
-	printf("jjjj");
 	rl_clear_history();
 	if (env_cpy)
 		free_db_array(env_cpy);

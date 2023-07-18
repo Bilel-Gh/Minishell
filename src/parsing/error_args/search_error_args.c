@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 20:08:15 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 19:18:17 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/18 02:55:00 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ bool	error_quote(int *type_args, int nb_args, char **args)
 	int	i;
 
 	i = 0;
-	printf("\n*********check parsing quote ???***************\n");
 	while (i < nb_args)
 	{
 		if (args[i][0] == 34 || args[i][0] == 39)
@@ -74,8 +73,6 @@ bool prev_next_error(char **args, int i)
     get_first_prev_arg = get_prev_arg(args, i);
     get_first_next_arg = get_next_arg(args, i);
 
-//    printf("get_first_prev_arg = %s\n", get_first_prev_arg);
-//    printf("get_first_next_arg = %s\n", get_first_next_arg);
     if (get_first_prev_arg != NULL && get_first_next_arg == NULL)
     {
         g_code_exit = ERROR_PIPE2;
@@ -117,14 +114,10 @@ bool ft_is_solo_expand(char *str)
 
 bool prev_next_redi_error(char **args, int i, int *type_args, int nb_args)
 {
-    char *get_first_prev_arg;
     char *get_first_next_arg;
 
-    get_first_prev_arg = get_prev_arg(args, i);
     get_first_next_arg = get_next_arg(args, i);
 
-   printf("get_first_prev_arg = %s\n", get_first_prev_arg);
-   printf("get_first_next_arg = %s\n", get_first_next_arg);
     if (type_args[i] == REDIRECT)
     {
         if ((i + 1) > nb_args)
@@ -163,7 +156,6 @@ bool error_expand(int type, char *next, char **env)
 				return (false);
             expand_to_search = ft_strdup(&next[1]);
             expand_value = give_env_expand(expand_to_search, ft_strlen(expand_to_search), env);
-            printf(" error_expande == %s\n", expand_value);
             if (expand_value == NULL)
             {
                 g_code_exit = ERROR_REDIRECT2;
@@ -180,7 +172,6 @@ bool	error_size_or_spe_redi(int *type_args, int nb_args, char **args, char **env
     char *get_first_next_arg;
 
 	i = 0;
-	printf("\n*********check parsing redirection ???***************\n");
 	while (i < nb_args)
 	{
 		if (type_args[i] == 1)
@@ -208,13 +199,6 @@ bool	error_pipe(int *type_args, int nb_args, char **args)
 {
 	int	i;
 
-	i = 0;
-	printf("\n*********check parsing pipe ???***************\n");
-    while (i < nb_args)
-    {
-        printf("PIPE args[%d] = %s\n", i, args[i]);
-        i++;
-    }
     i = 0;
 	while (i < nb_args)
 	{
@@ -261,8 +245,6 @@ bool	error_back_slash(int nb_args, char **args)
     i = 0;
     nb_bs = 0;
     len_last_arg = ft_strlen(args[nb_args -1]);
-    printf("\n*********check parsing backslash ???***************\n");
-    printf("args[nb_args - 1][len_last_arg - 1] = %c\n", args[nb_args - 1][len_last_arg - 1]);
     while (i < nb_args)
     {
         nb_bs = ft_strlen(args[i]);
@@ -293,24 +275,20 @@ bool	search_error_args(int *type_args, int *nb_args, char **args, char **env)
 {
     if (error_pipe(type_args, *nb_args, args))
     {
-        printf("^^^^^^^^^^^     no error pipe    ^^^^^^^^^^^^^^^^^^\n");
         return (1);
     }
 	if (error_size_or_spe_redi(type_args, *nb_args, args, env))
 	{
-		printf("^^^^^^^^^^^ no error redirection ^^^^^^^^^^^^^^^^^^\n");
         if (g_code_exit != ERROR_REDIRECT2)
             g_code_exit = ERROR_REDIRECT;
 		return (1);
 	}
 	if (error_quote(type_args, *nb_args, args))
-	{
-		printf("\n*********    no error quote    ***************\n");
-		return (1);
-	}
+    {
+        return (1);
+    }
     if (error_back_slash(*nb_args, args))
     {
-        printf("\n*********    no error back_slash    ***************\n");
         return (1);
     }
 	return (0);

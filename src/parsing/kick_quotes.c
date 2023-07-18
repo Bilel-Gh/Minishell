@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 03:35:14 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/10 21:18:30 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/18 02:41:18 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,6 @@ char	**kick_quote(int *type_args, int nb_args, char **args)
 			no_quote[i] = copy_sans_quote(args[i]);
 		else
 			no_quote[i] = copy_cont(args[i]);
-		printf("no quote = %s \n", no_quote[i]);
-		printf("args = %s \n", args[i]);
 		i++;
 	}
 	no_quote[i] = 0;

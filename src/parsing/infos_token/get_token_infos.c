@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 21:08:43 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/16 19:29:22 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/18 02:50:55 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ t_token	*create_token(t_token *head, char *value, int index)
 	t_token	*new_token;
 	t_token	*current;
 
-	printf("creat = %s\n",value);
 	value = ft_strtrim(value, " ");
 	new_token = (t_token *)malloc(sizeof(t_token));
 	new_token->value = value;

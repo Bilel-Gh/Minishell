@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 16:18:20 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/17 18:30:37 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/18 03:41:58 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ bool	error_grammaticale(int *type_args, int nb_args)
 	i = 0;
 	if (!type_args)
 		return (false);
-	printf("*********check grammaticale error ???***************\n");
 	if (nb_args == 1 && type_args[i] != 0)
 		return (true);
 	while (i < nb_args - 1)
@@ -56,7 +55,6 @@ int	count_nb_space(int *type_args, int nb_args)
 
 	i = 0;
 	nb_space = 0;
-	printf("nb_args = %d",nb_args);
 	if (type_args == NULL)
 		return (nb_space);
 	while (i < nb_args - 1)
@@ -208,7 +206,6 @@ void ft_gestion_backslash(int **type_args, int *nb_args, t_global_parsing **g_pa
         while (is_backslash((*g_pars)->args[i]) && (*g_pars)->args[i][1] != '\0')
         {
             cleaned_arg = remove_backslash((*g_pars)->args[i]);
-            printf("\033[1;34m ----------------- CLEAN_ARG = %s \033[0m\n", cleaned_arg);
             free((*g_pars)->args[i]);
             (*g_pars)->args[i] = cleaned_arg;
         }
@@ -229,28 +226,15 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
 	type_args = ft_get_info_args((*g_pars)->args, nb_args);
 	if (search_error_args(type_args, nb_args, (*g_pars)->args, *env))
 		return (free(type_args), (*g_pars)->args);
-    printf("\033[1;34m G_CODE_EXIT = %d \033[0m\n", g_code_exit);
     ft_gestion_backslash(&type_args, nb_args, g_pars);
 	expande(&type_args, nb_args, g_pars, *env);
     g_code_exit = SUCCESS;
-    printf("\033[1;31m APRES EXPAND \033[0m\n");
-    printf("nb_args = %d\n", *nb_args);
-    int w = 0;
-    while ((*g_pars)->args[w])
-    {
-        printf("\033[1;31m             APRES EXPAND args[%d] = %s \033[0m\n", w, (*g_pars)->args[w]);
-        w++;
-    }
     if (*nb_args == 0)
     {
+	    free(type_args);
         g_code_exit = SUCCESS;
         return ((*g_pars)->args);
     }
-// 	if (ft_strcmp(no_quote_args[0], "export") == 0)
-//     {
-          //no_quote_args = ft_db_array_dup(args);
-//     }
-    // printf tout le tableau (*g_pars)->args
 	new_args = join_inter_space((*g_pars)->args, type_args, nb_args);
 	new_type_args = ft_get_info_args(new_args, nb_args);
 	free_db_array((*g_pars)->args);
@@ -260,31 +244,9 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
 	free(new_type_args);
 	new_type_args = ft_get_info_args((*g_pars)->args, nb_args);
 	if (error_grammaticale(new_type_args, *nb_args))
-		return ((*g_pars)->args);
-	printf("^^^^^^^^^^^ no error grammaticale ^^^^^^^^^^^^^^^^\n");
-    int z = 0;
-    while ((*g_pars)->args[z])
     {
-        printf("\033[0;35m ARGUMENT PARSING : %s\033[0m\n", (*g_pars)->args[z]);
-        z++;
-    }
-    // char *first_arg;
-    // first_arg = NULL;
-   // if ((*g_pars)->args[0][0] == 39 || (*g_pars)->args[0][0] == 34)
-	 //   first_arg = copy_sans_quote((*g_pars)->args[0]);
-    //char *first_arg = remove_double_quotes((*g_pars)->args[0]);
-    // if (ft_strcmp(first_arg, (*g_pars)->args[0]) != 0)
-    // {
-    //     free((*g_pars)->args[0]);
-    //     (*g_pars)->args[0] = first_arg;
-    // }
-    // else
-    //     free(first_arg);
-    z = 0;
-    while ((*g_pars)->args[z])
-    {
-        printf("\033[0;35m ARGUMENT PARSING sans quotes: %s\033[0m\n", (*g_pars)->args[z]);
-        z++;
+        free(new_type_args);
+        return ((*g_pars)->args);
     }
 	free(new_type_args);
 	return ((*g_pars)->args);

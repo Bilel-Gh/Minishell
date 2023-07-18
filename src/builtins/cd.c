@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 17:58:56 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 16:45:38 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/18 02:36:11 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,6 @@ void	ft_change_env_after_cd(char ***env, char *target_dir)
 void	ft_cd_tiret(char **const *env, char *prev_dir)
 {
 	(void)env;
-	printf("PREV DIR = %s\n", prev_dir);
 	if (prev_dir != NULL)
 	{
 		if (chdir(prev_dir) != 0)

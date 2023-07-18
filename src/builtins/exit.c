@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 05:17:04 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/16 19:44:36 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/18 02:36:44 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,6 @@ void	builtin_exit(char **args, t_global_parsing **g_pars)
 		nb_check = ft_atoll(args[1]);
 	else if (args[1] == NULL)
 		nb_check = 0;
-	printf("exit\n");
 	while (args_cpy[nb_args] != NULL)
 		nb_args++;
 	ft_gestion_exit_error(args, nb_args, nb_check, g_pars);

@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/06/21 19:18:43 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/18 02:34:56 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,8 +215,8 @@ void	set_exec_and_exec(t_token *tokens, char **cmd, t_exec *exec)
 	//gestion_infile;
     (void)cmd;
 	gestion_outfile(tokens, exec);
-    printf("exec->outfile = %s\n", exec->outfile);
-    printf("exec->fd_outfile = %d\n", exec->fd_outfile);
+    // printf("exec->outfile = %s\n", exec->outfile);
+    // printf("exec->fd_outfile = %d\n", exec->fd_outfile);
 	//start_exec;
 
 

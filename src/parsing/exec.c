@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/17 18:43:19 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/18 02:40:24 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,15 +177,12 @@ void	start_heredoc(t_exec *exec)
 			O_RDWR | O_CREAT | O_TRUNC, 0644);
 	if (exec->fd_infile == -1)
 	{
-		printf(" error heredoc\n");
 		perror("open");
 		return ;
 	}
 	g_code_exit = g_code_exit + exec->fd_infile;
 	while (1)
 	{
-
-		printf(" g_exit_code = %d \n", g_code_exit);
 		line = readline("> ");
 		if (!line || g_code_exit == CSIGINT)
 		{
@@ -242,14 +239,11 @@ int	new_heredoc(t_exec *exec, t_token *token)
 			return (perror("error fork"), -1);
 		if (pid == 0)
 			start_heredoc(exec);
-		printf("pid fils = %d\n", pid);
 		while (waitpid(pid, &info, 0) == -1 && info != 32718)
 			;
-		printf(" le fils a terminer\n");
 		g_code_exit = tmp_error;
 		if (info > 255)
 			info = info / 256;
-		printf("%d\n", info);
 		if (info == 0)
 			return (g_code_exit = 130, -1);
 	exec->fd_infile = open("/tmp/here_doc_minishell", O_RDONLY);
@@ -473,13 +467,11 @@ int	exec_cmd(t_exec *info, char ***env, char **cmd)
 	{
 		free(info->path_cmd);
 		ft_free_g_parsing_total(info->g_parsing);
-		printf("errno = %d\n", errno);
 		return (exit(g_code_exit), -1);
 	}
 	if (execve(info->path_cmd, cmd, *env) == -1)
 	{
 		free(info->path_cmd);
-		printf("errno = %d\n", errno);
 		ft_check_error_exec(cmd);
 		ft_free_g_parsing_total(info->g_parsing);
 		return (exit(g_code_exit), -1);
@@ -493,12 +485,10 @@ void	close_for_first(int *pipefd, t_exec *info)
 	close(pipefd[1]);
 	if ((info->infile || info->limiteur) && info->fd_infile != 0)
 	{
-		printf("close infile first= %d\n", info->fd_infile);
 		close(info->fd_infile);
 	}
 	if (info->outfile && info->fd_outfile != 1)
 	{
-		printf("close outfile first= %d\n", info->fd_outfile);
 		close(info->fd_outfile);
 	}
 	info->fd_in_last_pipe = pipefd[0];
@@ -715,7 +705,6 @@ void	close_for_solo_and_free(t_exec *info)
 {
 	while (waitpid(-1, &g_code_exit, 0) != -1 || g_code_exit == 355)
 		;
-	printf(" g_code_exit sortie de wait = %d", g_code_exit);
 	if (g_code_exit > 255)
 		g_code_exit = g_code_exit / 256;
 	if ((info->infile || info->limiteur) && info->fd_infile > 0)
@@ -886,7 +875,6 @@ void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pa
 	init_exec(&exec);
 	exec.g_parsing = *g_pars;
 	exec.nb_cmd = nb_pipe(tokens) + 1;
-	printf("nb_exec = %d\n", exec.nb_cmd);
 	if (exec.nb_cmd == 1)
 	{
 		info_token = get_info_token(tokens, i);
