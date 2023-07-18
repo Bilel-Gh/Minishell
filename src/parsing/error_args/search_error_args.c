@@ -30,11 +30,6 @@ bool	error_quote(int *type_args, int nb_args, char **args)
                     g_code_exit = ERROR_QUOTE_S;
                 return (true);
             }
-            // if (ft_strlen(args[0]) == 2 && args[0][0] == 34 && args[0][1] == 34)
-            // {
-            //     g_code_exit = NOTFOUND;
-            //     return (true);
-            // }
 			if (args[i][0] == 34)
 				type_args[i] = 9;
 			else
