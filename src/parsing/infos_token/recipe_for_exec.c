@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 22:49:57 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/18 01:42:09 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/18 04:02:14 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,10 +267,15 @@ int	ft_is_in_quote_split(const char *str, int i, int in_quotes,
 char	**ft_custom_split(char *str)
 {
 	t_split	*s;
+	char **final_result;
 
 	s = malloc(sizeof(t_split));
 	if (!ft_init_result(str, s))
-		return (s->result);
+	{
+		final_result = s->result;
+		free(s);
+		return (final_result);
+	}
 	ft_init_s(str, s);
 	while (s->i < s->len)
 	{
@@ -287,7 +292,9 @@ char	**ft_custom_split(char *str)
 	}
 	s->clean_result = ft_db_array_dup(s->result);
 	ft_free_db_by_len(s->result, s->space_count + 1);
-	return (s->clean_result);
+	final_result = s->clean_result;
+	free(s);
+	return (final_result);
 }
 
 void	add_cmd_to_list_commande(t_commande *list_commande, char **cmd_join)
