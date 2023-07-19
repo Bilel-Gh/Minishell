@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 16:18:20 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/17 18:30:37 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/19 09:45:58 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,8 +230,8 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
 	if (search_error_args(type_args, nb_args, (*g_pars)->args, *env))
 		return (free(type_args), (*g_pars)->args);
     printf("\033[1;34m G_CODE_EXIT = %d \033[0m\n", g_code_exit);
-    ft_gestion_backslash(&type_args, nb_args, g_pars);
 	expande(&type_args, nb_args, g_pars, *env);
+    ft_gestion_backslash(&type_args, nb_args, g_pars);
     g_code_exit = SUCCESS;
     printf("\033[1;31m APRES EXPAND \033[0m\n");
     printf("nb_args = %d\n", *nb_args);

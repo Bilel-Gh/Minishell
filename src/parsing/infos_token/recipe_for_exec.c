@@ -434,6 +434,7 @@ void	change_cmd_list(t_commande *list_commande)
             i = 0;
             while (list_commande->cmd[i])
             {
+                printf("$$$$$$$$$$ %s /n",list_commande->cmd[i]);
                 ft_change_cmds(list_commande, i);
                 i++;
             }
@@ -463,6 +464,7 @@ void	ft_change_cmds(t_commande *list_commande, int i)
     free(list_commande->cmd[i]);
     list_commande->cmd[i] = ft_db_array_join(no_quote_args,
                                              ft_db_arr_len(no_quote_args));
+   
     free_db_array(no_quote_args);
     free(type_arg_to_unquote);
 }

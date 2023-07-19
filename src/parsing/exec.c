@@ -755,6 +755,8 @@ int solo_exec(char **cmd, t_exec *info, char ***env)
 {
 	pid_t pid;
 
+	printf("cmd[0] in exec = %s", cmd[0]);
+	printf("cmd[1] in exec = %s", cmd[1]);
 	if (file_solo(info) < 0)
 	{
 		close_for_solo_and_free(info);
