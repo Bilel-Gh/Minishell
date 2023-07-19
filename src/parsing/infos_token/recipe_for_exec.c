@@ -35,7 +35,7 @@ void		ft_do_split_custom(char *str, t_split *s);
 void		ft_get_result_db_join(char **strings, int count, char *result,
                                   int len);
 
-void		ft_change_cmds(t_commande *list_commande, int i);
+void		ft_change_cmds(t_commande *list_commande, int *i);
 
 void ft_is_in_quote_split(const char *str, t_split *s);
 
@@ -388,9 +388,10 @@ char	*ft_db_array_join(char **strings, int count)
     int		i;
     char	*result;
     int		len;
-
+    
     if (strings == NULL || count == 0)
     {
+        printf(" c est ici \n");
         return (NULL);
     }
     total_len = 0;
@@ -435,9 +436,10 @@ void	change_cmd_list(t_commande *list_commande)
             while (list_commande->cmd[i])
             {
                 printf("$$$$$$$$$$ %s /n",list_commande->cmd[i]);
-                ft_change_cmds(list_commande, i);
-                i++;
+                ft_change_cmds(list_commande, &i);
             }
+            list_commande->cmd = ft_clean_null_db_array(list_commande->cmd, &i);
+ 
             list_commande = list_commande->next;
         }
         else
@@ -445,28 +447,39 @@ void	change_cmd_list(t_commande *list_commande)
     }
 }
 
-void	ft_change_cmds(t_commande *list_commande, int i)
+void	ft_change_cmds(t_commande *list_commande, int *i)
 {
     char	**arg_to_unquote;
     int		*type_arg_to_unquote;
     int		nb_arg_to_unquote;
     char	**no_quote_args;
 
-    arg_to_unquote = ft_lexeur(list_commande->cmd[i]);
+    arg_to_unquote = ft_lexeur(list_commande->cmd[*i]);
     nb_arg_to_unquote = ft_db_arr_len(arg_to_unquote);
     type_arg_to_unquote = ft_get_info_args2(arg_to_unquote,
                                             &nb_arg_to_unquote);
     no_quote_args = kick_quote(type_arg_to_unquote,
                                nb_arg_to_unquote,
                                arg_to_unquote);
-    printf("\033[1;36mno_quote_args[%d] = %s\n\033[0m", 0, no_quote_args[0]);
+                               int y = 0;
+    while (no_quote_args[y])
+    {
+        printf("\033[1;36mno_quote_args[%d] = %s\n\033[0m", y, no_quote_args[y]);
+        y++;
+    }                       
     free_db_array(arg_to_unquote);
-    free(list_commande->cmd[i]);
-    list_commande->cmd[i] = ft_db_array_join(no_quote_args,
+    free(list_commande->cmd[*i]);
+    if (no_quote_args != NULL)
+    {  
+        list_commande->cmd[*i] = ft_db_array_join(no_quote_args,
                                              ft_db_arr_len(no_quote_args));
-   
+        printf("\033[1;36mlist_commande->cmd[%d] = %s\n\033[0m", *i, list_commande->cmd[*i]);  
+
+    }                        
+    
     free_db_array(no_quote_args);
     free(type_arg_to_unquote);
+     *i = *i + 1; 
 }
 
 t_commande	*cmd_complete(t_token *token)

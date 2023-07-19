@@ -503,15 +503,14 @@ void	int_handler(int sig)
 	int	infile;
 
 	infile = 0;
-	if (g_code_exit >= 1000)
+	if (g_code_exit >= CHILD)
 	{
 		infile = g_code_exit - 1000;
 		close(infile);
 		exit(0);
-		printf("hello\n");
 		g_code_exit = 998;
 	}
-	else if (sig == SIGINT && g_code_exit != 355)
+	else if (sig == SIGINT && g_code_exit != FORK)
 	{
 		printf("\n");
 		rl_on_new_line();
@@ -523,13 +522,12 @@ void	int_handler(int sig)
 
 void	quit_handler(int sig)
 {
-	if (sig == SIGQUIT && g_code_exit >= 1000 && g_code_exit != 355)
+	if (sig == SIGQUIT && g_code_exit >= CHILD && g_code_exit != FORK)
 	{
 		if (rl_line_buffer && ft_strlen(rl_line_buffer) > 0)
 		{
 			ft_fprintf(2, "Quit (core dumped)\n");
-			ft_fprintf(2, "ft_strlen(rl_line_buffer) = %d",
-				ft_strlen(rl_line_buffer));
+				ft_strlen(rl_line_buffer);
 			exit(131);
 		}
 		else
@@ -539,7 +537,7 @@ void	quit_handler(int sig)
 			rl_redisplay();
 		}
 	}
-	if (sig == SIGQUIT && g_code_exit >= 999)
+	if (sig == SIGQUIT && g_code_exit >= CHILD)
 	{
 		rl_on_new_line();
 		rl_replace_line("", 0);

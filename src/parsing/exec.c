@@ -361,7 +361,7 @@ char *for_test(char *test, char *argv)
 	}
 	str[i] = '/';
 	i++;
-	while (argv[y] != ' ' && argv[y])
+	while (argv[y])
 	{
 		str[i] = argv[y];
 		i++;
@@ -396,7 +396,7 @@ int find_path(char **path, char *cmd, t_exec *info)
 		if (path[info->i])
 			free(test);
 	}
-	info->path_cmd = test;
+	info->path_cmd = NULL;
 	return (1);
 }
 
@@ -469,7 +469,9 @@ void null_cmd(t_exec *info)
 int exec_cmd(t_exec *info, char ***env, char **cmd)
 {
 	int exec_bultins;
-
+	g_code_exit = CSIGINT;
+	
+	
 	if (info->fd_infile != 0)
 	{
 		dup2(info->fd_infile, 0);
@@ -486,6 +488,7 @@ int exec_cmd(t_exec *info, char ***env, char **cmd)
 	}
 	if (cmd[0] == NULL)
 		null_cmd(info);
+	printf ("cmd[0] before execve == %s \n",info->path_cmd);
 	if (execve(info->path_cmd, cmd, *env) == -1)
 	{
 		free(info->path_cmd);
@@ -494,6 +497,7 @@ int exec_cmd(t_exec *info, char ***env, char **cmd)
 		ft_free_g_parsing_total(info->g_parsing);
 		return (exit(g_code_exit), -1);
 	}
+	printf("in exec_cmd !! \n");
 	g_code_exit = SUCCESS;
 	return (1);
 }
@@ -671,6 +675,9 @@ int close_last(t_exec *info)
 		close(info->fd_in_last_pipe);
 	while (waitpid(-1, &g_code_exit, 0) != -1)
 		;
+	printf(" g_code_exit sortie de wait = %d", g_code_exit);
+	if (g_code_exit == 2)
+		g_code_exit = CSIGINT;
 	if (g_code_exit > 255)
 		g_code_exit = g_code_exit / 256;
 	return (1);
@@ -724,6 +731,8 @@ void close_for_solo_and_free(t_exec *info)
 	while (waitpid(-1, &g_code_exit, 0) != -1 || g_code_exit == 355)
 		;
 	printf(" g_code_exit sortie de wait = %d", g_code_exit);
+	if (g_code_exit == 2)
+		g_code_exit = CSIGINT;
 	if (g_code_exit > 255)
 		g_code_exit = g_code_exit / 256;
 	if ((info->infile || info->limiteur) && info->fd_infile > 0)
@@ -755,8 +764,6 @@ int solo_exec(char **cmd, t_exec *info, char ***env)
 {
 	pid_t pid;
 
-	printf("cmd[0] in exec = %s", cmd[0]);
-	printf("cmd[1] in exec = %s", cmd[1]);
 	if (file_solo(info) < 0)
 	{
 		close_for_solo_and_free(info);
@@ -776,7 +783,7 @@ int solo_exec(char **cmd, t_exec *info, char ***env)
 			if (info->outfile)
 				close(info->fd_outfile);
 			if (exec_cmd(info, env, cmd) == 1)
-				return (1);
+				return (-1);
 		}
 	}
 	close_for_solo_and_free(info);
@@ -907,6 +914,8 @@ void exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pa
 			free_list_tokens(info_token);
 			free_name_file(&exec);
 			free_db_array(exec.path);
+			ft_free_g_parsing_total(*g_pars);
+			exit(NOTFOUND);
 			return;
 		}
 		commande = commande->next;
@@ -937,7 +946,4 @@ void exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pa
 		}
 	}
 	free_db_array(exec.path);
-	// ft_free_g_parsing_process(*g_pars);
-	// ft_free_g_parsing(*g_pars);
-	// exit(g_code_exit);
 }

@@ -68,6 +68,8 @@ int	ft_get_len_name(const char *arg, int i)
 	int		in_quote;
 
 	in_quote = 0;
+	if (arg == NULL)
+		return(i);
 	while (arg[i] != '=' && arg[i] != '\0')
 	{
 		if (arg[i] == '"' || arg[i] == '\'')
@@ -408,7 +410,8 @@ int	ft_is_alnum(char c)
 bool	ft_check_name(char *name)
 {
 	int	i;
-
+	if (name == NULL)
+		return (false);
 	if (!ft_is_alpha(name[0]) && name[0] != '_')
 	{
 		return (false);
@@ -461,7 +464,6 @@ int	ft_check_no_args(char **args, t_global_exec **g_exec)
 			printf("%s\n", (*g_exec)->export[i]);
 			i++;
 		}
-		g_code_exit = SUCCESS;
 		return (1);
 	}
 	return (0);
@@ -472,6 +474,8 @@ int	ft_check_solo_invalid_arg(char *args)
 	char	*invalid_chars;
 
 	invalid_chars = "=+%?-@!*#$&(){}[]^~|\\<>;,./123456789";
+	if (args == NULL)
+		return (0);
 	if (args[0] == '\0' || ft_strchr(invalid_chars, args[0]) != NULL)
 	{
 		if (args[0] == '-' && args[1] != '\0')
@@ -505,10 +509,10 @@ void	builtin_export(char **args, char ***env, t_global_exec **g_exec)
 	int	nb_args;
 
 	nb_args = ft_db_tablen(args);
+	g_code_exit = SUCCESS;
 	if (ft_check_export_err(args, g_exec, nb_args))
 		return ;
 	ft_do_export(args, env, g_exec);
-	g_code_exit = SUCCESS;
 }
 
 void	ft_do_export(char *const *args, char ***env, t_global_exec **g_exec)
@@ -538,7 +542,6 @@ void	ft_do_export(char *const *args, char ***env, t_global_exec **g_exec)
 		i++;
 	}
 	ft_free_export_var(name, value, full_clean_str);
-	g_code_exit = SUCCESS;
 }
 
 int	ft_get_name(char *full_clean_str, int *i, char **name)
@@ -547,8 +550,13 @@ int	ft_get_name(char *full_clean_str, int *i, char **name)
 	if (!ft_check_name((*name)))
 	{
 		g_code_exit = ERROR;
-		ft_fprintf(2, "minishell: export: `%s': not a valid identifier\n",
-			full_clean_str);
+		if (*name != NULL)
+		{
+			ft_fprintf(2, "minishell: export: `%s': not a valid identifier\n",
+				full_clean_str);
+		}
+		else
+			ft_fprintf(2, "minishell: export: `': not a valid identifier\n");
 		(*i)++;
 		return (0);
 	}
