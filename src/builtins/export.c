@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 02:56:40 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/17 18:52:14 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/20 00:09:27 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,8 @@ int	ft_get_len_name(const char *arg, int i)
 		else
 			i++;
 	}
+	if (arg[i] == '=')
+		i++;
 	return (i);
 }
 
@@ -121,7 +123,7 @@ char	*ft_get_env_to_add(char *name, char *value)
 	int		i;
 	int		j;
 
-	new_env = (char *)malloc((ft_strlen(name) + ft_strlen(value) + 2)
+	new_env = (char *)malloc((ft_strlen(name) + ft_strlen(value) + 1)
 			* sizeof(char));
 	i = 0;
 	while (name[i] != '\0')
@@ -134,8 +136,8 @@ char	*ft_get_env_to_add(char *name, char *value)
 		new_env[i] = '\0';
 		return (new_env);
 	}
-	new_env[i] = '=';
-	i++;
+	// new_env[i] = '=';
+	// i++;
 	j = 0;
 	while (value[j] != '\0')
 		new_env[i++] = value[j++];
@@ -143,14 +145,50 @@ char	*ft_get_env_to_add(char *name, char *value)
 	return (new_env);
 }
 
+char *get_current_name(char *long_name)
+{
+	// enlever les 7 premier character de longname
+	char *long_name_cpy;
+	long_name_cpy = ft_strdup(&long_name[7]);
+	char *solo_name;
+	int	len_solo;
+	int i;
+
+	len_solo = 0;
+	solo_name = NULL;
+	while(long_name_cpy[len_solo] != '\0' && long_name_cpy[len_solo] != '=')
+		len_solo++;
+	if (long_name_cpy[len_solo] == '=')
+		len_solo++;
+    if (len_solo == ft_strlen(long_name_cpy))
+		return (long_name_cpy);
+	solo_name = malloc(sizeof(char) * len_solo + 1);
+	i = 0;
+	while(long_name_cpy[i] != '\0' && long_name_cpy[i] != '=')
+	{
+		solo_name[i] = long_name_cpy[i];
+		i++;
+	}
+	if (long_name_cpy[i] == '=')
+		solo_name[i++] = '=';
+	solo_name[i] = '\0';
+	free(long_name_cpy);
+	return (solo_name);
+}
+
 char	**ft_add_to_db_tab_export(char **tab, char *str, char *name)
 {
 	int		i;
 	char	**new_tab;
 	int		db_tablen;
-	int		len_name;
+	char	*name_copy;
+	char	*name_s_equal;
+	char 	*current_name;
+	int 	found;
 
 	i = 0;
+	found = 0;
+	current_name = NULL;
 	if (tab == NULL)
 	{
 		new_tab = malloc(sizeof(char *) * 2);
@@ -159,10 +197,36 @@ char	**ft_add_to_db_tab_export(char **tab, char *str, char *name)
 		return (new_tab);
 	}
 	db_tablen = ft_db_tablen(tab);
-	len_name = ft_strlen(name);
-	while (tab[i] != NULL && ft_strncmp(&tab[i][7], name,
-			len_name) != 0)
+	name_copy = ft_strdup(name);
+	if (name_copy[ft_strlen(name_copy) - 1] == '=')
+		name_s_equal = ft_substr(name_copy, 0, ft_strlen(name_copy) - 1);
+	else
+		name_s_equal = ft_strdup(name_copy);
+	free(name_copy);
+	while (tab[i] != NULL)
+	{
+		current_name = get_current_name(tab[i]);
+		if (ft_strncmp(current_name, name, ft_strlen(name)) == 0)
+			found = 1;
+		// printf("\033[0;31m current_name = %s | name_s_equal = %s \033[0m\n", current_name, name_s_equal);
+		if(ft_strcmp(current_name, name_s_equal) == 0)
+			found = 1;
+		if (found == 1)
+			break;
 		i++;
+		free(current_name);
+		current_name = NULL;
+	}
+	if (current_name != NULL)
+		free(current_name);
+	// printf("\033[0;31m found = %d \033[0m\n", found);
+	// printf("\033[0;31m name_s_equal = %s \033[0m\n", name_s_equal);
+	if (found == 1 && name_s_equal[ft_strlen(name) - 1] == '=')
+	{
+		free(str);
+		return (tab);
+	}
+	free(name_s_equal);
 	if (tab[i] != NULL && ft_strchr(str, '=') == NULL)
 	{
 		free(str);
@@ -223,7 +287,6 @@ char	**ft_add_to_db_tab(char **tab, char *str, char *name)
 char	**ft_get_new_tab(char **tab, char *str, int i, int db_tablen)
 {
 	char	**new_tab;
-
 	if (i < db_tablen)
 	{
 		free(tab[i]);
@@ -277,7 +340,7 @@ char	*ft_clean_quote_str(char *value)
 	ft_bzero(new_value, len + 1);
 	if (new_value == NULL)
 		return (NULL);
-	ft_remove_qt_value(value, new_value, i, j); // a voir si remplacer par kick quotes
+	ft_remove_qt_value(value, new_value, i, j);
 	cleaned_value = ft_strdup(new_value);
 	free(new_value);
 	return (cleaned_value);
@@ -346,6 +409,13 @@ void	ft_add_env(char *name, char *value, char ***env, t_global_exec **g_exec)
 		value_cpy = ft_strdup(value);
 	value_for_export = get_value_for_export(value_cpy);
 	env_to_add_export = ft_get_env_to_add(name, value_for_export);
+	// si env_to_add_export fini par = et que value_for_export est null, alors value_for_export = ""
+	if (env_to_add_export[ft_strlen(env_to_add_export) - 1] == '=' && value_for_export == NULL)
+	{
+		free(env_to_add_export);
+		value_for_export = ft_strdup("\"\"");
+		env_to_add_export = ft_get_env_to_add(name, value_for_export);
+	}
 	free(value_cpy);
 	if (value == NULL)
 	{
@@ -546,8 +616,17 @@ void	ft_do_export(char *const *args, char ***env, t_global_exec **g_exec)
 
 int	ft_get_name(char *full_clean_str, int *i, char **name)
 {
+	char *name_to_check;
 	(*name) = get_name(full_clean_str);
-	if (!ft_check_name((*name)))
+	name_to_check = NULL;
+	if (*name != NULL)
+	{
+		if ((*name)[ft_strlen((*name)) - 1] == '=')
+			name_to_check = ft_substr((*name), 0, ft_strlen((*name)) - 1);
+		else
+			name_to_check = ft_strdup((*name));
+	}
+	if (!ft_check_name(name_to_check))
 	{
 		g_code_exit = ERROR;
 		if (*name != NULL)
@@ -558,8 +637,10 @@ int	ft_get_name(char *full_clean_str, int *i, char **name)
 		else
 			ft_fprintf(2, "minishell: export: `': not a valid identifier\n");
 		(*i)++;
+		free(name_to_check);
 		return (0);
 	}
+	free(name_to_check);
 	return (1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 04:16:16 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/10 14:51:56 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/19 23:54:00 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	ft_strncmp(char *s1, char *s2, unsigned int n)
 
 	r = 0;
 	i = 0;
-	while ((s1[i] || s2[i]) && r == 0 && i < n)
+	while (r == 0 && i < n && (s1[i] != '\0' || s2[i] != '\0'))
 	{
 		if (s1[i] != s2[i])
 		{

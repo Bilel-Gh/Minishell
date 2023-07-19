@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/18 23:16:23 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/20 00:22:10 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -396,7 +396,7 @@ int find_path(char **path, char *cmd, t_exec *info)
 		if (path[info->i])
 			free(test);
 	}
-	info->path_cmd = NULL;
+	info->path_cmd = test;
 	return (1);
 }
 
@@ -470,8 +470,8 @@ int exec_cmd(t_exec *info, char ***env, char **cmd)
 {
 	int exec_bultins;
 	g_code_exit = CSIGINT;
-	
-	
+
+
 	if (info->fd_infile != 0)
 	{
 		dup2(info->fd_infile, 0);
@@ -677,7 +677,7 @@ int close_last(t_exec *info)
 		;
 	printf(" g_code_exit sortie de wait = %d", g_code_exit);
 	if (g_code_exit == 2)
-		g_code_exit = CSIGINT;
+		g_code_exit = CSIGINT; // ! TODO ERROR code d'erreur modifie builtins
 	if (g_code_exit > 255)
 		g_code_exit = g_code_exit / 256;
 	return (1);
@@ -731,7 +731,7 @@ void close_for_solo_and_free(t_exec *info)
 	while (waitpid(-1, &g_code_exit, 0) != -1 || g_code_exit == 355)
 		;
 	printf(" g_code_exit sortie de wait = %d", g_code_exit);
-	if (g_code_exit == 2)
+	if (g_code_exit == 2) // ! TODO ERROR code d'erreur modifie builtins
 		g_code_exit = CSIGINT;
 	if (g_code_exit > 255)
 		g_code_exit = g_code_exit / 256;
