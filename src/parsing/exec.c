@@ -396,6 +396,7 @@ int find_path(char **path, char *cmd, t_exec *info)
 		if (path[info->i])
 			free(test);
 	}
+	free(test);
 	info->path_cmd = NULL;
 	return (1);
 }
