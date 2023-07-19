@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:10:02 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/19 00:51:14 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/19 21:04:23 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,42 +37,48 @@ char *expand_exit_code(char *expande)
 		i++;
 	}
 	expand[j] = 0;
+	free(expande);
+	free(nb_exit_code);
 	return (expand);
 }
 
-char	*traslate_expand(char *arg_ct, char *ext_exp, int size_ext, char **env)
+char	*traslate_expand(char *arg_ct, char *ext_exp, int *i, char **env)
 {
 	char	*get_expande;
 	char	*new_args;
 	char	*exit_code;
-
+	int		size_ext;
 	exit_code = NULL;
 	new_args = NULL;
 	get_expande = NULL;
+
+	size_ext = ft_size_of_expende(&arg_ct[*i]);
 	if (ext_exp[0] == '?')
 	{
 		exit_code = expand_exit_code(ext_exp);
 		get_expande = exit_code;
+		new_args = join_and_rp_args(arg_ct, get_expande, size_ext, i);
+		return (free(get_expande), new_args);
 	}
 	else
 		get_expande = give_env_expand(ext_exp, size_ext, env);
 	if (get_expande)
 	{
 		printf("\n my extratc yes\n");
-		new_args = join_and_rp_args(arg_ct, get_expande, size_ext);
+		new_args = join_and_rp_args(arg_ct, get_expande, size_ext, i);
 		return (new_args);
 	}
 	else
 	{
 		printf("\n my extratc no\n");
-		new_args = join_and_rp_args(arg_ct, NULL, size_ext);
+		new_args = join_and_rp_args(arg_ct, NULL, size_ext, i);
 		printf ("nil ? = %s", new_args);
 		return (new_args);
 	}
 
 }
 
-char	*replace_expande(char *args, int i, char **env, int *info)
+char	*replace_expande(char *args, int *i, char **env, int *info)
 {
 	char	*expend_recherche;
 	int		size_of_expende;
@@ -80,13 +86,13 @@ char	*replace_expande(char *args, int i, char **env, int *info)
 
 	*info = 0;
 	new_args = NULL;
-	size_of_expende = ft_size_of_expende(&args[i]);
-	if (size_of_expende < 2)
-		return (*info = 1, args);
+	size_of_expende = ft_size_of_expende(&args[*i]);
+	// if (size_of_expende < 2)
+	// 	return (*info = 1, args);
 	printf("size = %d\n \n ", size_of_expende);
-	expend_recherche = get_expende_detect(size_of_expende , &args[i]);
-	printf("expend_recherche == %s\n \n", expend_recherche);
-	new_args = traslate_expand(args, expend_recherche, size_of_expende, env);
+	expend_recherche = get_expende_detect(size_of_expende , &args[*i]);
+//	printf("expend_recherche == %s\n \n", expend_recherche);
+	new_args = traslate_expand(args, expend_recherche, i, env);
 	return (new_args);
 }
 
@@ -104,26 +110,24 @@ char	*importe_expande(char *args, char **env)
 	while (args[i])
 	{
 		info = 0;
-		printf("in importe_expande args[%d] = %c \n", i ,args[i]);
+	//	printf("in importe_expande args[%d] = %c \n", i ,args[i]);
 		if (args[i] == '$' && back_slach(args, i))
 		{
 			printf("args ________ %s\n", args);
 			tmp = ft_strdup(args);
-			new_args = replace_expande(tmp, i, env, &info);
+			new_args = replace_expande(tmp, &i, env, &info);
 			printf(" replace_expande ______ %s\n", new_args);
 			free(args);
 			if (new_args == NULL)
 				return (free(tmp), new_args);
 			args = new_args;
-			if (info != 1)
-				i = 0;
-			else
-				i++;
+				//i++;
 		}
 		else
 			i++;
 		if (new_args == NULL)
 			new_args = args;
+		printf("i = %d", i);
 	}
 	return (new_args);
 }
@@ -305,7 +309,9 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 	while (i < *nb_args)
 	{
 		printf("######### (*g_pars)->args[i] = %s \n", (*g_pars)->args[i]);
-		if ((*type_args)[i] == ALPHANUM || (*type_args)[i] == QUOTE_D)
+		if ((*type_args)[i] == QUOTE_S )
+			i++;
+		if (i < *nb_args && ((*type_args)[i] == ALPHANUM || (*type_args)[i] == QUOTE_D))
 		{
 
 			if (have_expande((*g_pars)->args[i]))
@@ -344,7 +350,8 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars, char **en
 			}
 		}
 		printf("&&&&&&&& %s &&&&&&\n",(*g_pars)->args[i]);
-		i++;
+		if(i < *nb_args)
+			i++;
 	}
 	(*g_pars)->args = ft_clean_null_db_array((*g_pars)->args, nb_args);
 	new_type_args = ft_get_info_args((*g_pars)->args, nb_args);

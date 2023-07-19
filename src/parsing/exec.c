@@ -396,8 +396,7 @@ int find_path(char **path, char *cmd, t_exec *info)
 		if (path[info->i])
 			free(test);
 	}
-	free(test);
-	info->path_cmd = NULL;
+	info->path_cmd = test;
 	return (1);
 }
 
@@ -489,7 +488,7 @@ int exec_cmd(t_exec *info, char ***env, char **cmd)
 	}
 	if (cmd[0] == NULL)
 		null_cmd(info);
-	printf ("cmd[0] before execve == %s \n",info->path_cmd);
+	//printf ("cmd[0] before execve == %s \n",info->path_cmd);
 	if (execve(info->path_cmd, cmd, *env) == -1)
 	{
 		free(info->path_cmd);

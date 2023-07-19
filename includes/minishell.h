@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 17:35:26 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/19 20:25:58 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,7 +239,7 @@ void						expande(int **type_args, int *nb_args,
 								t_global_parsing **g_pars, char **env);
 bool						back_slach(char *args, int i);
 char						*join_and_rp_args(char *args_con, char *expande,
-								int size_extract);
+								int size_extract, int *info);
 char						*give_env_expand(char *expande_search, int size,
 								char **env);
 char						*give_env_expand(char *expande_search, int size,
