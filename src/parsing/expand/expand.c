@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:10:02 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/18 22:32:10 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/19 00:51:14 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,7 +195,7 @@ int ft_nb_args_out_null(char **old_arg, int size_db_arr)
 	new_size = 0;
 	while (i < size_db_arr)
 	{
-		if (old_arg[i] == 0)
+		if (old_arg[i] == 0 || !old_arg[i][0])
 			i++;
 		else if ( old_arg[i][0] == ' ' && old_arg[i + 1] == NULL && (i + 2 < size_db_arr) && old_arg[i + 2][0] == ' ')
 			i = i + 2;
@@ -227,6 +227,8 @@ char **ft_clean_null_db_array(char **old_arg, int *size_db_arr)
 		if (old_arg[i] == 0)
 			free(old_arg[i]);
 		else if ( old_arg[i][0] == ' ' && old_arg[i + 1] == NULL && (i + 2 < *size_db_arr) && old_arg[i + 2][0] == ' ')
+			free(old_arg[i]);
+		else if (!old_arg[i][0])
 			free(old_arg[i]);
 		else if (old_arg[i] != 0)
 		{

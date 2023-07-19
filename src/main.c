@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/18 13:40:42 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/19 01:16:41 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,29 +141,37 @@ void	ft_check_not_found(char **cmd)
 {
 	struct stat	path_stat;
 
-	if (lstat(cmd[0], &path_stat) == 0)
-	{
-		if (path_stat.st_mode & S_IFDIR)
-		{
-			ft_fprintf(2, "bash: %s: is a directory: \n", cmd[0]);
-			g_code_exit = CANTEXEC;
-		}
-		else if(errno == 8)
-		{
-			ft_fprintf(2, "bash: %s: Permission denied\n", cmd[0]);
-			g_code_exit = CANTEXEC;
-		}
-		else
-		{
-			ft_fprintf(2, "bash: %s: command not found\n", cmd[0]);
-			g_code_exit = NOTFOUND;
-		}
-	}
-	else
-	{
-		ft_fprintf(2, "bash: %s: command not found\n", cmd[0]);
-		g_code_exit = NOTFOUND;
-	}
+    if (lstat(cmd[0], &path_stat) == 0)
+    {
+        // Le fichier ou répertoire existe
+        if (S_ISDIR(path_stat.st_mode))
+        {
+            ft_fprintf(2, "bash: %s: is a directory\n", cmd[0]);
+            g_code_exit = CANTEXEC;
+        }
+        else if (errno == EACCES)
+        {
+            ft_fprintf(2, "bash: %s: Permission denied\n", cmd[0]);
+            g_code_exit = CANTEXEC;
+        }
+        else
+        {
+            ft_fprintf(2, "bash: %s: command not found\n", cmd[0]);
+            g_code_exit = NOTFOUND;
+        }
+    }
+    else if (errno == ENOENT)
+    {
+        // Le fichier ou répertoire n'existe pas
+        ft_fprintf(2, "bash: %s: command not found\n", cmd[0]);
+        g_code_exit = NOTFOUND;
+    }
+    else
+    {
+        // Autre erreur lors de l'appel à lstat
+        ft_fprintf(2, "bash: %s: error: %s\n", cmd[0], strerror(errno));
+        g_code_exit = ERROR; // À définir selon votre gestion des codes d'erreur
+    }
 }
 
 void	ft_check_error_exec(char **cmd)
@@ -253,12 +261,12 @@ int	ft_custom_error(char **args)
 	}
 	if (g_code_exit == ERROR_QUOTE_D)
 	{
-		ft_fprintf(2, "bash: unclosed quote : '\"'\n");
+		ft_fprintf(2, "bash: command not found (unclosed quote) : '\"'\n");
 		return (1);
 	}
 	if (g_code_exit == ERROR_QUOTE_S)
 	{
-		ft_fprintf(2, "bash: unclosed quote : '\''\n");
+		ft_fprintf(2, "bash: command not found (unclosed quote) : '\''\n");
 		return (1);
 	}
 	return (0);
@@ -304,7 +312,7 @@ void	minishell_loop(char ***env, t_global_exec *g_exec,
 
 int	ft_general_error(t_global_parsing *g_parsing)
 {
-	if (strlen(g_parsing->line) == 0 || ft_strcmp(g_parsing->line, ":") == 0
+	if (ft_strlen(g_parsing->line) == 0 || ft_strcmp(g_parsing->line, ":") == 0
 		|| ft_strcmp(g_parsing->line, ";") == 0
 		|| is_only_space(g_parsing->line) == 1)
 	{
@@ -321,14 +329,14 @@ void	ft_do_exec(char ***env, t_global_parsing *g_parsing, int nb_args)
 	ft_set_index_for_exec(&g_parsing->tokens);
 
 
-	// DEBUG
-	int z = 0;
-	while (g_parsing->commande->cmd[z] != NULL)
-	{
-		printf("\033[1;36mcmd[%d] = %s\n\033[0m", z,
-				g_parsing->commande->cmd[z]);
-		z++;
-	}
+	// // DEBUG
+	// int z = 0;
+	// while (z < nb_args)
+	// {
+	// 	printf("\033[1;36mcmd[%d] = %s\n\033[0m", z,
+	// 			g_parsing->commande->cmd[z]);
+	// 	z++;
+	// }
 	t_token	*head = g_parsing->tokens;
 	while (g_parsing->tokens)
 	{

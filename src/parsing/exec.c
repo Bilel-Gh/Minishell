@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/18 16:43:15 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/18 23:16:23 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -481,6 +481,7 @@ int exec_cmd(t_exec *info, char ***env, char **cmd)
 		free(info->path_cmd);
 		ft_free_g_parsing_total(info->g_parsing);
 		printf("errno = %d\n", errno);
+		printf("\033[1;35mERRNO BUILTINS = %d\n\033[0m", errno);
 		return (exit(g_code_exit), -1);
 	}
 	if (cmd[0] == NULL)
@@ -489,7 +490,7 @@ int exec_cmd(t_exec *info, char ***env, char **cmd)
 	{
 		free(info->path_cmd);
 		ft_check_error_exec(cmd);
-		printf("errno = %d , g_exit_code = %d\n", errno, g_code_exit);
+		printf("\033[1;33mERRNO EXEC = %d\n\033[0m", errno);
 		ft_free_g_parsing_total(info->g_parsing);
 		return (exit(g_code_exit), -1);
 	}
@@ -896,7 +897,6 @@ void exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pa
 	printf("nb_exec = %d\n", exec.nb_cmd);
 	if (exec.nb_cmd == 1)
 	{
-		printf("kdhskakhsdkjhjfksdhsdjkfhdf\n");
 		info_token = get_info_token(tokens, i);
 		if (!info_token)
 			return;

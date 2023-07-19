@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 20:43:23 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/12 22:47:14 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/19 00:57:36 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	give_sp_args_redi(char *args, int *type_args, int pos)
 {
 	int	size_args;
 
-	size_args = strlen(args);
+	size_args = ft_strlen(args);
 	if (size_args == 1 && args[0] == '<')
 		type_args[pos] = 2;
 	else if (size_args == 2 && args[0] == '<')

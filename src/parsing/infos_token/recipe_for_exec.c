@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 22:49:57 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/18 05:28:40 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/19 00:44:21 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,7 +303,6 @@ void	add_cmd_to_list_commande(t_commande *list_commande, char **cmd_join)
     while (list_cmd)
     {
         list_cmd->cmd = ft_custom_split(cmd_join[i]);
-        printf("custom split %d = %s", i, list_cmd->cmd[i]);
         i++;
         if (list_cmd->next == 0)
             break ;
@@ -459,6 +458,7 @@ void	ft_change_cmds(t_commande *list_commande, int i)
     no_quote_args = kick_quote(type_arg_to_unquote,
                                nb_arg_to_unquote,
                                arg_to_unquote);
+    printf("\033[1;36mno_quote_args[%d] = %s\n\033[0m", 0, no_quote_args[0]);
     free_db_array(arg_to_unquote);
     free(list_commande->cmd[i]);
     list_commande->cmd[i] = ft_db_array_join(no_quote_args,

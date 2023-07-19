@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:13:01 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/13 12:54:25 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/19 00:57:58 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,12 +150,12 @@ char	*join_and_rp_args(char *args_con, char *expande, int s_extract)
 
 	expande_in = false;
 	i = 0;
-	i = strlen(args_con) - s_extract;
+	i = ft_strlen(args_con) - s_extract;
 	printf (" size for null = %d\n", i);
 	i = 0;
 	j = 0;
 	new_args = NULL;
-	if ((strlen(args_con) - (s_extract + 1) == 0) && (expande == NULL))
+	if ((ft_strlen(args_con) - (s_extract + 1) == 0) && (expande == NULL))
 		return (new_args);
 	printf("expande = %s\n", expande);
 	printf("s_extract = %d\n", s_extract);
