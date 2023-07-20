@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/20 00:22:10 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/20 01:34:35 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -470,8 +470,9 @@ int exec_cmd(t_exec *info, char ***env, char **cmd)
 {
 	int exec_bultins;
 	g_code_exit = CSIGINT;
+	char *path;
 
-
+	path = ft_getenv("PATH", *env);
 	if (info->fd_infile != 0)
 	{
 		dup2(info->fd_infile, 0);
@@ -492,9 +493,16 @@ int exec_cmd(t_exec *info, char ***env, char **cmd)
 	if (execve(info->path_cmd, cmd, *env) == -1)
 	{
 		free(info->path_cmd);
-		ft_check_error_exec(cmd);
+		if (path == NULL)
+		{
+			ft_fprintf(2, "bash: %s: No such file or directory\n", cmd[0]);
+			g_code_exit = NOTFOUND;
+		}
+		else
+			ft_check_error_exec(cmd);
 		printf("\033[1;33mERRNO EXEC = %d\n\033[0m", errno);
 		ft_free_g_parsing_total(info->g_parsing);
+		free(path);
 		return (exit(g_code_exit), -1);
 	}
 	printf("in exec_cmd !! \n");
