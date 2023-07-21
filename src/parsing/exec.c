@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/21 02:57:18 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/21 15:45:03 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -883,7 +883,7 @@ void free_name_file(t_exec *exec)
 }
 void ft_free_g_parsing_total(t_global_parsing *g_parsing)
 {
-	//    rl_clear_history();
+	rl_clear_history();
 	if (g_parsing->line)
 		free(g_parsing->line);
 	if (g_parsing->args)

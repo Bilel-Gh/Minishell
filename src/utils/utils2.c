@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 22:52:58 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/26 16:07:44 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/21 15:03:51 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,16 @@ void	free_db_array(char **array)
 	int	i;
 
 	i = 0;
-	if (array == NULL)
-		return ;
-	while (array[i])
-	{
-        if (array[i][0] != '\0')
-			free(array[i]);
-		i++;
-	}
-	free(array);
-	array = 0;
+    if (array == NULL)
+        return;
+    while (array[i]) {
+        if (array[i][0] != '\0') {
+            free(array[i]);
+            array[i] = NULL;
+        }
+        i++;
+    }
+    free(array);
 }
 
 int	ft_strcmp(char *s1, char *s2)

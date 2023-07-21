@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/21 07:18:37 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/21 15:04:10 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	ft_init_global_parsing(t_global_parsing *g_parsing)
 
 void	ft_free_g_parsing(t_global_parsing *g_parsing)
 {
-	//    rl_clear_history();
+	rl_clear_history();
 	if (g_parsing->line)
 		free(g_parsing->line);
 	if (g_parsing->args)
@@ -57,15 +57,6 @@ void	ft_free_g_parsing(t_global_parsing *g_parsing)
 		free_list_tokens(g_parsing->tokens);
 	if (g_parsing->commande)
 		free_list_commande(g_parsing->commande);
-	//ft_bzero(g_parsing, sizeof(t_global_parsing));
-	//    if (g_parsing->env_cpy_ptr && *(g_parsing->env_cpy_ptr))
-	//        free_db_array(*(g_parsing->env_cpy_ptr));
-	//    if (g_parsing->exec)
-	//    {
-	//        if (g_parsing->exec->export)
-	//            free_db_array(g_parsing->exec->export);
-	//        free(g_parsing->exec);
-	//    }
 }
 
 void	ft_set_index_for_exec(t_token **tokens)
@@ -301,7 +292,10 @@ void	minishell_loop(char ***env, t_global_exec *g_exec,
 		g_parsing->exec = g_exec;
 		g_parsing->line = readline("minishell > ");
 		if (g_parsing->line == NULL)
+		{
+			ft_free_g_parsing_total(g_parsing);
 			break;
+		}
 		rl_replace_line("", 0);
 		if (ft_general_error(g_parsing))
 			continue ;
@@ -561,10 +555,7 @@ int	main(int argc, char **argv, char **env)
 	s_sigaction.sa_handler = quit_handler;
 	sigaction(SIGQUIT, &s_sigaction, NULL);
 	minishell_loop(&env_cpy, g_exec, &g_parsing);
-	printf("jjjj");
 	rl_clear_history();
-	if (env_cpy)
-		free_db_array(env_cpy);
 	rl_catch_signals = 1;
 	return (0);
 }
