@@ -1,3 +1,17 @@
+# export LDFLAGS="-L$(brew --prefix readline)/lib" #                                                                                               ─╯
+# export CPPFLAGS="-I$(brew --prefix readline)/include" #
+
+# /* ~~~~~~~ COMPILING INFO ~~~~~~~ */
+CC = cc
+CFLAGS = -Wall -Werror -Wextra -g3
+# CFLAGS = -Wall -Werror -Wextra -fsanitize=address
+
+IFLAGS:= -I ./includes
+
+# /* ~~~~~~~ LINKING INFO ~~~~~~~ */
+LDFLAGS = -L /Users/bilelgh/homebrew/Cellar/readline/8.2.1/lib #A supprimer
+LDLIBS = -lreadline
+
 # /* ~~~~~~ SOURCES ~~~~~~ */
 SRCS_DIR = ./src/
 SRCS =	main.c \
@@ -7,30 +21,58 @@ OBJS = ${addprefix ${SRCS_DIR}, ${SRCS:.c=.o}}
 # /* ~~~~~~~ UTILS ~~~~~~~ */
 UTILS_DIR = ./src/utils/
 UTILS =	split.c \
+		ft_strjoin.c \
+		utils.c \
+		utils2.c \
+		utils3.c \
+		utils_debug.c \
+		ft_fprintf.c \
 
 OBJS_UTILS = ${addprefix ${UTILS_DIR}, ${UTILS:.c=.o}}
 
+# /* ~~~~~~~ LEXEUR ~~~~~~~ */
+LEXEUR_DIR = ./src/lexeur/
+LEXEUR =	lexeur.c \
+			lexeur2.c \
+			merge_characters.c \
+			merge_characters2.c \
+
+OBJS_LEXEUR = ${addprefix ${LEXEUR_DIR}, ${LEXEUR:.c=.o}}
+
 # /* ~~~~~~~ PARSING ~~~~~~~ */
 PARSING_DIR = ./src/parsing/
-PARSING =	lexeur.c \
+PARSING =	get_info_args.c \
+			parsing.c \
+			join_inter_space.c \
+			kick_quotes.c \
+			/infos_token/get_token_infos.c \
+			/infos_token/infos_utils.c \
+			/infos_token/verif_cmd.c \
+			/infos_token/verif_cmd2.c \
+			/infos_token/recipe_for_exec.c \
+			/error_args/search_error_args.c \
+			/error_args/utils_error_args.c \
+			/expand/expand.c \
+			/expand/expand2.c \
+			/exec.c \
 
 OBJS_PARSING = ${addprefix ${PARSING_DIR}, ${PARSING:.c=.o}}
 
 # /* ~~~~~~~ BUILTINS ~~~~~~~ */
 BUILTINS_DIR = ./src/builtins/
 BUILTINS =	builtins.c \
-			b_export.c \
+			export.c \
+			echo.c \
+			cd.c \
+			env.c \
+			pwd.c \
+			unset.c \
+			exit.c \
 
 OBJS_BUILTINS = ${addprefix ${BUILTINS_DIR}, ${BUILTINS:.c=.o}}
 
 
-
-# /* ~~~~~~~ COMPILING INFO ~~~~~~~ */
-CC = cc
-CFLAGS = -Wall -Werror -Wextra
-IFLAGS:= -I ./includes
-
-# /* ~~~~~~~ OTHER ~~~~~~~ */
+# /* ~~~~~~~ TARGET ~~~~~~~ */
 NAME = minishell
 RM = rm -f
 
@@ -45,19 +87,22 @@ EOC:="\033[0;0m"
 
 all:	${NAME}
 
-$(NAME): $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS)
+$(NAME): $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS)
 	@echo $(CYAN) " - Compiling $@" $(RED)
-	@$(CC) $(CFLAGS) $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS) $(IFLAGS) -o $(NAME) -l readline
+	@$(CC) $(CFLAGS) $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS) $(IFLAGS) $(LDFLAGS) $(LDLIBS) -o $(NAME)
 	@echo $(GREEN) "[OK COMPILED]" $(EOC)
 	@echo $(GREEN) "[LAUNCH PROGRAMM]" $(EOC)
+	@mkdir -p obj
 
 clean:
-		@echo $(PURPLE) "[🧹Cleaning...🧹]" $(EOC)
-		@${RM} ${OBJS} $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS)
+	@echo $(PURPLE) "[🧹Cleaning...🧹]" $(EOC)
+	@${RM} ${OBJS} $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS)
+	@${RM} -r obj
 
 fclean: clean
-		@echo $(PURPLE) "[🧹FCleaning...🧹]" $(EOC)
-		@${RM} ${OBJS} $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_BUILTINS) ${NAME}
+	@echo $(PURPLE) "[🧹FCleaning...🧹]" $(EOC)
+	@${RM} ${NAME}
+
 
 re: 	fclean all
 

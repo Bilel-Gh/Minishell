@@ -1,37 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins.c                                         :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/25 01:44:34 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 05:48:24 by bghandri         ###   ########.fr       */
+/*   Created: 2023/06/17 21:38:03 by bghandri          #+#    #+#             */
+/*   Updated: 2023/07/17 18:46:44 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-char	*ft_substr(char *s, unsigned int start, size_t len)
+void	builtin_env(char **args, char **env)
 {
-	size_t	i;
-	size_t	j;
-	char	*str;
+	int	i;
 
-	str = (char *)malloc(sizeof(*s) * (len + 1));
-	if (!str)
-		return (NULL);
 	i = 0;
-	j = 0;
-	while (s[i])
+	while (ft_strcmp(args[i], "env") == 0)
 	{
-		if (i >= start && j < len)
-		{
-			str[j] = s[i];
-			j++;
-		}
+		if (args[i + 1] == NULL || ft_strcmp(args[i + 1], "env") != 0)
+			break ;
 		i++;
 	}
-	str[j] = 0;
-	return (str);
+	if (args[i + 1] != NULL)
+	{
+		ft_fprintf(2, "env: ʻ%s’: No such file or directory\n", args[i + 1]);
+		ft_fprintf(2, "env: should not have arguments\n");
+		g_code_exit = NOTFOUND;
+		return ;
+	}
+	while (env[i] != NULL)
+	{
+		printf("%s\n", env[i]);
+		i++;
+	}
+	g_code_exit = SUCCESS;
 }
