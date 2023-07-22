@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 03:35:14 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/10 21:18:30 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/22 05:05:26 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ char	**kick_quote(int *type_args, int nb_args, char **args)
 	i = 0;
 	no_quote = malloc(sizeof(char *) * (nb_args + 1));
 	no_quote[nb_args] = 0;
-
 	while (i < nb_args)
 	{
 		if (type_args[i] == QUOTE_D || type_args[i] == QUOTE_S)

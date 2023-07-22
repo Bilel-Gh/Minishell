@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 23:39:03 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 16:52:19 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/21 20:01:46 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,9 +103,9 @@ void	builtin_unset(char **args, char ***env, t_global_exec **g_exec)
 			i++;
 			continue ;
 		}
-		if (!ft_check_name(name) || ft_check_solo_invalid_arg(args[i]) || ft_unset_export(name,
-				(*g_exec)->export) != 0 || ft_is_in_env(name, *env) == 0
-			|| ft_unsetenv(name, env) != 0)
+		if (!ft_check_name(name) || ft_check_solo_invalid_arg(args[i])
+			|| ft_unset_export(name, (*g_exec)->export) != 0
+			|| ft_is_in_env(name, *env) == 0 || ft_unsetenv(name, env) != 0)
 		{
 			if (!ft_check_name(name))
 				ft_is_error_unset(name);

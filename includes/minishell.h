@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/21 04:54:12 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/22 05:01:42 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,60 @@ typedef struct s_global_parsing
 	char 					***env;
 }							t_global_parsing;
 
+typedef struct s_split
+{
+	int		count;
+	char	**result;
+	char	**clean_result;
+	int		space_count;
+	int		i;
+	int		len;
+	int		in_quotes;
+	char	type_inquote;
+	int		start;
+	int		len_str_to_add;
+}			t_split;
+
+typedef struct s_var_add_to_export
+{
+	char	**new_tab;
+	int		db_tablen;
+	char	*name_copy;
+	char	*name_s_equal;
+	char	*current_name;
+	int		found;
+}			t_var_add_to_export;
+
+typedef struct s_expand_join
+{
+	char	*new_args;
+	int		i;
+	int		j;
+	bool	expande_in;
+}			t_expand_join;
+
+typedef struct s_importe_expande
+{
+	char	*tmp;
+	char	*new_args;
+	int		info;
+}			t_importe_expande;
+
+typedef struct s_expande_var
+{
+    int		i;
+    char	*new_args;
+    int		*new_type_args;
+    int *nb_args;
+}			t_expande_var;
+
+typedef struct s_clean_null_var
+{
+	int		nb_new_args;
+	char	**new_args;
+	int		i;
+	int		j;
+}			t_clean_null_var;
 
 int	ft_fprintf(int fd, const char *format, ...);
 

@@ -6,14 +6,16 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 19:57:00 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/10 20:02:51 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/21 22:54:21 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+void	ft_merge_rest(t_token **token_head, t_character **current_char);
+
 void	get_current_charptr(t_character **current_charPtr,
-		t_character *next_char)
+							t_character *next_char)
 {
 	if (next_char)
 		*current_charPtr = next_char;
@@ -105,10 +107,16 @@ t_token	*merge_characters(t_character *head)
 			if (current_char == NULL)
 				return (token_head);
 		}
-        if (current_char->type != ESPACE && current_char->type != QUOTE_D && current_char->type != QUOTE_S)
-		    token_head = ft_group_rest(token_head, &current_char);
+		ft_merge_rest(&token_head, &current_char);
 		if (current_char == NULL)
 			return (token_head);
 	}
 	return (token_head);
+}
+
+void	ft_merge_rest(t_token **token_head, t_character **current_char)
+{
+	if ((*current_char)->type != ESPACE && (*current_char)->type != QUOTE_D
+		&& (*current_char)->type != QUOTE_S)
+		(*token_head) = ft_group_rest((*token_head), current_char);
 }

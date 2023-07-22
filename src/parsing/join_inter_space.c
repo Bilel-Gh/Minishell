@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:49:46 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 16:53:05 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/22 05:05:03 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,6 @@ char	**join_inter_space(char **args, int *type_args, int *nb_args)
 	int		nb_new_args;
 
 	nb_new_args = count_new_args(type_args, *nb_args);
-//	if (nb_new_args == *nb_args)
-//		return (args);
 	i = 0;
 	new_args = malloc(sizeof(char *) * (nb_new_args + 1));
 	while (i <= nb_new_args)

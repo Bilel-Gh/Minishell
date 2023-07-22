@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 21:08:43 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/21 04:56:01 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/22 05:03:38 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,6 @@ enum e_token_type	get_value_type(t_token *token, int *is_commande_in_pipe)
 		return (OUTFILE);
 	else if (token->prev && token->prev->info->type == REDIRECT_D_OUT)
 		return (LIMITEUR);
-//	else if (ft_is_command(token) && *is_commande_in_pipe == 0)
-//	{
-//		*is_commande_in_pipe = 1;
-//		return (COMMANDE);
-//	}
 	else
 		return (ARG);
 }
@@ -61,7 +56,6 @@ t_token	*create_token(t_token *head, char *value, int index)
 	t_token	*new_token;
 	t_token	*current;
 
-	printf("creat = %s\n",value);
 	value = ft_strtrim(value, " ");
 	new_token = (t_token *)malloc(sizeof(t_token));
 	new_token->value = value;
@@ -85,20 +79,19 @@ t_token	*create_token(t_token *head, char *value, int index)
 	return (head);
 }
 
-
-
-void handle_kick_quote(t_token *token)
+void	handle_kick_quote(t_token *token)
 {
-	t_token *head;
-	head = token;
-	char *tmp;
+	t_token	*head;
+	char	*tmp;
 
+	head = token;
 	while (head)
 	{
 		tmp = head->value;
-		if ((head->info->type == INFILE || head->info->type == OUTFILE || head->info->type == LIMITEUR)
-		 && (head->value[0] == '\'' || head->value[0] == '\"'))
-				head->value = copy_sans_quote(head->value);
+		if ((head->info->type == INFILE || head->info->type == OUTFILE
+				|| head->info->type == LIMITEUR) && (head->value[0] == '\''
+				|| head->value[0] == '\"'))
+			head->value = copy_sans_quote(head->value);
 		else
 			head->value = copy_cont(head->value);
 		free(tmp);

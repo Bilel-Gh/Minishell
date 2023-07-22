@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 07:23:43 by bghandri          #+#    #+#             */
-/*   Updated: 2023/06/21 22:08:46 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/21 22:18:46 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,17 +104,18 @@ char	**ft_lexeur(char *line)
 	t_character	*characters;
 	t_token		*tokens;
 	char		**args;
+	char		**tmp;
 
 	characters = ft_parse_string(line);
 	tokens = merge_characters(characters);
 	args = get_args(tokens);
 	free_list_characters(characters);
 	free_list_tokens(tokens);
-    char **tmp = args;
-    while (*tmp)
-    {
-        printf("\033[0;31m arg = %s\n \033[0m", *tmp);
-        tmp++;
-    }
+	tmp = args;
+	while (*tmp)
+	{
+		printf("\033[0;31m arg = %s\n \033[0m", *tmp);
+		tmp++;
+	}
 	return (args);
 }

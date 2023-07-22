@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 17:58:56 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/20 02:39:59 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/21 16:15:16 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@ void	ft_move_to_directory(char ***env, char *home, char *prev_dir,
 			char *target_dir);
 
 void	ft_init_cd_var(char **const *env, char **home, char **prev_dir);
+
+int		ft_gestion_cd_error2(char **args, char *home, char *prev_dir);
+
+int		ft_gestion_cd_error1(char *home, char *prev_dir,
+			const char *target_dir);
 
 char	*ft_getenv(char *name, char **env)
 {
@@ -128,17 +133,37 @@ int	builtin_cd(char **args, char ***env)
 	if (target_dir == NULL || target_dir[0] == '\0')
 	{
 		target_dir = ft_getenv("HOME", *env);
-		if (target_dir == NULL)
-		{
-			ft_fprintf(2, "bash: cd: HOME not set\n");
-			g_code_exit = ERROR;
-			if (home)
-				free(home);
-			if (prev_dir)
-				free(prev_dir);
-			return (ERROR);
-		}
+		if (ft_gestion_cd_error1(home, prev_dir, target_dir))
+			return (g_code_exit);
 	}
+	if (ft_gestion_cd_error2(args, home, prev_dir))
+		return (g_code_exit);
+	ft_move_to_directory(env, home, prev_dir, target_dir);
+	ft_change_env_after_cd(env, target_dir);
+	if (home)
+		free(home);
+	if (prev_dir)
+		free(prev_dir);
+	return (g_code_exit);
+}
+
+int	ft_gestion_cd_error1(char *home, char *prev_dir, const char *target_dir)
+{
+	if (target_dir == NULL)
+	{
+		ft_fprintf(2, "bash: cd: HOME not set\n");
+		g_code_exit = ERROR;
+		if (home)
+			free(home);
+		if (prev_dir)
+			free(prev_dir);
+		return (ERROR);
+	}
+	return (0);
+}
+
+int	ft_gestion_cd_error2(char **args, char *home, char *prev_dir)
+{
 	if (ft_db_tablen(args) > 2)
 	{
 		ft_fprintf(2, "bash: cd: too many arguments\n");
@@ -159,13 +184,7 @@ int	builtin_cd(char **args, char ***env)
 			free(prev_dir);
 		return (ERROR);
 	}
-	ft_move_to_directory(env, home, prev_dir, target_dir);
-	ft_change_env_after_cd(env, target_dir);
-	if (home)
-		free(home);
-	if (prev_dir)
-		free(prev_dir);
-	return (g_code_exit);
+	return (0);
 }
 
 void	ft_init_cd_var(char **const *env, char **home, char **prev_dir)

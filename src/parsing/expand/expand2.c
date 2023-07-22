@@ -6,11 +6,22 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 02:13:01 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/19 20:56:10 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/22 02:29:47 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/minishell.h"
+
+char		*ft_malloc_expand(const char *args_con, const char *expande,
+				int s_extract, char *new_args);
+
+int			ft_init_s_ex_join(char *args_con, const char *expande,
+				int s_extract, t_expand_join *s_ex_join);
+
+void		ft_fill_new_args(const char *args_con, const int *info,
+				t_expand_join *s_ex_join);
+
+int			ft_go_next_arg(const char *args_con, t_expand_join *s_ex_join);
 
 int	ft_size_of_expende(char *expande)
 {
@@ -20,21 +31,15 @@ int	ft_size_of_expende(char *expande)
 	while (1)
 	{
 		printf("+1\n");
-		if ((expande[size] == '@' && size > 1)
-			|| (expande[size] == '#' && size > 1)
-			|| (expande[size] == '[' && size > 1)
-			|| (expande[size] == ']' && size > 1)
-			|| (expande[size] == '/' && size > 1)
-			|| (expande[size] == '=')
-			|| (expande[size] == ':' && size > 1)
-			|| (expande[size] == '-' && size > 1)
-			|| (expande[size] == '%' && size > 1)
-			|| (expande[size] == '$' && size > 1)
-			|| (expande[size] == 92 && size > 1)
-			|| (expande[size] == ' ' && size > 1)
-			|| (expande[size] == 0)
-			|| (expande[size] == '.')
-			|| (expande[size] == 39)
+		if ((expande[size] == '@' && size > 1) || (expande[size] == '#'
+				&& size > 1) || (expande[size] == '[' && size > 1)
+			|| (expande[size] == ']' && size > 1) || (expande[size] == '/'
+				&& size > 1) || (expande[size] == '=') || (expande[size] == ':'
+				&& size > 1) || (expande[size] == '-' && size > 1)
+			|| (expande[size] == '%' && size > 1) || (expande[size] == '$'
+				&& size > 1) || (expande[size] == 92 && size > 1)
+			|| (expande[size] == ' ' && size > 1) || (expande[size] == 0)
+			|| (expande[size] == '.') || (expande[size] == 39)
 			|| (expande[size] == 34))
 		{
 			size--;
@@ -83,8 +88,6 @@ char	*give_env_expand(char *expande_search, int size, char **env)
 
 	i = 0;
 	sp_expand = NULL;
-//	if (!expande_search)
-//		return (NULL);
 	sp_expand = is_sp_expand(expande_search);
 	for_search = ft_strdup(expande_search);
 	for_search = ft_strjoin(for_search, "=");
@@ -92,7 +95,7 @@ char	*give_env_expand(char *expande_search, int size, char **env)
 		return (sp_expand);
 	while (env[i])
 	{
-		if (!strncmp(for_search, env[i], size + 1)) // ! a changer
+		if (!strncmp(for_search, env[i], size + 1))
 			break ;
 		i++;
 	}
@@ -106,11 +109,12 @@ char	*give_env_expand(char *expande_search, int size, char **env)
 int	join_expand(char *expande, int *j, int s_extract, char *new_args)
 {
 	int	index;
+
 	(void)s_extract;
 	index = 0;
 	if (expande)
 	{
-	printf("expand = ________ %s\n",expande);
+		printf("expand = ________ %s\n", expande);
 		while (expande[index])
 		{
 			new_args[*j] = expande[index];
@@ -121,9 +125,9 @@ int	join_expand(char *expande, int *j, int s_extract, char *new_args)
 	return (index);
 }
 
-bool back_slach(char *args, int i)
+bool	back_slach(char *args, int i)
 {
-	int nb_back_s;
+	int	nb_back_s;
 
 	nb_back_s = 0;
 	if (i == 0)
@@ -134,7 +138,7 @@ bool back_slach(char *args, int i)
 		i--;
 		nb_back_s++;
 		if (i < 0)
-			break;
+			break ;
 	}
 	if (nb_back_s % 2 == 0)
 		return (true);
@@ -142,62 +146,79 @@ bool back_slach(char *args, int i)
 		return (false);
 }
 
-char	*join_and_rp_args(char *args_con, char *expande, int s_extract, int *info)
+char	*join_and_rp_args(char *args_con, char *expande, int s_extract,
+		int *info)
 {
-	char	*new_args;
-	int		i;
-	int		j;
-	bool	expande_in;
+	t_expand_join	s_ex_join;
 
-	expande_in = false;
-	i = 0;
-	i = ft_strlen(args_con) - s_extract;
-	printf (" size for null = %d\n", i);
-	i = 0; 
-	j = 0;
-	new_args = NULL;
+	if (ft_init_s_ex_join(args_con, expande, s_extract, &s_ex_join))
+		return (s_ex_join.new_args);
+	ft_fill_new_args(args_con, info, &s_ex_join);
+	while (args_con[s_ex_join.i])
+	{
+		if (args_con[s_ex_join.i] == '$' && s_ex_join.expande_in == false
+			&& back_slach(args_con, s_ex_join.i))
+		{
+			*info = s_ex_join.i + join_expand(expande, &s_ex_join.j,
+					s_extract, s_ex_join.new_args);
+			s_ex_join.i = s_ex_join.i + s_extract;
+			if (args_con[s_ex_join.i] != '$')
+				s_ex_join.i++;
+			s_ex_join.expande_in = true;
+		}
+		if (ft_go_next_arg(args_con, &s_ex_join))
+			break ;
+	}
+	s_ex_join.new_args[s_ex_join.j] = 0;
+	free(args_con);
+	return (s_ex_join.new_args);
+}
+
+int	ft_go_next_arg(const char *args_con, t_expand_join *s_ex_join)
+{
+	s_ex_join->new_args[s_ex_join->j] = args_con[s_ex_join->i];
+	if (args_con[s_ex_join->i] == 0)
+		return (1);
+	s_ex_join->i++;
+	s_ex_join->j++;
+	return (0);
+}
+
+void	ft_fill_new_args(const char *args_con, const int *info,
+		t_expand_join *s_ex_join)
+{
+	while (s_ex_join->i < *info)
+	{
+		s_ex_join->new_args[s_ex_join->j] = args_con[s_ex_join->i];
+		if (args_con[s_ex_join->i] == 0)
+			break ;
+		s_ex_join->i++;
+		s_ex_join->j++;
+	}
+}
+
+int	ft_init_s_ex_join(char *args_con, const char *expande, int s_extract,
+		t_expand_join *s_ex_join)
+{
+	s_ex_join->expande_in = false;
+	s_ex_join->i = 0;
+	s_ex_join->j = 0;
+	s_ex_join->new_args = NULL;
 	if ((ft_strlen(args_con) - (s_extract + 1) == 0) && (expande == NULL))
-		return (new_args);
-	printf("expande = %s\n", expande);
-	printf("s_extract = %d\n", s_extract);
-	printf("size args_con  = %ld \n", strlen(args_con));
+		return (1);
+	s_ex_join->new_args = ft_malloc_expand(args_con, expande, s_extract,
+			s_ex_join->new_args);
+	return (0);
+}
+
+char	*ft_malloc_expand(const char *args_con, const char *expande,
+		int s_extract, char *new_args)
+{
 	if (!expande)
 		new_args = malloc((strlen(args_con) - s_extract) + 1);
 	else
 		new_args = malloc(strlen(args_con) + (strlen(expande) - s_extract) + 1);
 	if (!new_args)
-		exit (0);// renplacer par la fonction free_all;
-	printf ("args_con________________ %s\n", args_con);
-	while (i < *info)
-	{
-		new_args[j] = args_con[i];
-		if (args_con[i] == 0)
-			break;
-		i++;
-		j++;
-	}
-	while (args_con[i])
-	{
-		if (args_con[i] == '$' && expande_in == false && back_slach(args_con, i))
-		{
-
-			*info = i + join_expand(expande, &j, s_extract, new_args);
-			i = i + s_extract;
-			printf("i ============ %d\n", i);
-		printf("args_con[i] == %c , i = %d\n", args_con[i], i);
-			if (args_con[i] != '$' )
-				i++;
-			expande_in = true;
-		}
-		printf("args_con2[i] == %c , i = %d\n", args_con[i], i);
-		new_args[j] = args_con[i];
-		if (args_con[i] == 0)
-			break;
-		i++;
-		j++;
-	}
-	printf("j = %d",j);
-	new_args[j] = 0;
-	free(args_con);
+		exit(0);
 	return (new_args);
 }

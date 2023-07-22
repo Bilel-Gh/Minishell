@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 16:18:20 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/19 09:45:58 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/07/22 05:07:38 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ char* remove_double_quotes(char* str) {
         }
         i++;
     }
-    result[j] = '\0';  // Ajouter la terminaison de la chaîne
+    result[j] = '\0';
     return result;
 }
 
@@ -204,7 +204,6 @@ void ft_gestion_backslash(int **type_args, int *nb_args, t_global_parsing **g_pa
     i = 0;
     while (i < *nb_args)
     {
-        //si l'argument a un backslash
         while (is_backslash((*g_pars)->args[i]) && (*g_pars)->args[i][1] != '\0')
         {
             cleaned_arg = remove_backslash((*g_pars)->args[i]);
@@ -247,11 +246,6 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
         g_code_exit = SUCCESS;
         return (free(type_args),(*g_pars)->args);
     }
-// 	if (ft_strcmp(no_quote_args[0], "export") == 0)
-//     {
-          //no_quote_args = ft_db_array_dup(args);
-//     }
-    // printf tout le tableau (*g_pars)->args
 	new_args = join_inter_space((*g_pars)->args, type_args, nb_args);
 	new_type_args = ft_get_info_args(new_args, nb_args);
 	free_db_array((*g_pars)->args);
@@ -269,18 +263,6 @@ char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
         printf("\033[0;35m ARGUMENT PARSING : %s\033[0m\n", (*g_pars)->args[z]);
         z++;
     }
-    // char *first_arg;
-    // first_arg = NULL;
-   // if ((*g_pars)->args[0][0] == 39 || (*g_pars)->args[0][0] == 34)
-	 //   first_arg = copy_sans_quote((*g_pars)->args[0]);
-    //char *first_arg = remove_double_quotes((*g_pars)->args[0]);
-    // if (ft_strcmp(first_arg, (*g_pars)->args[0]) != 0)
-    // {
-    //     free((*g_pars)->args[0]);
-    //     (*g_pars)->args[0] = first_arg;
-    // }
-    // else
-    //     free(first_arg);
     z = 0;
     while ((*g_pars)->args[z])
     {
