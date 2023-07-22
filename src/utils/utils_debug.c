@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 17:37:32 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/22 22:29:10 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/22 23:37:52 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,7 @@ void	verifyString(const char *str)
 	printf("\n");
 	if (str[i] == '\0')
 	{
-		printf("La chaîne se termine correctement avec le caractère nul '\\0' a l'index
-				%d.\n", i);
+		printf("La chaîne se termine correctement avec le caractère nul '\\0' a l'index %d.\n", i);
 	}
 	else
 	{

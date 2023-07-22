@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/22 19:17:09 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/22 23:37:25 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -333,11 +333,11 @@ int	ft_general_error(t_global_parsing *g_parsing)
 
 void	ft_do_exec(char ***env, t_global_parsing *g_parsing, int nb_args)
 {
-	t_token	*head;
-
 	g_parsing->tokens = ft_get_tokens_with_infos(g_parsing->args, nb_args);
 	g_parsing->commande = cmd_complete(g_parsing->tokens);
 	ft_set_index_for_exec(&g_parsing->tokens);
+	t_token	*head;
+	head = NULL;
 	FT_PRINT_TOKEN_DEBUG(g_parsing, head);
 	exec(g_parsing->tokens, g_parsing->commande, env, &g_parsing);
 	rl_replace_line("", 0);

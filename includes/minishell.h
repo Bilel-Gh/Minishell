@@ -6,28 +6,29 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 04:32:12 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/22 23:03:12 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/22 23:35:35 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include <errno.h>
-# include <fcntl.h>
-# include <limits.h>
-# include <readline/history.h>
-# include <readline/readline.h>
-# include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <stdbool.h>
+#include <string.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <limits.h>
 # include <stdarg.h>
-# include <stdbool.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
-# include <sys/stat.h>
-# include <sys/types.h>
-# include <sys/wait.h>
-# include <unistd.h>
 
 # define SIZE_PATH 4096
 # define FIRST 0
@@ -36,7 +37,7 @@
 # define FORK 355
 # define CHILD 1000
 
-extern int					g_code_exit;
+extern int g_code_exit;
 
 enum						e_character_type
 {
@@ -76,14 +77,14 @@ enum
 	CANTEXEC = 126,
 	NOTFOUND = 127,
 	CSIGINT = 130,
-	CMD_FOUND = 200,
-	ERROR_PIPE = 201,
-	ERROR_REDIRECT = 202,
-	ERROR_PIPE2 = 203,
-	ERROR_QUOTE_S = 204,
-	ERROR_QUOTE_D = 205,
-	ERROR_BACKSLASH = 206,
-	OVERFLOW = 207,
+    CMD_FOUND = 200,
+    ERROR_PIPE = 201,
+    ERROR_REDIRECT = 202,
+    ERROR_PIPE2 = 203,
+    ERROR_QUOTE_S = 204,
+    ERROR_QUOTE_D = 205,
+    ERROR_BACKSLASH = 206,
+    OVERFLOW = 207,
 	ERROR_REDIRECT2 = 208,
 };
 
@@ -131,70 +132,69 @@ typedef struct s_global_parsing
 	t_commande				*commande;
 	char					*line;
 	t_global_exec			*exec;
-	char					***env;
+	char 					***env;
 }							t_global_parsing;
 
 typedef struct s_split
 {
-	int						count;
-	char					**result;
-	char					**clean_result;
-	int						space_count;
-	int						i;
-	int						len;
-	int						in_quotes;
-	char					type_inquote;
-	int						start;
-	int						len_str_to_add;
-}							t_split;
+	int		count;
+	char	**result;
+	char	**clean_result;
+	int		space_count;
+	int		i;
+	int		len;
+	int		in_quotes;
+	char	type_inquote;
+	int		start;
+	int		len_str_to_add;
+}			t_split;
 
 typedef struct s_var_add_to_export
 {
-	char					**new_tab;
-	int						db_tablen;
-	char					*name_copy;
-	char					*name_s_equal;
-	char					*current_name;
-	int						found;
-}							t_var_add_to_export;
+	char	**new_tab;
+	int		db_tablen;
+	char	*name_copy;
+	char	*name_s_equal;
+	char	*current_name;
+	int		found;
+}			t_var_add_to_export;
 
 typedef struct s_expand_join
 {
-	char					*new_args;
-	int						i;
-	int						j;
-	bool					expande_in;
-}							t_expand_join;
+	char	*new_args;
+	int		i;
+	int		j;
+	bool	expande_in;
+}			t_expand_join;
 
 typedef struct s_importe_expande
 {
-	char					*tmp;
-	char					*new_args;
-	int						info;
-}							t_importe_expande;
+	char	*tmp;
+	char	*new_args;
+	int		info;
+}			t_importe_expande;
 
 typedef struct s_expande_var
 {
-	int						i;
-	char					*new_args;
-	int						*new_type_args;
-	int						*nb_args;
-}							t_expande_var;
+    int		i;
+    char	*new_args;
+    int		*new_type_args;
+    int *nb_args;
+}			t_expande_var;
 
 typedef struct s_clean_null_var
 {
-	int						nb_new_args;
-	char					**new_args;
-	int						i;
-	int						j;
-}							t_clean_null_var;
+	int		nb_new_args;
+	char	**new_args;
+	int		i;
+	int		j;
+}			t_clean_null_var;
 
-int							ft_fprintf(int fd, const char *format, ...);
+int	ft_fprintf(int fd, const char *format, ...);
 
 //debug
 void						verifyString(const char *str);
-void						FT_PRINT_TOKEN_DEBUG(t_global_parsing *g_parsing,
-								t_token *head);
+void FT_PRINT_TOKEN_DEBUG(t_global_parsing *g_parsing, t_token *head);
 
 // DOSSIER EXEC
 char						**ft_lexeur(char *line);
@@ -209,9 +209,9 @@ void						builtin_unset(char **args, char ***env,
 								t_global_exec **g_exec);
 void						builtin_env(char **args, char **env);
 void						builtin_pwd(char **args);
-int							builtin_cd(char **args, char ***env);
-void	builtin_exit(char **args,
-					t_global_parsing **g_pars);
+int						builtin_cd(char **args, char ***env);
+void						builtin_exit(char **args,
+								t_global_parsing **g_pars);
 void						ft_exec_bultins(char **args, char ***env,
 								t_global_parsing **g_pars,
 								t_global_exec **g_exec);
@@ -221,11 +221,11 @@ int							ft_check_solo_invalid_arg(char *args);
 bool						ft_check_name(char *name);
 
 // Dossier PARSING
-char	**ft_parsing(int *nb_args,
-					t_global_parsing **g_pars,
-					char ***env);
-int	*ft_get_info_args(char **line_split,
-						int *give_nb_token);
+char						**ft_parsing(int *nb_args,
+								t_global_parsing **g_pars,
+								char ***env);
+int							*ft_get_info_args(char **line_split,
+								int *give_nb_token);
 char						**join_inter_space(char **args, int *type_args,
 								int *nb_args);
 char						**kick_quote(int *type_args, int nb_args,
@@ -238,7 +238,7 @@ t_token						*addtoken(t_token *head, char *value);
 int							ft_get_infos_by_pos(t_token *token);
 char						*copy_cont(char *str);
 char						*copy_sans_quote(char *args);
-char						*copy_sans_quote(char *args);
+char	*copy_sans_quote(char *args);
 
 // Dossier UTILS
 void						ft_complete(char const *s, char *str, int *i);
@@ -261,22 +261,22 @@ void						free_list_commande(t_commande *commande);
 int							ft_db_tablen(char **tab);
 void						ft_free_g_parsing(t_global_parsing *g_parsing);
 char						*ft_itoa(int num);
-char						*ft_strcat(char *s1, const char *s2);
-int							ft_is_digit(char c);
-char						*ft_substr(char *s, unsigned int start, size_t len);
-char						*ft_strstr(char *str, char *to_find);
-int							is_only_space(char *str);
-int							ft_db_arr_len(char **arr);
-void						ft_bzero(void *s, size_t n);
+char	*ft_strcat(char *s1, const char *s2);
+int ft_is_digit(char c);
+char *ft_substr(char *s, unsigned int start, size_t len);
+char *ft_strstr(char *str, char *to_find);
+int is_only_space(char *str);
+int ft_db_arr_len(char **arr);
+void	ft_bzero(void *s, size_t n);
 
 // Dossier LEXEUR
 t_token						*merge_characters(t_character *head);
-t_token	*ft_handle_quotes(t_token *tokenHead,
-							t_character **current_charPtr);
+t_token						*ft_handle_quotes(t_token *tokenHead,
+								t_character **current_charPtr);
 char						*append_value(char *str, char c);
 t_character					*ft_parse_string(const char *input);
-void	get_current_charptr(t_character **current_charPtr,
-							t_character *next_char);
+void						get_current_charptr(t_character **current_charPtr,
+								t_character *next_char);
 
 // Dossier error_args
 bool						search_error_args(int *type_args, int *nb_args,
@@ -300,12 +300,11 @@ char						*give_env_expand(char *expande_search, int size,
 char						*give_env_expand(char *expande_search, int size,
 								char **env);
 char						*is_sp_expand(char *expand_search);
-char	*get_expende_detect(int size_of_expende,
-							char *expande);
+char						*get_expende_detect(int size_of_expende,
+								char *expande);
 int							ft_size_of_expende(char *expande);
 bool						solo_dolard(char *str);
-char						**ft_clean_null_db_array(char **old_arg,
-								int *size_db_arr);
+char 						**ft_clean_null_db_array(char **old_arg, int *size_db_arr);
 
 // Dossier INFOS_TOKENS
 int							ft_is_command(t_token *token);
@@ -327,9 +326,8 @@ void						ft_free_paths2(char **path_splited, char *pathCopy,
 int							nb_pipe(t_token *info);
 
 // Dossier exec
-void						ft_free_g_parsing_total(t_global_parsing *g_parsing);
-void						exec(t_token *tokens, t_commande *cmd, char ***env,
-								t_global_parsing **g_pars);
-void						ft_check_error_exec(char **cmd);
+void	ft_free_g_parsing_total(t_global_parsing *g_parsing);
+void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pars);
+void 	ft_check_error_exec(char **cmd);
 
 #endif
