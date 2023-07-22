@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/21 15:04:10 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/22 19:17:09 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,10 @@ int		ft_general_error(t_global_parsing *g_parsing);
 
 void	ft_print_error_redirect(char **args);
 
+int		ft_is_error_full_cmd(char *const *cmd, char *full_cmd);
+
+void	ft_get_exit_code_lstat(char *const *cmd, struct stat *path_stat);
+
 void	ft_init_global_parsing(t_global_parsing *g_parsing)
 {
 	if (!g_parsing)
@@ -46,7 +50,6 @@ void	ft_init_global_parsing(t_global_parsing *g_parsing)
 
 void	ft_free_g_parsing(t_global_parsing *g_parsing)
 {
-	rl_clear_history();
 	if (g_parsing->line)
 		free(g_parsing->line);
 	if (g_parsing->args)
@@ -132,37 +135,37 @@ void	ft_check_not_found(char **cmd)
 {
 	struct stat	path_stat;
 
-    if (lstat(cmd[0], &path_stat) == 0)
-    {
-        // Le fichier ou répertoire existe
-        if (S_ISDIR(path_stat.st_mode))
-        {
-            ft_fprintf(2, "bash: %s: is a directory\n", cmd[0]);
-            g_code_exit = CANTEXEC;
-        }
-        else if (errno == EACCES)
-        {
-            ft_fprintf(2, "bash: %s: Permission denied\n", cmd[0]);
-            g_code_exit = CANTEXEC;
-        }
-        else
-        {
-            ft_fprintf(2, "bash: %s: command not found\n", cmd[0]);
-            g_code_exit = NOTFOUND;
-        }
-    }
-    else if (errno == ENOENT)
-    {
-        // Le fichier ou répertoire n'existe pas
-        ft_fprintf(2, "bash: %s: command not found\n", cmd[0]);
-        g_code_exit = NOTFOUND;
-    }
-    else
-    {
-        // Autre erreur lors de l'appel à lstat
-        ft_fprintf(2, "bash: %s: error: %s\n", cmd[0], strerror(errno));
-        g_code_exit = ERROR; // À définir selon votre gestion des codes d'erreur
-    }
+	if (lstat(cmd[0], &path_stat) == 0)
+		ft_get_exit_code_lstat(cmd, &path_stat);
+	else if (errno == ENOENT)
+	{
+		ft_fprintf(2, "bash: %s: command not found\n", cmd[0]);
+		g_code_exit = NOTFOUND;
+	}
+	else
+	{
+		ft_fprintf(2, "bash: %s: error: %s\n", cmd[0], strerror(errno));
+		g_code_exit = ERROR;
+	}
+}
+
+void	ft_get_exit_code_lstat(char *const *cmd, struct stat *path_stat)
+{
+	if (S_ISDIR((*path_stat).st_mode))
+	{
+		ft_fprintf(2, "bash: %s: is a directory\n", cmd[0]);
+		g_code_exit = CANTEXEC;
+	}
+	else if (errno == EACCES)
+	{
+		ft_fprintf(2, "bash: %s: Permission denied\n", cmd[0]);
+		g_code_exit = CANTEXEC;
+	}
+	else
+	{
+		ft_fprintf(2, "bash: %s: command not found\n", cmd[0]);
+		g_code_exit = NOTFOUND;
+	}
 }
 
 void	ft_check_error_exec(char **cmd)
@@ -177,27 +180,33 @@ void	ft_check_error_exec(char **cmd)
 		full_cmd = ft_strjoin(full_cmd, cmd[i]);
 		i++;
 	}
+	if (ft_is_error_full_cmd(cmd, full_cmd))
+		return ;
+	ft_check_not_found(cmd);
+	free(full_cmd);
+}
+
+int	ft_is_error_full_cmd(char *const *cmd, char *full_cmd)
+{
 	if (full_cmd == NULL)
 	{
 		ft_fprintf(2, "bash: %s: command not found\n", cmd[0]);
 		g_code_exit = NOTFOUND;
 		free(full_cmd);
-		return ;
+		return (1);
 	}
 	if (ft_strcmp(full_cmd, ">") == 0)
 	{
 		g_code_exit = SUCCESS;
 		free(full_cmd);
-		return ;
+		return (1);
 	}
 	if (ft_check_full_cmd(full_cmd))
 	{
-		ft_fprintf(2, "full_cmd = %s\n", full_cmd);
 		free(full_cmd);
-		return ;
+		return (1);
 	}
-	ft_check_not_found(cmd);
-	free(full_cmd);
+	return (0);
 }
 
 void	gestion_pipe2(char ***env, t_global_parsing **g_parsing, int *nb_args)
@@ -294,7 +303,7 @@ void	minishell_loop(char ***env, t_global_exec *g_exec,
 		if (g_parsing->line == NULL)
 		{
 			ft_free_g_parsing_total(g_parsing);
-			break;
+			break ;
 		}
 		rl_replace_line("", 0);
 		if (ft_general_error(g_parsing))
@@ -324,37 +333,12 @@ int	ft_general_error(t_global_parsing *g_parsing)
 
 void	ft_do_exec(char ***env, t_global_parsing *g_parsing, int nb_args)
 {
+	t_token	*head;
+
 	g_parsing->tokens = ft_get_tokens_with_infos(g_parsing->args, nb_args);
 	g_parsing->commande = cmd_complete(g_parsing->tokens);
 	ft_set_index_for_exec(&g_parsing->tokens);
-
-
-	// // DEBUG
-	// int z = 0;
-	// while (z < nb_args)
-	// {
-	// 	printf("\033[1;36mcmd[%d] = %s\n\033[0m", z,
-	// 			g_parsing->commande->cmd[z]);
-	// 	z++;
-	// }
-	t_token	*head = g_parsing->tokens;
-	while (g_parsing->tokens)
-	{
-		printf("\033[1;31mtoken value = %s\n\033[0m", g_parsing->tokens->value);
-		printf("\033[1;33mtoken type = %d\n\033[0m",
-				g_parsing->tokens->info->type);
-		printf("\033[1;34mtoken index = %d\n\033[0m",
-				g_parsing->tokens->token_index);
-		if (g_parsing->tokens->prev)
-			printf("\033[1;35mtoken prev value = %s\n\033[0m",
-					g_parsing->tokens->prev->value);
-		printf("\n\n");
-		g_parsing->tokens = g_parsing->tokens->next;
-	}
-	g_parsing->tokens = head;
-	// DEBUG
-
-
+	FT_PRINT_TOKEN_DEBUG(g_parsing, head);
 	exec(g_parsing->tokens, g_parsing->commande, env, &g_parsing);
 	rl_replace_line("", 0);
 }
@@ -527,7 +511,7 @@ void	quit_handler(int sig)
 		if (rl_line_buffer && ft_strlen(rl_line_buffer) > 0)
 		{
 			ft_fprintf(2, "Quit (core dumped)\n");
-				ft_strlen(rl_line_buffer);
+			ft_strlen(rl_line_buffer);
 			exit(131);
 		}
 	}

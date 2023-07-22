@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 22:49:57 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/22 05:09:37 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/22 18:22:17 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,13 @@ void		ft_get_result_db_join(char **strings, int count, char *result,
 void		ft_change_cmds(t_commande *list_commande, int *i);
 
 void		ft_is_in_quote_split(const char *str, t_split *s);
+
+void		ft_do_join_cmd(char **cmd_join, int i, t_token *tok_sch,
+				int *is_first);
+
+int			ft_malloc_cmd_join(int nb_cdm, char ***cmd_join, int i);
+
+void		ft_add_last_str_split(char *str, t_split *s);
 
 void	init_struc_cmd(t_commande *commande)
 {
@@ -109,23 +116,13 @@ char	**give_cmd_join(t_token *token, int nb_cdm)
 	i = 0;
 	is_first = 1;
 	tok_sch = token;
-	cmd_join = malloc(sizeof(char *) * (nb_cdm + 1));
-	if (!cmd_join)
+	if (!ft_malloc_cmd_join(nb_cdm, &cmd_join, i))
 		return (0);
-	b_zero_for_cmd_join(cmd_join, nb_cdm, i);
 	while (tok_sch)
 	{
 		while (tok_sch && i < nb_cdm)
 		{
-			if (is_first && (tok_sch->info->type == REDIRECT_IN
-					|| tok_sch->info->type == REDIRECT_OUT))
-			{
-				cmd_join[i] = ft_join_cmd(cmd_join[i], tok_sch->value);
-				is_first = 0;
-			}
-			if (tok_sch->info->type == COMMANDE || tok_sch->info->type == ARG)
-				cmd_join[i] = ft_join_cmd(cmd_join[i], tok_sch->value);
-			is_first = 0;
+			ft_do_join_cmd(cmd_join, i, tok_sch, &is_first);
 			if (tok_sch->info->type == T_PIPE)
 				break ;
 			tok_sch = tok_sch->next;
@@ -135,6 +132,28 @@ char	**give_cmd_join(t_token *token, int nb_cdm)
 			tok_sch = tok_sch->next;
 	}
 	return (cmd_join);
+}
+
+int	ft_malloc_cmd_join(int nb_cdm, char ***cmd_join, int i)
+{
+	*cmd_join = malloc(sizeof(char *) * (nb_cdm + 1));
+	if (!(*cmd_join))
+		return (0);
+	b_zero_for_cmd_join(*cmd_join, nb_cdm, i);
+	return (1);
+}
+
+void	ft_do_join_cmd(char **cmd_join, int i, t_token *tok_sch, int *is_first)
+{
+	if (is_first && (tok_sch->info->type == REDIRECT_IN
+			|| tok_sch->info->type == REDIRECT_OUT))
+	{
+		cmd_join[i] = ft_join_cmd(cmd_join[i], tok_sch->value);
+		*is_first = 0;
+	}
+	if (tok_sch->info->type == COMMANDE || tok_sch->info->type == ARG)
+		cmd_join[i] = ft_join_cmd(cmd_join[i], tok_sch->value);
+	*is_first = 0;
 }
 
 char	*ft_strncpy(char *dest, char *src, unsigned int n)
@@ -275,6 +294,16 @@ char	**ft_custom_split(char *str)
 		s->i++;
 	}
 	s->len_str_to_add = s->i - s->start;
+	ft_add_last_str_split(str, s);
+	s->clean_result = ft_db_array_dup(s->result);
+	ft_free_db_by_len(s->result, s->space_count + 1);
+	final_result = s->clean_result;
+	free(s);
+	return (final_result);
+}
+
+void	ft_add_last_str_split(char *str, t_split *s)
+{
 	if (s->len_str_to_add > 0)
 	{
 		s->result[s->count] = (char *)malloc((s->len_str_to_add + 1)
@@ -282,11 +311,6 @@ char	**ft_custom_split(char *str)
 		ft_strncpy(s->result[s->count], str + s->start, s->len_str_to_add);
 		s->result[s->count][s->len_str_to_add] = '\0';
 	}
-	s->clean_result = ft_db_array_dup(s->result);
-	ft_free_db_by_len(s->result, s->space_count + 1);
-	final_result = s->clean_result;
-	free(s);
-	return (final_result);
 }
 
 void	add_cmd_to_list_commande(t_commande *list_commande, char **cmd_join)
@@ -446,16 +470,16 @@ void	ft_change_cmds(t_commande *list_commande, int *i)
 	arg_to_unquote = ft_lexeur(list_commande->cmd[*i]);
 	nb_arg_to_unquote = ft_db_arr_len(arg_to_unquote);
 	type_arg_to_unquote = ft_get_info_args2(arg_to_unquote,
-											&nb_arg_to_unquote);
+			&nb_arg_to_unquote);
 	no_quote_args = kick_quote(type_arg_to_unquote,
-								nb_arg_to_unquote,
-								arg_to_unquote);
+			nb_arg_to_unquote,
+			arg_to_unquote);
 	free_db_array(arg_to_unquote);
 	free(list_commande->cmd[*i]);
 	if (no_quote_args != NULL)
 	{
 		list_commande->cmd[*i] = ft_db_array_join(no_quote_args,
-													ft_db_arr_len(no_quote_args));
+				ft_db_arr_len(no_quote_args));
 	}
 	free_db_array(no_quote_args);
 	free(type_arg_to_unquote);
@@ -480,9 +504,7 @@ t_commande	*cmd_complete(t_token *token)
 	list_commande = head;
 	cmd_join = give_cmd_join(token, nb_node);
 	if (!cmd_join)
-	{
 		return (NULL);
-	}
 	add_cmd_to_list_commande(list_commande, cmd_join);
 	list_commande = head;
 	change_cmd_list(list_commande);

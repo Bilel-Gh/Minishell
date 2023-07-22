@@ -6,11 +6,13 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 16:18:20 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/22 05:07:38 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/22 18:57:55 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+void		ft_get_result_bs(const char *str, char *result, int *i, int *j);
 
 bool	fist_error(int *type_args)
 {
@@ -56,7 +58,7 @@ int	count_nb_space(int *type_args, int nb_args)
 
 	i = 0;
 	nb_space = 0;
-	printf("nb_args = %d",nb_args);
+	printf("nb_args = %d", nb_args);
 	if (type_args == NULL)
 		return (nb_space);
 	while (i < nb_args - 1)
@@ -107,168 +109,117 @@ char	**kick_args_space(char **new_args, int *type_args, int *nb_args)
 	return (*nb_args = nb_new_args, last_args);
 }
 
-char* remove_double_quotes(char* str) {
-    int len;
-    int count_quotes;
-    int i;
-    int j;
+typedef struct s_bachslash
+{
+	int		i;
+	int		j;
+	int		inquote;
+	int		max;
+	char	*result;
+}			t_bachslash;
 
-    i = 0;
-    j = 0;
-    count_quotes = 0;
-    len = ft_strlen(str);
-    while (i < len) {
-        if (str[i] == '"' || str[i] == '\'') {
-            count_quotes++;
-        }
-        i++;
-    }
-    if (count_quotes == len)
-        return ft_strdup(str);
-    char* result = (char*)malloc((len - count_quotes + 1) * sizeof(char));
-    i = 0;
-    while (i < len) {
-        if (str[i] != '"' && str[i] != '\'') {
-            result[j] = str[i];
-            j++;
-        }
-        i++;
-    }
-    result[j] = '\0';
-    return result;
+char	*remove_backslash(char *str)
+{
+	t_bachslash	var;
+
+	var.inquote = 0;
+	var.i = 0;
+	var.j = 0;
+	var.max = 2 * ft_strlen(str) + 1;
+	var.result = malloc(sizeof(char) * var.max);
+	ft_bzero(var.result, var.max);
+	if (var.result == NULL)
+		return (NULL);
+	while (str[var.i])
+	{
+		if (str[var.i] == '\'')
+			var.inquote = !var.inquote;
+		if (str[var.i] == '\\' && var.inquote)
+			var.i++;
+		else if (str[var.i] == '\\' && !var.inquote)
+		{
+			ft_get_result_bs(str, var.result, &var.i, &var.j);
+			continue ;
+		}
+		var.result[var.j++] = str[var.i++];
+	}
+	var.result[var.j] = '\0';
+	return (var.result);
 }
 
-char *remove_backslash(char *str)
+void	ft_get_result_bs(const char *str, char *result, int *i, int *j)
 {
-    char *result;
-    int inquote;
-    int max;
-    int i;
-    int j;
-
-    inquote = 0;
-    i = 0;
-    j = 0;
-    max = 2 * ft_strlen(str) + 1;
-
-    result = malloc(sizeof(char) * max);
-    ft_bzero(result, max);
-    if (result == NULL)
-        return NULL;
-    while (str[i])
-    {
-        if (str[i] == '\'')
-            inquote = !inquote;
-        if (str[i] == '\\' && inquote)
-            i++;
-        else if (str[i] == '\\' && !inquote)
-        {
-            if (str[i + 1])
-            {
-                result[j++] = '\'';
-                result[j++] = str[i + 1];
-                result[j++] = '\'';
-                i += 2;
-            }
-            else
-                result[j++] = str[i++];
-            continue;
-        }
-        result[j++] = str[i++];
-    }
-    result[j] = '\0';
-    return result;
+	if (str[(*i) + 1])
+	{
+		result[(*j)++] = '\'';
+		result[(*j)++] = str[(*i) + 1];
+		result[(*j)++] = '\'';
+		(*i) += 2;
+	}
+	else
+		result[(*j)++] = str[(*i)++];
 }
 
-int is_backslash(char *str)
+int	is_backslash(char *str)
 {
-    int get_index_bs;
+	int	get_index_bs;
 
-    get_index_bs = 0;
-    if (ft_strchr(str, '\\'))
-    {
-        while (str[get_index_bs] != '\\')
-            get_index_bs++;
-        if (str[get_index_bs + 1] != '\'' && str[get_index_bs - 1] != '\'')
-            return (1);
-    }
-    return (0);
+	get_index_bs = 0;
+	if (ft_strchr(str, '\\'))
+	{
+		while (str[get_index_bs] != '\\')
+			get_index_bs++;
+		if (str[get_index_bs + 1] != '\'' && str[get_index_bs - 1] != '\'')
+			return (1);
+	}
+	return (0);
 }
 
-
-void ft_gestion_backslash(int **type_args, int *nb_args, t_global_parsing **g_pars)
+void	ft_gestion_backslash(int **type_args, int *nb_args,
+		t_global_parsing **g_pars)
 {
-    char *cleaned_arg;
-    int i;
+	char	*cleaned_arg;
+	int		i;
 
-    i = 0;
-    while (i < *nb_args)
-    {
-        while (is_backslash((*g_pars)->args[i]) && (*g_pars)->args[i][1] != '\0')
-        {
-            cleaned_arg = remove_backslash((*g_pars)->args[i]);
-            printf("\033[1;34m ----------------- CLEAN_ARG = %s \033[0m\n", cleaned_arg);
-            free((*g_pars)->args[i]);
-            (*g_pars)->args[i] = cleaned_arg;
-        }
-
-        i++;
-    }
-    // TODO recree le type_args
-    (void )type_args;
+	i = 0;
+	while (i < *nb_args)
+	{
+		while (is_backslash((*g_pars)->args[i])
+			&& (*g_pars)->args[i][1] != '\0')
+		{
+			cleaned_arg = remove_backslash((*g_pars)->args[i]);
+			free((*g_pars)->args[i]);
+			(*g_pars)->args[i] = cleaned_arg;
+		}
+		i++;
+	}
+	*type_args = ft_get_info_args((*g_pars)->args, nb_args);
 }
 
 char	**ft_parsing(int *nb_args, t_global_parsing **g_pars, char ***env)
 {
 	char	**new_args;
-//	char	**no_quote_cmd;
 	int		*new_type_args;
 	int		*type_args;
 
 	type_args = ft_get_info_args((*g_pars)->args, nb_args);
 	if (search_error_args(type_args, nb_args, (*g_pars)->args, *env))
 		return (free(type_args), (*g_pars)->args);
-    printf("\033[1;34m G_CODE_EXIT = %d \033[0m\n", g_code_exit);
 	expande(&type_args, nb_args, g_pars, *env);
-    ft_gestion_backslash(&type_args, nb_args, g_pars);
-    g_code_exit = SUCCESS;
-    printf("\033[1;31m APRES EXPAND \033[0m\n");
-    printf("nb_args = %d\n", *nb_args);
-    int w = 0;
-    while ((*g_pars)->args[w])
-    {
-        printf("\033[1;31m             APRES EXPAND args[%d] = %s \033[0m\n", w, (*g_pars)->args[w]);
-        w++;
-    }
-    if (*nb_args == 0)
-    {
-         printf("\033[1;31m STOP \033[0m\n");
-        g_code_exit = SUCCESS;
-        return (free(type_args),(*g_pars)->args);
-    }
+	ft_gestion_backslash(&type_args, nb_args, g_pars);
+	g_code_exit = SUCCESS;
+	if (*nb_args == 0)
+		return (free(type_args), (*g_pars)->args);
 	new_args = join_inter_space((*g_pars)->args, type_args, nb_args);
 	new_type_args = ft_get_info_args(new_args, nb_args);
 	free_db_array((*g_pars)->args);
-    (*g_pars)->args = kick_args_space(new_args, new_type_args, nb_args);
+	(*g_pars)->args = kick_args_space(new_args, new_type_args, nb_args);
 	free_db_array(new_args);
 	free(type_args);
 	free(new_type_args);
 	new_type_args = ft_get_info_args((*g_pars)->args, nb_args);
 	if (error_grammaticale(new_type_args, *nb_args))
 		return ((*g_pars)->args);
-	printf("^^^^^^^^^^^ no error grammaticale ^^^^^^^^^^^^^^^^\n");
-    int z = 0;
-    while ((*g_pars)->args[z])
-    {
-        printf("\033[0;35m ARGUMENT PARSING : %s\033[0m\n", (*g_pars)->args[z]);
-        z++;
-    }
-    z = 0;
-    while ((*g_pars)->args[z])
-    {
-        printf("\033[0;35m ARGUMENT PARSING sans quotes: %s\033[0m\n", (*g_pars)->args[z]);
-        z++;
-    }
 	free(new_type_args);
 	return ((*g_pars)->args);
 }

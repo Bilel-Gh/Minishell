@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/20 19:39:34 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/14 15:32:44 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/22 22:59:07 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,11 @@ int	print_nbr_fd(int nbr, int fd)
 	free(str);
 	return (len);
 }
+
 // affiche un caractere et retourne sa taille donc 1
-int    ft_putchar_fd(char c, int fd)
+int	ft_putchar_fd(char c, int fd)
 {
-    write(fd, &c, 1);
+	write(fd, &c, 1);
 	return (1);
 }
 
