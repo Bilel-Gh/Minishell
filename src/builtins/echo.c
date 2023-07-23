@@ -12,10 +12,6 @@
 
 #include "../../includes/minishell.h"
 
-int		ft_print_echo_arg(char **args, int i, int print_newline);
-
-int		ft_print_fullarg(int j, char *full_arg, char *tmp);
-
 int	ft_is_option_echo(char *str)
 {
 	if (str[0] == '-')

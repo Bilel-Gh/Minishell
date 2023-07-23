@@ -6,13 +6,11 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 23:39:03 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/21 20:01:46 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/23 22:04:40 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-void	ft_is_error_unset(const char *name);
 
 int	ft_unsetenv(char *name, char ***env)
 {

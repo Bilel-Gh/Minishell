@@ -6,13 +6,11 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 19:57:00 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/21 22:54:21 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/23 22:11:25 by bghandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-void	ft_merge_rest(t_token **token_head, t_character **current_char);
 
 void	get_current_charptr(t_character **current_charPtr,
 							t_character *next_char)
@@ -21,19 +19,6 @@ void	get_current_charptr(t_character **current_charPtr,
 		*current_charPtr = next_char;
 	else
 		*current_charPtr = NULL;
-}
-
-// permet d'ajouter un caractère à la fin d'une chaine de caractère
-char	*append_value(char *str, char c)
-{
-	char	*temp;
-
-	temp = (char *)malloc((ft_strlen(str) + 2) * sizeof(char));
-	ft_strcpy(temp, str);
-	temp[ft_strlen(str)] = c;
-	temp[ft_strlen(str) + 1] = '\0';
-	free(str);
-	return (temp);
 }
 
 t_token	*ft_group_spaces(t_token *token_head, t_character **current_charPtr)

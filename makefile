@@ -15,6 +15,11 @@ LDLIBS = -lreadline
 # /* ~~~~~~ SOURCES ~~~~~~ */
 SRCS_DIR = ./src/
 SRCS =	main.c \
+		main_utils.c \
+		main_utils2.c \
+		main_utils3.c \
+		main_utils4.c \
+		main_utils5.c \
 
 OBJS = ${addprefix ${SRCS_DIR}, ${SRCS:.c=.o}}
 
@@ -43,6 +48,8 @@ OBJS_LEXEUR = ${addprefix ${LEXEUR_DIR}, ${LEXEUR:.c=.o}}
 PARSING_DIR = ./src/parsing/
 PARSING =	get_info_args.c \
 			parsing.c \
+			parsing2.c \
+			parsing3.c \
 			join_inter_space.c \
 			kick_quotes.c \
 			/infos_token/get_token_infos.c \
@@ -50,10 +57,21 @@ PARSING =	get_info_args.c \
 			/infos_token/verif_cmd.c \
 			/infos_token/verif_cmd2.c \
 			/infos_token/recipe_for_exec.c \
+			/infos_token/recipe_for_exec2.c \
+			/infos_token/recipe_for_exec3.c \
+			/infos_token/recipe_for_exec4.c \
+			/infos_token/recipe_for_exec5.c \
+			/infos_token/recipe_for_exec6.c \
 			/error_args/search_error_args.c \
+			/error_args/search_error_args2.c \
+			/error_args/search_error_args3.c \
 			/error_args/utils_error_args.c \
 			/expand/expand.c \
 			/expand/expand2.c \
+			/expand/expand3.c \
+			/expand/expand4.c \
+			/expand/expand5.c \
+			/expand/expand6.c \
 			/exec.c \
 
 OBJS_PARSING = ${addprefix ${PARSING_DIR}, ${PARSING:.c=.o}}
@@ -62,12 +80,21 @@ OBJS_PARSING = ${addprefix ${PARSING_DIR}, ${PARSING:.c=.o}}
 BUILTINS_DIR = ./src/builtins/
 BUILTINS =	builtins.c \
 			export.c \
+			export2.c \
+			export3.c \
+			export4.c \
+			export5.c \
+			export6.c \
+			export7.c \
 			echo.c \
 			cd.c \
+			cd2.c \
+			cd3.c \
 			env.c \
 			pwd.c \
 			unset.c \
 			exit.c \
+			exit2.c \
 
 OBJS_BUILTINS = ${addprefix ${BUILTINS_DIR}, ${BUILTINS:.c=.o}}
 
