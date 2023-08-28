@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:21:17 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/24 00:42:34 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/08/28 14:38:56 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,6 @@ void start_heredoc(t_exec *exec, int exit_code)
 						   O_RDWR | O_CREAT | O_TRUNC, 0644);
 	if (exec->fd_infile == -1)
 	{
-		printf(" error heredoc\n");
 		perror("open");
 		return;
 	}
@@ -192,7 +191,7 @@ void start_heredoc(t_exec *exec, int exit_code)
 		{
 			ft_fprintf(2, "bash: warning: here-document delimited by end-of-file (wanted `%s')", exec->limiteur);
 			g_code_exit = SUCCESS;
-			break;
+			exit (0);
 		}
 		if (!ft_strcmp(line, exec->limiteur))
 		{
@@ -203,19 +202,50 @@ void start_heredoc(t_exec *exec, int exit_code)
 			line = exit_code_expande(line, exit_code);
 		else
 			line = importe_expande(line, *env);
+			//
 		write(exec->fd_infile, line, ft_strlen(line));
 		write(exec->fd_infile, "\n", 1);
 		free(line);
+		//
 	}
+	//
 	rl_catch_signals = 0;
 	free(line);
 	close(exec->fd_infile);
 	ft_fprintf(2, " limiteur = %s \n", exec->limiteur);
 	free(exec->limiteur);
 	free_db_array(exec->path);
+	//
 	exit(exec->fd_infile);
 }
+void	destruction_infile(t_exec *exec)
+{
+		close(exec->fd_infile);
+		free(exec->infile);
+		exec->infile = NULL;
+}
 
+void	dectruction_heredoc(t_exec *exec)
+{
+		close(exec->fd_infile);
+		free(exec->limiteur);
+		unlink("/tmp/here_doc_minishell");
+		exec->limiteur = NULL;
+}
+int wait_heredoc(int info, t_exec *exec, int tmp_error, pid_t pid)
+{
+	while (waitpid(pid, &info, 0) == -1 && info != 32718)
+			;
+		g_code_exit = tmp_error;
+		if (info > 255)
+			info = info / 256;
+		if (info == 0)
+			return (g_code_exit = 0, -1); // ! TODO ERROR le fait de renvoyer -1 ici fait exit le parent apres un controle c dans le heredoc je pense pas que ce soit voulu mais je change rien pr l'instant
+		exec->fd_infile = open("/tmp/here_doc_minishell", O_RDONLY);
+		if (exec->fd_infile == -1)
+			perror("error open heredoc");
+		return (0);
+}
 int new_heredoc(t_exec *exec, t_token *token)
 {
 	int info;
@@ -225,18 +255,9 @@ int new_heredoc(t_exec *exec, t_token *token)
 	info = 0;
 	tmp_error = g_code_exit;
 	if (exec->infile)
-	{
-		close(exec->fd_infile);
-		free(exec->infile);
-		exec->infile = NULL;
-	}
+		destruction_infile(exec);
 	if (exec->limiteur)
-	{
-		close(exec->fd_infile);
-		free(exec->limiteur);
-		unlink("/tmp/here_doc_minishell");
-		exec->limiteur = NULL;
-	}
+		dectruction_heredoc(exec);
 	exec->limiteur = ft_strdup(token->value);
 	if (!exec->limiteur)
 		return (-1);
@@ -248,21 +269,8 @@ int new_heredoc(t_exec *exec, t_token *token)
 			return (perror("error fork"), -1);
 		if (pid == 0)
 			start_heredoc(exec, tmp_error);
-		printf("pid fils = %d\n", pid);
-		while (waitpid(pid, &info, 0) == -1 && info != 32718)
-			;
-		printf(" le fils a terminer\n");
-		g_code_exit = tmp_error;
-		if (info > 255)
-			info = info / 256;
-		printf("info heredoc = %d\n", info);
-		if (info == 0)
-			return (g_code_exit = 130, -1); // ! TODO ERROR le fait de renvoyer -1 ici fait exit le parent apres un controle c dans le heredoc je pense pas que ce soit voulu mais je change rien pr l'instant
-		exec->fd_infile = open("/tmp/here_doc_minishell", O_RDONLY);
-		if (exec->fd_infile == -1)
-			perror("error open heredoc");
+		wait_heredoc(info, exec, tmp_error, pid);
 	}
-	printf(" quit heredoc\n");
 	return (0);
 }
 
@@ -485,14 +493,10 @@ int exec_cmd(t_exec *info, char ***env, char **cmd)
 	if (exec_bultins != 0)
 	{
 		free(info->path_cmd);
-		ft_free_g_parsing_total(info->g_parsing);
-		printf("errno = %d\n", errno);
-		printf("\033[1;35mERRNO BUILTINS = %d\n\033[0m", errno);
-		return (exit(g_code_exit), -1);
+		return (ft_free_g_parsing_total(info->g_parsing), exit(g_code_exit), -1);
 	}
 	if (cmd[0] == NULL)
 		null_cmd(info);
-	//printf ("cmd[0] before execve == %s \n",info->path_cmd);
 	if (execve(info->path_cmd, cmd, *env) == -1)
 	{
 		free(info->path_cmd);
@@ -503,12 +507,10 @@ int exec_cmd(t_exec *info, char ***env, char **cmd)
 		}
 		else
 			ft_check_error_exec(cmd);
-		printf("\033[1;33mERRNO EXEC = %d\n\033[0m", errno);
 		ft_free_g_parsing_total(info->g_parsing);
 		free(path);
 		return (exit(g_code_exit), -1);
 	}
-	printf("in exec_cmd !! \n");
 	g_code_exit = SUCCESS;
 	return (1);
 }
@@ -812,6 +814,12 @@ int start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char ***env)
 	if (info == -1)
 		return (-1);
 	gestion_outfile(tokens, exec);
+	int i = 0;
+	while (cmd[i])
+	{
+		printf("cmd[%d] %s \n", i, cmd[i]);
+		i++;
+	}
 	// if (cmd[0] == NULL)
 	// {
 	// 	file_solo(exec);
@@ -927,8 +935,8 @@ void exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pa
 			free_list_tokens(info_token);
 			free_name_file(&exec);
 			free_db_array(exec.path);
-			ft_free_g_parsing_total(*g_pars);
-			exit(NOTFOUND);
+		//	ft_free_g_parsing_total(*g_pars);
+		//	exit(NOTFOUND);
 			return;
 		}
 		commande = commande->next;

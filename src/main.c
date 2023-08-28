@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/24 00:27:28 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/25 12:58:38 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void	int_handler(int sig)
 	int	infile;
 
 	infile = 0;
-	if (g_code_exit >= CHILD)
+	if (g_code_exit > CHILD)
 	{
 		infile = g_code_exit - 1000;
 		close(infile);

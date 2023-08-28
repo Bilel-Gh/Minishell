@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   recipe_for_exec.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 22:49:57 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/23 23:21:15 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/24 18:49:15 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,12 @@ t_commande	*cmd_complete(t_token *token)
 	creat_cmd_list(list_commande, nb_node);
 	list_commande = head;
 	cmd_join = give_cmd_join(token, nb_node);
+	int i = 0;
+	while(cmd_join[i])
+	{
+		printf("cmd_join[%d] = %s \n",i , cmd_join[i]);
+		i++;
+	}
 	if (!cmd_join)
 		return (NULL);
 	add_cmd_to_list_commande(list_commande, cmd_join);

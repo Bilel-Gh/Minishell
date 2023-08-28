@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   recipe_for_exec3.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 23:18:07 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/23 23:20:03 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/07/25 12:35:29 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,12 @@ int	ft_malloc_cmd_join(int nb_cdm, char ***cmd_join, int i)
 
 void	ft_do_join_cmd(char **cmd_join, int i, t_token *tok_sch, int *is_first)
 {
-	if (is_first && (tok_sch->info->type == REDIRECT_IN
-			|| tok_sch->info->type == REDIRECT_OUT))
-	{
-		cmd_join[i] = ft_join_cmd(cmd_join[i], tok_sch->value);
-		*is_first = 0;
-	}
+	//if (is_first && (tok_sch->info->type == REDIRECT_IN
+			//|| tok_sch->info->type == REDIRECT_OUT))
+	//{
+		//cmd_join[i] = ft_join_cmd(cmd_join[i], tok_sch->value);
+		//*is_first = 0;
+	//}
 	if (tok_sch->info->type == COMMANDE || tok_sch->info->type == ARG)
 		cmd_join[i] = ft_join_cmd(cmd_join[i], tok_sch->value);
 	*is_first = 0;
