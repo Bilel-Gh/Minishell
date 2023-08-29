@@ -6,7 +6,7 @@
 /*   By: ncharii <ncharii@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 15:36:06 by ncharii           #+#    #+#             */
-/*   Updated: 2023/07/25 12:58:38 by ncharii          ###   ########.fr       */
+/*   Updated: 2023/08/28 22:22:04 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,9 @@ void	minishell_loop(char ***env, t_global_exec *g_exec,
 	{
 		g_parsing->exec = g_exec;
 		g_parsing->line = readline("minishell > ");
+		// TODO dosier null
+		// if(getpwd == NULL)
+		//	chdir(== home);
 		if (g_parsing->line == NULL)
 		{
 			ft_free_g_parsing_total(g_parsing);

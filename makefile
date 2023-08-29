@@ -72,9 +72,24 @@ PARSING =	get_info_args.c \
 			/expand/expand4.c \
 			/expand/expand5.c \
 			/expand/expand6.c \
-			/exec.c \
 
 OBJS_PARSING = ${addprefix ${PARSING_DIR}, ${PARSING:.c=.o}}
+
+# /* ~~~~~~~ EXEC ~~~~~~~~~~ */
+EXEC_DIR = ./src/exec/
+EXEC =	exec_3.c  \
+		exec_cmd.c \
+		exec_multi.c \
+		free_for_exec.c \
+		infile.c \
+		exec_2.c \
+		exec.c \
+		exec_multi_2.c \
+		exec_solo.c \
+		heredoc.c \
+		outfile.c
+
+OBJS_EXEC = ${addprefix ${EXEC_DIR}, ${EXEC:.c=.o}}
 
 # /* ~~~~~~~ BUILTINS ~~~~~~~ */
 BUILTINS_DIR = ./src/builtins/
@@ -94,7 +109,7 @@ BUILTINS =	builtins.c \
 			pwd.c \
 			unset.c \
 			exit.c \
-			exit2.c \
+			exit2.c 
 
 OBJS_BUILTINS = ${addprefix ${BUILTINS_DIR}, ${BUILTINS:.c=.o}}
 
@@ -114,16 +129,16 @@ EOC:="\033[0;0m"
 
 all:	${NAME}
 
-$(NAME): $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS)
+$(NAME): $(OBJS) $(OBJS_UTILS) $(OBJS_EXEC) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS)
 	@echo $(CYAN) " - Compiling $@" $(RED)
-	@$(CC) $(CFLAGS) $(OBJS) $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS) $(IFLAGS) $(LDFLAGS) $(LDLIBS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(OBJS_UTILS) $(OBJS_EXEC) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS) $(IFLAGS) $(LDFLAGS) $(LDLIBS) -o $(NAME)
 	@echo $(GREEN) "[OK COMPILED]" $(EOC)
 	@echo $(GREEN) "[LAUNCH PROGRAMM]" $(EOC)
 	@mkdir -p obj
 
 clean:
 	@echo $(PURPLE) "[🧹Cleaning...🧹]" $(EOC)
-	@${RM} ${OBJS} $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS)
+	@${RM} ${OBJS} $(OBJS_UTILS) $(OBJS_PARSING) $(OBJS_EXEC) $(OBJS_LEXEUR) $(OBJS_BUILTINS)
 	@${RM} -r obj
 
 fclean: clean

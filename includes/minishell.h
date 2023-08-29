@@ -199,6 +199,24 @@ typedef struct s_bachslash
 	char	*result;
 }			t_bachslash;
 
+typedef struct exec
+{
+	char				*infile;
+	char				*outfile;
+	int					fd_infile;
+	int					fd_outfile;
+	int					fd_in_last_pipe;
+	int					fd_heredoc;
+	char				*limiteur;
+	int					pos;
+	int					nb_cmd;
+	int					i;
+	int					path_input;
+	char				**path;
+	char				*path_cmd;
+	t_global_parsing	*g_parsing;
+}	t_exec;
+
 //debug
 void						verifyString(const char *str);
 void FT_PRINT_TOKEN_DEBUG(t_global_parsing *g_parsing, t_token *head);
@@ -529,8 +547,60 @@ void						ft_free_paths2(char **path_splited, char *pathCopy,
 int							nb_pipe(t_token *info);
 
 // Dossier exec
+void	init_exec(t_exec *exec);
+int	nb_token_whis_index(t_token *tokens, int index);
+t_token	*creat_info_token_list(t_token *tokens, int nb_node);
+void	copy_cont_token(t_token *dest, t_token *src);
+t_token	*dup_info(t_token *info_token, t_token *tokens, int index);
+t_token	*get_info_token(t_token *tokens, int index);
+bool	is_token_redi_in(t_token *token);
+void	new_infile(t_exec *exec, t_token *token);
+void	write_in_heredoc(int fd_heredoc, char *line, int size_line);
+void	quit_heredoc(t_exec *exec, char *line);
+void	heredoc_loop(t_exec *exec, int exit_code, char *line, char ***env);
+void	start_heredoc(t_exec *exec, int exit_code);
+void	destruction_infile(t_exec *exec);
+void	dectruction_heredoc(t_exec *exec);
+int	wait_heredoc(int info, t_exec *exec, int tmp_error, pid_t pid);
+int	new_heredoc(t_exec *exec, t_token *token);
+int	set_new_infile(t_exec *exec, t_token *tokens);
+int	gestion_infile(t_token *tokens, t_exec *exec);
+void	set_new_outfile(t_exec *exec, t_token *token);
+bool	is_token_redi_out(t_token *token);
+void	gestion_outfile(t_token *tokens, t_exec *exec);
+char	*for_test(char *test, char *argv);
+int	find_path(char **path, char *cmd, t_exec *info);
+int	add_one(int *is_bultin);
+int	ft_bultins_fork(char **cmd, char ***env, t_exec *info);
+int	add_zero(int *info_return);
+int	is_bultins_not_fork(char **cmd, char ***env, t_exec *info, int pos);
+void	null_cmd(t_exec *info);
+void	fail_execve(t_exec *info, char **cmd, char *path);
+int	exec_cmd(t_exec *info, char ***env, char **cmd);
+void	close_for_first(int *pipefd, t_exec *info);
+int	creat_pipe_and_file(t_exec *info, int *pipefd);
+int	dup_in_fork_first_inter(t_exec *info, int *pipefd);
+int	first(char **cmd, t_exec *info, char ***env);
+void	close_inter(int *pipefd, t_exec *info);
+int	gestion_file_inter(t_exec *info, int *pipefd);
+int	inter(char **cmd, t_exec *info, char ***env);
+int	gestion_file_last(t_exec *info);
+int	close_last(t_exec *info);
+int	dup_in_fork_last_solo(t_exec *info);
+int	last(char **cmd, t_exec *info, char ***env);
+int	start_exec(char **cdm, t_exec *info, char ***env);
+void	close_for_solo_and_free(t_exec *info);
+int	file_solo(t_exec *info);
+int	solo_exec(char **cmd, t_exec *info, char ***env);
+int	start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char ***env);
+int	start_exec_mult(t_token *tokens, char **cmd, t_exec *exec, char ***env);
+int	get_path(t_exec *exec, char **envp);
+void	free_name_file(t_exec *exec);
 void	ft_free_g_parsing_total(t_global_parsing *g_parsing);
-void	exec(t_token *tokens, t_commande *cmd, char ***env, t_global_parsing **g_pars);
-void 	ft_check_error_exec(char **cmd);
+void	free_path(t_exec *exec);
+int	exec_one(t_token *tokens, t_commande *cmd, char ***env, t_exec *exec);
+int	exec_multi(t_token *tokens, t_commande *cmd, char ***env, t_exec *exec);
+void	exec(t_token *tokens, t_commande *cmd, char ***env,
+	t_global_parsing **g_pars);
 
 #endif

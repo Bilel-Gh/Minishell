@@ -87,5 +87,6 @@ void	ft_gestion_backslash(int **type_args, int *nb_args,
 		}
 		i++;
 	}
+	free(*type_args);
 	*type_args = ft_get_info_args((*g_pars)->args, nb_args);
 }

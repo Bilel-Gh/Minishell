@@ -56,7 +56,7 @@ int	count_nb_space(int *type_args, int nb_args)
 
 	i = 0;
 	nb_space = 0;
-	printf("nb_args = %d", nb_args);
+	ft_fprintf(2, "nb_args = %d", nb_args);
 	if (type_args == NULL)
 		return (nb_space);
 	while (i < nb_args - 1)
