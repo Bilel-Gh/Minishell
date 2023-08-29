@@ -54,15 +54,16 @@ t_token	*creat_info_token_list(t_token *tokens, int nb_node)
 	return (head);
 }
 
-void	copy_cont_token(t_token *dest, t_token *src)
+int	copy_cont_token(t_token *dest, t_token *src)
 {
 	dest->token_index = src->token_index;
 	dest->value = ft_strdup(src->value);
 	dest->info = (t_token_info *)malloc(sizeof(t_token_info));
+	if (!dest->info)
+		return (1);
 	dest->info->type = src->info->type;
 	dest->prev = NULL;
-	// TODO gestion d errerur a faire et
-	// il faudrait meme reflechir  aune autre facon de faire
+	return (0);
 }
 
 t_token	*dup_info(t_token *info_token, t_token *tokens, int index)
@@ -76,7 +77,8 @@ t_token	*dup_info(t_token *info_token, t_token *tokens, int index)
 	{
 		if (all->token_index == index)
 		{
-			copy_cont_token(tokens_value_index, all);
+			if (copy_cont_token(tokens_value_index, all))
+				return (NULL);
 			tokens_value_index = tokens_value_index->next;
 		}
 		all = all->next;

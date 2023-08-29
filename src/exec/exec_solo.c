@@ -45,10 +45,10 @@ void	close_for_solo_and_free(t_exec *info)
 	while (waitpid(-1, &g_code_exit, 0) != -1 || g_code_exit == 355)
 		;
 	printf(" g_code_exit sortie de wait = %d\n", g_code_exit);
-	if (g_code_exit == 131) // pour afficher le message en sortie de process de SIGQUIT TODO voir siavec errdoc ca pose pas de pb normalement non
+	if (g_code_exit == 131)
 		ft_fprintf(2, "Quit (core dumped)\n");
-	// if (g_code_exit == 2) // ! TODO ERROR code d'erreur modifie builtins
-	// 	g_code_exit = CSIGINT;
+	 if (g_code_exit == 2) // ! TODO ERROR code d'erreur modifie builtins
+	 	g_code_exit = CSIGINT;
 	if (g_code_exit > 255)
 		g_code_exit = g_code_exit / 256;
 	if ((info->infile || info->limiteur) && info->fd_infile > 0)

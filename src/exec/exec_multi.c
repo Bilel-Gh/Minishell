@@ -128,4 +128,3 @@ int	close_last(t_exec *info)
 		g_code_exit = g_code_exit / 256;
 	return (1);
 }
-

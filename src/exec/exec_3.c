@@ -87,7 +87,7 @@ int	wait_heredoc(int info, t_exec *exec, int tmp_error, pid_t pid)
 	if (info > 255)
 		info = info / 256;
 	if (info == 0)
-		return (g_code_exit = 0, -1); // ! TODO ERROR le fait de renvoyer -1 ici fait exit le parent apres un controle c dans le heredoc je pense pas que ce soit voulu mais je change rien pr l'instant
+		return (g_code_exit = 0, -1);
 	exec->fd_infile = open("/tmp/here_doc_minishell", O_RDONLY);
 	if (exec->fd_infile == -1)
 		perror("error open heredoc");

@@ -37,7 +37,8 @@ void	heredoc_loop(t_exec *exec, int exit_code, char *line, char ***env)
 		line = readline("> ");
 		if (!line || g_code_exit == CSIGINT)
 		{
-			ft_fprintf(2, "bash: warning: here-document delimited by end-of-file (wanted `%s')", exec->limiteur);
+			ft_fprintf(2, "bash: warning: here-document \
+delimited by end-of-file (wanted `%s')", exec->limiteur);
 			g_code_exit = SUCCESS;
 			exit (0);
 		}

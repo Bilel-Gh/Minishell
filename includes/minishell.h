@@ -550,7 +550,7 @@ int							nb_pipe(t_token *info);
 void	init_exec(t_exec *exec);
 int	nb_token_whis_index(t_token *tokens, int index);
 t_token	*creat_info_token_list(t_token *tokens, int nb_node);
-void	copy_cont_token(t_token *dest, t_token *src);
+int	copy_cont_token(t_token *dest, t_token *src);
 t_token	*dup_info(t_token *info_token, t_token *tokens, int index);
 t_token	*get_info_token(t_token *tokens, int index);
 bool	is_token_redi_in(t_token *token);

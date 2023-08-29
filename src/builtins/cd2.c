@@ -6,7 +6,7 @@
 /*   By: bghandri <bghandri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 19:51:46 by bghandri          #+#    #+#             */
-/*   Updated: 2023/07/23 20:09:27 by bghandri         ###   ########.fr       */
+/*   Updated: 2023/08/29 17:02:15 by ncharii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,21 +42,22 @@ void	ft_cd_tiret(char **const *env, char *prev_dir)
 void	ft_cd_tild(char **const *env, char *home)
 {
 	(void)env;
+	printf("cd tild \n");
 	if (home != NULL && home[0] != '\0')
 	{
-		if (home != NULL)
+		printf("cd in if\n");
+
+		if (chdir(home) != 0)
 		{
-			if (chdir(home) != 0)
-			{
-				free(home);
-				perror("chdir");
-				g_code_exit = ERROR;
-			}
-		}
-		else
-		{
-			ft_fprintf(2, "cd: home not found\n");
+			free(home);
+			perror("chdir");
 			g_code_exit = ERROR;
 		}
+	}
+	else
+	{
+		printf("cd in else\n");
+		ft_fprintf(2, "cd: home not found\n");
+		g_code_exit = ERROR;
 	}
 }
