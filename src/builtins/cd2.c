@@ -42,11 +42,8 @@ void	ft_cd_tiret(char **const *env, char *prev_dir)
 void	ft_cd_tild(char **const *env, char *home)
 {
 	(void)env;
-	printf("cd tild \n");
 	if (home != NULL && home[0] != '\0')
 	{
-		printf("cd in if\n");
-
 		if (chdir(home) != 0)
 		{
 			free(home);
@@ -56,7 +53,6 @@ void	ft_cd_tild(char **const *env, char *home)
 	}
 	else
 	{
-		printf("cd in else\n");
 		ft_fprintf(2, "cd: home not found\n");
 		g_code_exit = ERROR;
 	}

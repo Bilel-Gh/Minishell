@@ -23,12 +23,12 @@ void	ft_move_to_directory(char ***env, char *home, char *prev_dir,
 	{
 		ft_cd_tiret(env, prev_dir);
 	}
+	else if (ft_strcmp(target_dir, "--") == 0)
+		return ;
 	else
 	{
 		if (chdir(target_dir) != 0)
 		{
-			printf("\033[1;31m CD FINAL ERROR TARGET_DIR = '%s'\n\033[0m",
-				target_dir);
 			perror("cd");
 			g_code_exit = ERROR;
 		}
@@ -90,7 +90,8 @@ int	ft_gestion_cd_error2(char **args, char *home, char *prev_dir)
 			free(prev_dir);
 		return (ERROR);
 	}
-	if (ft_strlen(args[1]) > 1 && args[1][0] == '-' && args[1][1] == '-')
+	if (ft_strlen(args[1]) > 2 && args[1][0] == '-'
+		&& !error_no_only_type(args[1]))
 	{
 		ft_fprintf(2, "bash: cd: invalid option\n");
 		g_code_exit = MISUSE;

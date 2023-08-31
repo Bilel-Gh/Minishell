@@ -9,7 +9,8 @@ CFLAGS = -Wall -Werror -Wextra -g3
 IFLAGS:= -I ./includes
 
 # /* ~~~~~~~ LINKING INFO ~~~~~~~ */
-LDFLAGS = -L /Users/bilelgh/homebrew/Cellar/readline/8.2.1/lib #A supprimer
+# LDFLAGS = -L /Users/bilelgh/homebrew/Cellar/readline/8.2.1/lib #A supprimer
+# LDFLAGS = -L
 LDLIBS = -lreadline
 
 # /* ~~~~~~ SOURCES ~~~~~~ */
@@ -131,7 +132,7 @@ all:	${NAME}
 
 $(NAME): $(OBJS) $(OBJS_UTILS) $(OBJS_EXEC) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS)
 	@echo $(CYAN) " - Compiling $@" $(RED)
-	@$(CC) $(CFLAGS) $(OBJS) $(OBJS_UTILS) $(OBJS_EXEC) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS) $(IFLAGS) $(LDFLAGS) $(LDLIBS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(OBJS_UTILS) $(OBJS_EXEC) $(OBJS_PARSING) $(OBJS_LEXEUR) $(OBJS_BUILTINS) $(IFLAGS) $(LDLIBS) -o $(NAME)
 	@echo $(GREEN) "[OK COMPILED]" $(EOC)
 	@echo $(GREEN) "[LAUNCH PROGRAMM]" $(EOC)
 	@mkdir -p obj
@@ -144,7 +145,6 @@ clean:
 fclean: clean
 	@echo $(PURPLE) "[🧹FCleaning...🧹]" $(EOC)
 	@${RM} ${NAME}
-
 
 re: 	fclean all
 

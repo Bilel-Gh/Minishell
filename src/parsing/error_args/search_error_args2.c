@@ -17,7 +17,6 @@ bool	error_quote(int *type_args, int nb_args, char **args)
 	int	i;
 
 	i = 0;
-	printf("\n*********check parsing quote ???***************\n");
 	while (i < nb_args)
 	{
 		if (args[i][0] == 34 || args[i][0] == 39)

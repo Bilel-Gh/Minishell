@@ -67,13 +67,15 @@ void	ft_check_atoll(char **str, int *negative)
 	else if (*(*str) == '+')
 		++(*str);
 }
-void free_for_err_exit(t_exec *exec)
+
+void	free_for_err_exit(t_exec *exec)
 {
 	free(exec->path_cmd);
 	free_db_array(exec->path);
 	free_list_tokens(exec->tokens);
 	exit(g_code_exit);
 }
+
 void	builtin_exit(char **args, t_global_parsing **g_pars, t_exec *exec)
 {
 	int				nb_args;

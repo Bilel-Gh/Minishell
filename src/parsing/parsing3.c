@@ -27,7 +27,6 @@ bool	error_grammaticale(int *type_args, int nb_args)
 	i = 0;
 	if (!type_args)
 		return (false);
-	printf("*********check grammaticale error ???***************\n");
 	if (nb_args == 1 && type_args[i] != 0)
 		return (true);
 	while (i < nb_args - 1)
@@ -56,7 +55,6 @@ int	count_nb_space(int *type_args, int nb_args)
 
 	i = 0;
 	nb_space = 0;
-	ft_fprintf(2, "nb_args = %d", nb_args);
 	if (type_args == NULL)
 		return (nb_space);
 	while (i < nb_args - 1)

@@ -65,11 +65,6 @@ void	ft_do_exec(char ***env, t_global_parsing *g_parsing, int nb_args)
 	g_parsing->tokens = ft_get_tokens_with_infos(g_parsing->args, nb_args);
 	g_parsing->commande = cmd_complete(g_parsing->tokens);
 	ft_set_index_for_exec(&g_parsing->tokens);
-	// DEBUG
-	t_token	*head;
-	head = NULL;
-	FT_PRINT_TOKEN_DEBUG(g_parsing, head);
-	// DEBUG
 	exec(g_parsing->tokens, g_parsing->commande, env, &g_parsing);
 	rl_replace_line("", 0);
 }

@@ -50,7 +50,8 @@ int	ft_isdigit(char *str)
 	return (1);
 }
 
-void	ft_do_exit(char *const *args, t_global_parsing *const *g_pars, t_exec *exec)
+void	ft_do_exit(char *const *args, t_global_parsing *const *g_pars,
+	t_exec *exec)
 {
 	if (args[1] != NULL)
 	{

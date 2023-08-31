@@ -69,14 +69,9 @@ char	**kick_quote(int *type_args, int nb_args, char **args)
 			no_quote[i] = copy_sans_quote(args[i]);
 		else
 			no_quote[i] = copy_cont(args[i]);
-		printf("no quote = %s \n", no_quote[i]);
-		printf("args = %s \n", args[i]);
 		i++;
 	}
 	no_quote[i] = 0;
-	printf("11111111111111111 %s\n", no_quote[0]);
 	no_quote = ft_clean_null_db_array(no_quote, &nb_args);
-	i = 0;
-	printf("00000000000000 %s\n", no_quote[0]);
 	return (no_quote);
 }

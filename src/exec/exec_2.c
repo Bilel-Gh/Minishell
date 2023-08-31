@@ -79,7 +79,6 @@ t_token	*dup_info(t_token *info_token, t_token *tokens, int index)
 		{
 			if (copy_cont_token(tokens_value_index, all))
 			{
-				ft_fprintf(2,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk\n");
 				return (NULL);
 			}
 			tokens_value_index = tokens_value_index->next;

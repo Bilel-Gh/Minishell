@@ -102,7 +102,6 @@ int	join_expand(char *expande, int *j, int s_extract, char *new_args)
 	index = 0;
 	if (expande)
 	{
-		printf("expand = ________ %s\n", expande);
 		while (expande[index])
 		{
 			new_args[*j] = expande[index];

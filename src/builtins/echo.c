@@ -95,7 +95,6 @@ int	ft_print_fullarg(int j, char *full_arg, char *tmp)
 		tmp = full_arg;
 		full_arg = ft_substr(full_arg, j, ft_strlen(full_arg));
 		j = 0;
-		printf("full_arg = %s\n", full_arg);
 		while (full_arg[j])
 		{
 			if (write(1, &full_arg[j], 1) == -1)

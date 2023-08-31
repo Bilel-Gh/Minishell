@@ -113,12 +113,6 @@ t_commande	*cmd_complete(t_token *token)
 	creat_cmd_list(list_commande, nb_node);
 	list_commande = head;
 	cmd_join = give_cmd_join(token, nb_node);
-	int i = 0;
-	while(cmd_join[i])
-	{
-		printf("cmd_join[%d] = %s \n",i , cmd_join[i]);
-		i++;
-	}
 	if (!cmd_join)
 		return (NULL);
 	add_cmd_to_list_commande(list_commande, cmd_join);

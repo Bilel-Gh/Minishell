@@ -63,7 +63,6 @@ bool	error_expand(int type, char *next, char **env)
 			expand_value = give_env_expand(expand_to_search,
 					ft_strlen(expand_to_search),
 					env);
-			printf(" error_expande == %s\n", expand_value);
 			if (expand_value == NULL)
 			{
 				g_code_exit = ERROR_REDIRECT2;
@@ -81,7 +80,6 @@ bool	error_size_or_spe_redi(int *type_args, int nb_args, char **args,
 	char	*get_first_next_arg;
 
 	i = 0;
-	printf("\n*********check parsing redirection ???***************\n");
 	while (i < nb_args)
 	{
 		if (type_args[i] == 1)

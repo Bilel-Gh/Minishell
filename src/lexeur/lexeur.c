@@ -86,7 +86,6 @@ void	free_list_tokens(t_token *tokens)
 		return ;
 	while (tokens->next)
 	{
-		ft_fprintf(2, "im in fonction\n");
 		head = tokens;
 		tokens = tokens->next;
 		free(head->value);
@@ -94,7 +93,6 @@ void	free_list_tokens(t_token *tokens)
 			free(head->info);
 		free(head);
 	}
-	ft_fprintf(2, "im in fonction not while\n");
 	if (tokens->info)
 		free(tokens->info);
 	free(tokens->value);
@@ -106,18 +104,11 @@ char	**ft_lexeur(char *line)
 	t_character	*characters;
 	t_token		*tokens;
 	char		**args;
-	char		**tmp;
 
 	characters = ft_parse_string(line);
 	tokens = merge_characters(characters);
 	args = get_args(tokens);
 	free_list_characters(characters);
 	free_list_tokens(tokens);
-	tmp = args;
-	while (*tmp)
-	{
-		printf("\033[0;31m arg = %s\n \033[0m", *tmp);
-		tmp++;
-	}
 	return (args);
 }

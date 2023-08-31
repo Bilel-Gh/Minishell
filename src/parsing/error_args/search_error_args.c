@@ -78,24 +78,20 @@ bool	search_error_args(int *type_args, int *nb_args, char **args, char **env)
 {
 	if (error_pipe(type_args, *nb_args, args))
 	{
-		printf("^^^^^^^^^^^     no error pipe    ^^^^^^^^^^^^^^^^^^\n");
 		return (1);
 	}
 	if (error_size_or_spe_redi(type_args, *nb_args, args, env))
 	{
-		printf("^^^^^^^^^^^ no error redirection ^^^^^^^^^^^^^^^^^^\n");
 		if (g_code_exit != ERROR_REDIRECT2)
 			g_code_exit = ERROR_REDIRECT;
 		return (1);
 	}
 	if (error_quote(type_args, *nb_args, args))
 	{
-		printf("\n*********    no error quote    ***************\n");
 		return (1);
 	}
 	if (error_back_slash(*nb_args, args))
 	{
-		printf("\n*********    no error back_slash    ***************\n");
 		return (1);
 	}
 	return (0);

@@ -121,9 +121,8 @@ int	close_last(t_exec *info)
 		close(info->fd_in_last_pipe);
 	while (waitpid(-1, &g_code_exit, 0) != -1)
 		;
-	printf("g_code_exit sortie de wait = %d\n", g_code_exit);
 	if (g_code_exit == 2)
-		g_code_exit = CSIGINT; // ! TODO ERROR code d'erreur modifie builtins
+		g_code_exit = CSIGINT;
 	if (g_code_exit == 13)
 		g_code_exit = 2;
 	if (g_code_exit > 255)

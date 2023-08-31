@@ -24,7 +24,6 @@ void	quit_heredoc(t_exec *exec, char *line)
 	rl_catch_signals = 0;
 	free(line);
 	close(exec->fd_infile);
-	ft_fprintf(2, " limiteur = %s \n", exec->limiteur);
 	free(exec->limiteur);
 	free_db_array(exec->path);
 	free_list_tokens(exec->tokens);

@@ -22,8 +22,7 @@ char	*replace_expande(char *args, int *i, char **env, int *info)
 	new_args = NULL;
 	size_of_expende = ft_size_of_expende(&args[*i]);
 	if (size_of_expende == 0)
-		return(*i = *i + 1, args);
-	printf("sizeeeeee = %d\n \n ", size_of_expende);
+		return (*i = *i + 1, args);
 	expend_recherche = get_expende_detect(size_of_expende, &args[*i]);
 	new_args = traslate_expand(args, expend_recherche, i, env);
 	return (new_args);

@@ -29,7 +29,6 @@ char	**ft_custom_split(char *str)
 	t_split	*s;
 	char	**final_result;
 
-	printf("str custom split = %s\n", str);
 	s = malloc(sizeof(t_split));
 	if (!ft_init_result(str, s))
 	{

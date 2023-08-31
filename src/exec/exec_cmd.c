@@ -66,7 +66,6 @@ void	null_cmd(t_exec *info)
 	g_code_exit = NOTFOUND;
 	free(info->path_cmd);
 	ft_free_g_parsing_total(info->g_parsing);
-	printf("errno = %d\n", errno);
 	return (exit(g_code_exit));
 }
 
@@ -81,6 +80,7 @@ void	fail_execve(t_exec *info, char **cmd, char *path, t_token *tokens)
 	else
 		ft_check_error_exec(cmd);
 	free_list_tokens(tokens);
+	free_name_file(info);
 	free_db_array(info->path);
 	ft_free_g_parsing_total(info->g_parsing);
 	free(path);
@@ -106,7 +106,7 @@ int	exec_cmd(t_exec *info, char ***env, char **cmd, t_token *tokens)
 		free_db_array(info->path);
 		free_list_tokens(tokens);
 		ft_free_g_parsing_total(info->g_parsing);
-		return (free(path), exit(g_code_exit), -1);
+		return (free_name_file(info), free(path), exit(g_code_exit), -1);
 	}
 	if (cmd[0] == NULL)
 		null_cmd(info);

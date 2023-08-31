@@ -25,7 +25,7 @@ int	ft_check_args(char **args)
 	{
 		while (args[i][j] == '-')
 			j++;
-		if (args[i][j] != 0)
+		if (j >= 3 || args[i][j] != 0)
 		{
 			ft_fprintf(2, "pwd: -%c: invalid option\n", args[i][j]);
 			g_code_exit = MISUSE;

@@ -78,10 +78,7 @@ void	expande(int **type_args, int *nb_args, t_global_parsing **g_pars,
 	while (v.i < *nb_args)
 	{
 		if ((*type_args)[v.i] == QUOTE_S)
-		{
-			printf("C EST ICI LE BOSS\n");
 			v.i++;
-		}
 		if (v.i < *nb_args && ((*type_args)[v.i] == ALPHANUM
 			|| (*type_args)[v.i] == QUOTE_D))
 		{

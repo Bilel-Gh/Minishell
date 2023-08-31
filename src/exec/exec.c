@@ -15,7 +15,6 @@
 int	start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char ***env)
 {
 	int	info;
-	int	i;
 
 	info = 0;
 	exec->tokens = tokens;
@@ -23,12 +22,6 @@ int	start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char ***env)
 	if (info == -1)
 		return (-1);
 	gestion_outfile(tokens, exec);
-	i = 0;
-	while (cmd[i])
-	{
-		printf("cmd[%d] %s \n", i, cmd[i]);
-		i++;
-	}
 	if (cmd[0] == NULL)
 	{
 		file_solo(exec);

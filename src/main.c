@@ -48,22 +48,6 @@ char	**ft_get_export(char **env)
 	free(suffix);
 	return (export);
 }
-void pwd_null(char ***env)
-{
-	char	cwd[SIZE_PATH];
-	char	*home;
-
-	if (!getcwd(cwd, SIZE_PATH))
-	{
-		home = ft_getenv("HOME", *env);
-		if (chdir(home) != 0)
-		{
-			free(home);
-			perror("chdir");
-			g_code_exit = ERROR;
-		}
-	}
-}
 
 void	minishell_loop(char ***env, t_global_exec *g_exec,
 		t_global_parsing *g_parsing)
@@ -76,7 +60,6 @@ void	minishell_loop(char ***env, t_global_exec *g_exec,
 	{
 		g_parsing->exec = g_exec;
 		g_parsing->line = readline("minishell > ");
-	//	pwd_null(g_parsing->env);
 		if (g_parsing->line == NULL)
 		{
 			ft_free_g_parsing_total(g_parsing);

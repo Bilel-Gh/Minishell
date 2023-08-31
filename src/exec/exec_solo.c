@@ -46,15 +46,14 @@ void	close_for_solo_and_free(t_exec *info)
 {
 	while (waitpid(-1, &g_code_exit, 0) != -1 || g_code_exit == 355)
 		;
-	printf(" g_code_exit sortie de wait = %d\n", g_code_exit);
 	if (g_code_exit == 131)
 		ft_fprintf(2, "Quit (core dumped)\n");
-	if (g_code_exit == 2) // ! TODO ERROR code d'erreur modifie builtins
-	 	g_code_exit = CSIGINT;
-	if (g_code_exit == 13)
-		g_code_exit = 2;
+	if (g_code_exit == 2)
+		g_code_exit = CSIGINT;
 	if (g_code_exit > 255)
 		g_code_exit = g_code_exit / 256;
+	if (g_code_exit == 13)
+		g_code_exit = 2;
 	if ((info->infile || info->limiteur) && info->fd_infile > 0)
 		close(info->fd_infile);
 	if (info->outfile && info->fd_outfile != 1)

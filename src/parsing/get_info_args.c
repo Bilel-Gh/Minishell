@@ -67,8 +67,6 @@ int	*ft_get_info_args(char **line_split, int *give_nb_args)
 		nb_args++;
 	type = malloc(sizeof(int) * nb_args);
 	i = ft_get_type(line_split, i, type);
-	ft_fprintf(2, "\nnbbbbbbbbbbbb i = %d\n", i);
 	*give_nb_args = i;
-	i = 0;
 	return (type);
 }

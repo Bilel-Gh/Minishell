@@ -51,12 +51,6 @@ int	ft_malloc_cmd_join(int nb_cdm, char ***cmd_join, int i)
 
 void	ft_do_join_cmd(char **cmd_join, int i, t_token *tok_sch, int *is_first)
 {
-	//if (is_first && (tok_sch->info->type == REDIRECT_IN
-			//|| tok_sch->info->type == REDIRECT_OUT))
-	//{
-		//cmd_join[i] = ft_join_cmd(cmd_join[i], tok_sch->value);
-		//*is_first = 0;
-	//}
 	if (tok_sch->info->type == COMMANDE || tok_sch->info->type == ARG)
 		cmd_join[i] = ft_join_cmd(cmd_join[i], tok_sch->value);
 	*is_first = 0;
