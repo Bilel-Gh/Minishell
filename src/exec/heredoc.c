@@ -27,6 +27,8 @@ void	quit_heredoc(t_exec *exec, char *line)
 	ft_fprintf(2, " limiteur = %s \n", exec->limiteur);
 	free(exec->limiteur);
 	free_db_array(exec->path);
+	free_list_tokens(exec->tokens);
+	ft_free_g_parsing_total(exec->g_parsing);
 	exit(exec->fd_infile);
 }
 
@@ -40,7 +42,11 @@ void	heredoc_loop(t_exec *exec, int exit_code, char *line, char ***env)
 			ft_fprintf(2, "bash: warning: here-document \
 delimited by end-of-file (wanted `%s')", exec->limiteur);
 			g_code_exit = SUCCESS;
-			exit (0);
+			close(exec->fd_infile);
+			free_db_array(exec->path);
+			free_list_tokens(exec->tokens);
+			ft_free_g_parsing_total(exec->g_parsing);
+			return (free(exec->limiteur), exit(0));
 		}
 		if (!ft_strcmp(line, exec->limiteur))
 		{

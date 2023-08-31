@@ -90,7 +90,6 @@ void	minishell_loop(char ***env, t_global_exec *g_exec,
 		if (ft_is_error_parsing(g_parsing, nb_args))
 			continue ;
 		ft_do_exec(g_parsing->env, g_parsing, nb_args);
-		printf("\033[1;36mexit code FINAL = %d\n\033[0m", g_code_exit);
 		ft_free_g_parsing(g_parsing);
 		ft_init_global_parsing(g_parsing);
 	}

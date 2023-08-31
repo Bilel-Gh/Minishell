@@ -67,8 +67,14 @@ void	ft_check_atoll(char **str, int *negative)
 	else if (*(*str) == '+')
 		++(*str);
 }
-
-void	builtin_exit(char **args, t_global_parsing **g_pars)
+void free_for_err_exit(t_exec *exec)
+{
+	free(exec->path_cmd);
+	free_db_array(exec->path);
+	free_list_tokens(exec->tokens);
+	exit(g_code_exit);
+}
+void	builtin_exit(char **args, t_global_parsing **g_pars, t_exec *exec)
 {
 	int				nb_args;
 	char			**args_cpy;
@@ -83,7 +89,12 @@ void	builtin_exit(char **args, t_global_parsing **g_pars)
 	printf("exit\n");
 	while (args_cpy[nb_args] != NULL)
 		nb_args++;
-	ft_gestion_exit_error(args, nb_args, nb_check, g_pars);
-	ft_do_exit(args, g_pars);
+	if (ft_gestion_exit_error(args, nb_args, nb_check, g_pars))
+		free_for_err_exit(exec);
+	ft_do_exit(args, g_pars, exec);
+	free(exec->path_cmd);
+	free_db_array(exec->path);
+	free_list_tokens(exec->tokens);
+	ft_free_g_parsing_total(*g_pars);
 	exit(g_code_exit);
 }

@@ -29,7 +29,7 @@ int	ft_bultins_fork(char **cmd, char ***env, t_exec *info)
 	else if (ft_strcmp(cmd[0], "pwd") == 0 && add_one(&is_bultin))
 		builtin_pwd(cmd);
 	else if (ft_strcmp(cmd[0], "exit") == 0 && add_one(&is_bultin))
-		builtin_exit(cmd, info_parsing);
+		builtin_exit(cmd, info_parsing, info);
 	else if (ft_strcmp(cmd[0], "env") == 0 && add_one(&is_bultin))
 		builtin_env(cmd, *env);
 	else if (ft_strcmp(cmd[0], "export") == 0 && add_one(&is_bultin))
@@ -53,7 +53,7 @@ int	is_bultins_not_fork(char **cmd, char ***env, t_exec *info, int pos)
 		builtin_unset(cmd, env, g_exec);
 	else if (ft_strcmp(cmd[0], "exit") == 0
 		&& add_zero(&info_return) && (pos == DERNIER))
-		builtin_exit(cmd, info_parsing);
+		builtin_exit(cmd, info_parsing, info);
 	else if ((ft_strcmp(cmd[0], "export") == 0) && (cmd[1] != NULL)
 		&& add_zero(&info_return) && (pos == DERNIER))
 		builtin_export(cmd, env, g_exec);
@@ -70,7 +70,7 @@ void	null_cmd(t_exec *info)
 	return (exit(g_code_exit));
 }
 
-void	fail_execve(t_exec *info, char **cmd, char *path)
+void	fail_execve(t_exec *info, char **cmd, char *path, t_token *tokens)
 {
 	free(info->path_cmd);
 	if (path == NULL)
@@ -80,12 +80,14 @@ void	fail_execve(t_exec *info, char **cmd, char *path)
 	}
 	else
 		ft_check_error_exec(cmd);
+	free_list_tokens(tokens);
+	free_db_array(info->path);
 	ft_free_g_parsing_total(info->g_parsing);
 	free(path);
 	exit(g_code_exit);
 }
 
-int	exec_cmd(t_exec *info, char ***env, char **cmd)
+int	exec_cmd(t_exec *info, char ***env, char **cmd, t_token *tokens)
 {
 	int		exec_bultins;
 	char	*path;
@@ -99,15 +101,17 @@ int	exec_cmd(t_exec *info, char ***env, char **cmd)
 	}
 	exec_bultins = ft_bultins_fork(cmd, env, info);
 	if (exec_bultins != 0)
-	{
+	{	
 		free(info->path_cmd);
+		free_db_array(info->path);
+		free_list_tokens(tokens);
 		ft_free_g_parsing_total(info->g_parsing);
-		return (exit(g_code_exit), -1);
+		return (free(path), exit(g_code_exit), -1);
 	}
 	if (cmd[0] == NULL)
 		null_cmd(info);
 	if (execve(info->path_cmd, cmd, *env) == -1)
-		fail_execve(info, cmd, path);
+		fail_execve(info, cmd, path, tokens);
 	g_code_exit = SUCCESS;
 	return (1);
 }

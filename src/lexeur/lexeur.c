@@ -86,6 +86,7 @@ void	free_list_tokens(t_token *tokens)
 		return ;
 	while (tokens->next)
 	{
+		ft_fprintf(2, "im in fonction\n");
 		head = tokens;
 		tokens = tokens->next;
 		free(head->value);
@@ -93,6 +94,7 @@ void	free_list_tokens(t_token *tokens)
 			free(head->info);
 		free(head);
 	}
+	ft_fprintf(2, "im in fonction not while\n");
 	if (tokens->info)
 		free(tokens->info);
 	free(tokens->value);

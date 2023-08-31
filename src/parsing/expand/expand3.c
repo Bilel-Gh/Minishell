@@ -74,6 +74,7 @@ int	ft_do_gestion_expand(int **type_args, t_global_parsing **g_pars, char **env,
 			ft_gestion_digit_expand(g_pars, v);
 		else if (solo_dolard((*g_pars)->args[(*v).i]))
 		{
+			ft_fprintf(2,"HSJAKFKJSHFLSDKJLKSHDKH\n \n");
 			ft_gestion_dollar_expand(type_args, v->nb_args, g_pars, v);
 			return (1);
 		}

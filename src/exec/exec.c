@@ -18,6 +18,7 @@ int	start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char ***env)
 	int	i;
 
 	info = 0;
+	exec->tokens = tokens;
 	info = gestion_infile(tokens, exec);
 	if (info == -1)
 		return (-1);
@@ -34,7 +35,7 @@ int	start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char ***env)
 		close_for_solo_and_free(exec);
 		return (0);
 	}
-	if (solo_exec(cmd, exec, env) == -1)
+	if (solo_exec(cmd, exec, env, tokens) == -1)
 		return (-2);
 	return (info);
 }
@@ -44,11 +45,12 @@ int	start_exec_mult(t_token *tokens, char **cmd, t_exec *exec, char ***env)
 	int	info;
 
 	info = 0;
+	exec->tokens = tokens;
 	info = gestion_infile(tokens, exec);
 	if (info == -1)
 		return (-1);
 	gestion_outfile(tokens, exec);
-	if (start_exec(cmd, exec, env) == -1)
+	if (start_exec(cmd, exec, env, tokens) == -1)
 		return (-2);
 	return (info);
 }
@@ -118,12 +120,18 @@ void	exec(t_token *tokens, t_commande *cmd, char ***env,
 	if (exec.nb_cmd == 1)
 	{
 		if (!exec_one(tokens, cmd, env, &exec))
+		{
+			free_db_array(exec.path);
 			return ;
+		}	
 	}
 	else
 	{
 		if (!exec_multi(tokens, cmd, env, &exec))
+		{
+			free_db_array(exec.path);
 			return ;
+		}
 	}
 	free_db_array(exec.path);
 }

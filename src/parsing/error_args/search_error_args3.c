@@ -14,7 +14,7 @@
 
 bool	ft_is_solo_expand(char *str)
 {
-	if (str != NULL && str[0] == '$')
+	if (str != NULL && str[0] == '$' && str[1] == 0)
 		return (true);
 	return (false);
 }

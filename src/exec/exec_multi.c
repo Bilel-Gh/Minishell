@@ -12,20 +12,20 @@
 
 #include "../../includes/minishell.h"
 
-int	start_exec(char **cdm, t_exec *info, char ***env)
+int	start_exec(char **cdm, t_exec *info, char ***env, t_token *tokens)
 {
 	if (info->pos == FIRST)
-		first(cdm, info, env);
+		first(cdm, info, env, tokens);
 	else if (info->nb_cmd == DERNIER)
-		last(cdm, info, env);
+		last(cdm, info, env, tokens);
 	else if (info->pos == INTER)
-		inter(cdm, info, env);
+		inter(cdm, info, env, tokens);
 	info->pos = INTER;
 	info->nb_cmd--;
 	return (1);
 }
 
-int	first(char **cmd, t_exec *info, char ***env)
+int	first(char **cmd, t_exec *info, char ***env, t_token *tokens)
 {
 	int		pipefd[2];
 	pid_t	pid;
@@ -45,7 +45,7 @@ int	first(char **cmd, t_exec *info, char ***env)
 			{
 				if (dup_in_fork_first_inter(info, pipefd) == -1)
 					return (-1);
-				if (exec_cmd(info, env, cmd) == 1)
+				if (exec_cmd(info, env, cmd, tokens) == 1)
 					return (1);
 			}
 		}
@@ -54,7 +54,7 @@ int	first(char **cmd, t_exec *info, char ***env)
 	return (0);
 }
 
-int	inter(char **cmd, t_exec *info, char ***env)
+int	inter(char **cmd, t_exec *info, char ***env, t_token *tokens)
 {
 	int		pipefd[2];
 	pid_t	pid;
@@ -74,7 +74,7 @@ int	inter(char **cmd, t_exec *info, char ***env)
 			{
 				if (dup_in_fork_first_inter(info, pipefd) == -1)
 					return (-1);
-				if (exec_cmd(info, env, cmd) == -1)
+				if (exec_cmd(info, env, cmd, tokens) == -1)
 					return (1);
 			}
 		}
@@ -83,7 +83,7 @@ int	inter(char **cmd, t_exec *info, char ***env)
 	return (0);
 }
 
-int	last(char **cmd, t_exec *info, char ***env)
+int	last(char **cmd, t_exec *info, char ***env, t_token *tokens)
 {
 	pid_t	pid;
 
@@ -102,7 +102,7 @@ int	last(char **cmd, t_exec *info, char ***env)
 			{
 				if (dup_in_fork_last_solo(info) == -1)
 					return (-1);
-				if (exec_cmd(info, env, cmd) == 1)
+				if (exec_cmd(info, env, cmd, tokens) == 1)
 					return (1);
 			}
 		}
@@ -124,6 +124,8 @@ int	close_last(t_exec *info)
 	printf("g_code_exit sortie de wait = %d\n", g_code_exit);
 	if (g_code_exit == 2)
 		g_code_exit = CSIGINT; // ! TODO ERROR code d'erreur modifie builtins
+	if (g_code_exit == 13)
+		g_code_exit = 2;
 	if (g_code_exit > 255)
 		g_code_exit = g_code_exit / 256;
 	return (1);

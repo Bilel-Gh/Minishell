@@ -73,7 +73,7 @@ enum
 {
 	SUCCESS = 0,
 	ERROR = 1,
-	MISUSE = 2,
+	MISUSE = 13,
 	CANTEXEC = 126,
 	NOTFOUND = 127,
 	CSIGINT = 130,
@@ -215,6 +215,7 @@ typedef struct exec
 	char				**path;
 	char				*path_cmd;
 	t_global_parsing	*g_parsing;
+	t_token				*tokens;
 }	t_exec;
 
 //debug
@@ -278,10 +279,10 @@ int		ft_print_fullarg(int j, char *full_arg, char *tmp);
 void						builtin_env(char **args, char **env);
 // ------------------------ EXIT ------------------------
 void						builtin_exit(char **args,
-								t_global_parsing **g_pars);
-void			ft_gestion_exit_error(char *const *args, int nb_args,
+								t_global_parsing **g_pars, t_exec *info);
+int			ft_gestion_exit_error(char *const *args, int nb_args,
 					long long int nb_check, t_global_parsing **g_pars);
-void			ft_do_exit(char *const *args, t_global_parsing *const *g_pars);
+void			ft_do_exit(char *const *args, t_global_parsing *const *g_pars, t_exec *exec);
 void			ft_check_atoll(char **str, int *negative);
 long long int	ft_check_overflow(const char *str, long long int res,
 					int negative);
@@ -575,23 +576,23 @@ int	ft_bultins_fork(char **cmd, char ***env, t_exec *info);
 int	add_zero(int *info_return);
 int	is_bultins_not_fork(char **cmd, char ***env, t_exec *info, int pos);
 void	null_cmd(t_exec *info);
-void	fail_execve(t_exec *info, char **cmd, char *path);
-int	exec_cmd(t_exec *info, char ***env, char **cmd);
+void	fail_execve(t_exec *info, char **cmd, char *path, t_token *token);
+int	exec_cmd(t_exec *info, char ***env, char **cmd, t_token *tokens);
 void	close_for_first(int *pipefd, t_exec *info);
 int	creat_pipe_and_file(t_exec *info, int *pipefd);
 int	dup_in_fork_first_inter(t_exec *info, int *pipefd);
-int	first(char **cmd, t_exec *info, char ***env);
+int	first(char **cmd, t_exec *info, char ***env, t_token *tokens);
 void	close_inter(int *pipefd, t_exec *info);
 int	gestion_file_inter(t_exec *info, int *pipefd);
-int	inter(char **cmd, t_exec *info, char ***env);
+int	inter(char **cmd, t_exec *info, char ***env, t_token *tokens);
 int	gestion_file_last(t_exec *info);
 int	close_last(t_exec *info);
 int	dup_in_fork_last_solo(t_exec *info);
-int	last(char **cmd, t_exec *info, char ***env);
-int	start_exec(char **cdm, t_exec *info, char ***env);
+int	last(char **cmd, t_exec *info, char ***env, t_token *tokens);
+int	start_exec(char **cdm, t_exec *info, char ***env, t_token *tokens);
 void	close_for_solo_and_free(t_exec *info);
 int	file_solo(t_exec *info);
-int	solo_exec(char **cmd, t_exec *info, char ***env);
+int	solo_exec(char **cmd, t_exec *info, char ***env, t_token *tokens);
 int	start_exec_one(t_token *tokens, char **cmd, t_exec *exec, char ***env);
 int	start_exec_mult(t_token *tokens, char **cmd, t_exec *exec, char ***env);
 int	get_path(t_exec *exec, char **envp);

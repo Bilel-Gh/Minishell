@@ -33,10 +33,12 @@ int	gestion_file_last(t_exec *info)
 
 int	dup_in_fork_last_solo(t_exec *info)
 {
-	if (dup2(info->fd_outfile, 1) == -1)
-		return (perror("error dup last"), -1);
 	if (info->outfile)
+	{
+		if (dup2(info->fd_outfile, 1) == -1)
+			return (perror("error dup last"), -1);
 		close(info->fd_outfile);
+	}
 	return (0);
 }
 
@@ -47,8 +49,10 @@ void	close_for_solo_and_free(t_exec *info)
 	printf(" g_code_exit sortie de wait = %d\n", g_code_exit);
 	if (g_code_exit == 131)
 		ft_fprintf(2, "Quit (core dumped)\n");
-	 if (g_code_exit == 2) // ! TODO ERROR code d'erreur modifie builtins
+	if (g_code_exit == 2) // ! TODO ERROR code d'erreur modifie builtins
 	 	g_code_exit = CSIGINT;
+	if (g_code_exit == 13)
+		g_code_exit = 2;
 	if (g_code_exit > 255)
 		g_code_exit = g_code_exit / 256;
 	if ((info->infile || info->limiteur) && info->fd_infile > 0)
@@ -76,7 +80,7 @@ int	file_solo(t_exec *info)
 	return (error);
 }
 
-int	solo_exec(char **cmd, t_exec *info, char ***env)
+int	solo_exec(char **cmd, t_exec *info, char ***env, t_token *tokens)
 {
 	pid_t	pid;
 
@@ -96,7 +100,7 @@ int	solo_exec(char **cmd, t_exec *info, char ***env)
 		{
 			if (dup_in_fork_last_solo(info) == -1)
 				return (-1);
-			if (exec_cmd(info, env, cmd) == 1)
+			if (exec_cmd(info, env, cmd, tokens) == 1)
 				return (-1);
 		}
 	}
